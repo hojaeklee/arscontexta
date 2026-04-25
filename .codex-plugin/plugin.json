@@ -1,0 +1,40 @@
+{
+  "name": "arscontexta",
+  "version": "0.8.1",
+  "description": "Agent-native knowledge-system architecture and Obsidian vault workflows for Codex.",
+  "author": {
+    "name": "Heinrich",
+    "email": "arscontexta@proton.me",
+    "url": "https://arscontexta.org"
+  },
+  "homepage": "https://arscontexta.org",
+  "repository": "https://github.com/agenticnotetaking/arscontexta",
+  "license": "MIT",
+  "keywords": [
+    "knowledge-management",
+    "obsidian",
+    "codex",
+    "agent-memory",
+    "zettelkasten",
+    "knowledge-graph"
+  ],
+  "skills": "./codex-skills/",
+  "interface": {
+    "displayName": "Ars Contexta",
+    "shortDescription": "Operate and maintain an agent-native Obsidian knowledge system.",
+    "longDescription": "Ars Contexta provides Codex skills for deriving, maintaining, querying, and evolving a local markdown knowledge graph, with Obsidian-friendly conventions and agent-native workflows.",
+    "developerName": "Heinrich",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Interactive"
+    ],
+    "websiteURL": "https://arscontexta.org",
+    "defaultPrompt": [
+      "Run an Ars Contexta health check.",
+      "Set up Ars Contexta for my vault.",
+      "Process this source into my knowledge graph."
+    ]
+  }
+}
