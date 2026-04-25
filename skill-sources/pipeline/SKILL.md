@@ -4,9 +4,8 @@ description: End-to-end source processing -- seed, reduce, process all claims th
 version: "1.0"
 generated_from: "arscontexta-v1.6"
 user-invocable: true
-context: fork
 model: sonnet
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Task
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Agent
 argument-hint: "[file] — path to source file to process end-to-end"
 ---
 
@@ -89,11 +88,12 @@ Process the extract task via /ralph. This spawns a subagent that runs /reduce, e
 /ralph 1 --batch {batch_id} --type extract
 ```
 
-Or via Task tool:
+Or via Agent tool:
 ```
-Task(
+Agent(
   prompt = "Run /ralph 1 --batch {batch_id} --type extract",
-  description = "extract: {batch_id}"
+  description = "extract: {batch_id}",
+  subagent_type = "general-purpose"
 )
 ```
 
@@ -121,11 +121,12 @@ Count total pending tasks for this batch from the queue. Then process all of the
 /ralph {remaining_count} --batch {batch_id}
 ```
 
-Or via Task tool:
+Or via Agent tool:
 ```
-Task(
+Agent(
   prompt = "Run /ralph {remaining_count} --batch {batch_id}",
-  description = "process: {batch_id} ({remaining_count} tasks)"
+  description = "process: {batch_id} ({remaining_count} tasks)",
+  subagent_type = "general-purpose"
 )
 ```
 
