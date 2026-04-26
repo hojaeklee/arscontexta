@@ -46,6 +46,7 @@ assert_contains "$plugin_output" "PASS arscontexta-session skill exists in insta
 assert_contains "$plugin_output" "PASS Bundled session orientation helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled session validation helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled session capture helper exists and is executable."
+assert_contains "$plugin_output" "PASS Bundled MCP vault tools prototype helper exists and is executable."
 
 bad_config="$tmp_dir/bad-config.toml"
 cat > "$bad_config" <<EOF

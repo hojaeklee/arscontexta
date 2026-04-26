@@ -54,6 +54,9 @@ Validation is warning-only. It checks frontmatter, `description:`, `topics:`,
 and obvious unresolved wiki links. Full semantic validation belongs to the
 future `arscontexta-validate` skill.
 
+Do not make this workflow depend on MCP. If an optional MCP wrapper exists it may
+be used, but the bundled script path remains the stable fallback.
+
 ## Capture
 
 Before writing, confirm the summary that should be saved. If the user did not

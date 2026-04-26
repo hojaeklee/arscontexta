@@ -447,9 +447,18 @@ qmd collection add . --name notes --mask "notes/**/*.md"
 qmd embed
 ```
 
-MCP integration should be reserved for deterministic operations such as graph
-analysis, YAML/frontmatter validation, link checks, queue operations, schema-aware
-note creation, and vault indexing.
+MCP integration is optional and future-facing. Issue #8 added a design and CLI
+prototype for deterministic operations, not a production MCP server:
+
+```bash
+scripts/mcp-vault-tools.sh links.check . --limit 25
+scripts/mcp-vault-tools.sh frontmatter.validate . --file notes/example.md --limit 25
+```
+
+Use MCP or the prototype for graph analysis, YAML/frontmatter validation, link
+checks, queue operations, schema-aware note creation, and vault indexing. Skills
+must continue to fall back to bundled scripts, `rg`, and wiki-link traversal when
+MCP is unavailable.
 
 ## Roadmap
 

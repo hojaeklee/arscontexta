@@ -98,6 +98,7 @@ setup_helper="$REPO_ROOT/plugins/arscontexta/scripts/setup-vault.sh"
 session_orient_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-orient.sh"
 session_validate_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-validate.sh"
 session_capture_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-capture.sh"
+mcp_tools_helper="$REPO_ROOT/plugins/arscontexta/scripts/mcp-vault-tools.sh"
 
 if require_json_tools; then
   if [[ -f "$marketplace" ]]; then
@@ -186,7 +187,8 @@ fi
 for helper in \
   "$session_orient_helper:session orientation" \
   "$session_validate_helper:session validation" \
-  "$session_capture_helper:session capture"
+  "$session_capture_helper:session capture" \
+  "$mcp_tools_helper:MCP vault tools prototype"
 do
   helper_path="${helper%%:*}"
   helper_label="${helper#*:}"
@@ -250,10 +252,10 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/scripts/setup-vault.sh" ]] \
       && emit PASS "Cached vault setup helper exists." \
       || emit WARN "Cached vault setup helper is missing; reinstall plugin after adding setup."
-    for helper_name in session-orient.sh session-validate.sh session-capture.sh; do
+    for helper_name in session-orient.sh session-validate.sh session-capture.sh mcp-vault-tools.sh; do
       [[ -f "$cache_dir/scripts/$helper_name" ]] \
         && emit PASS "Cached $helper_name helper exists." \
-        || emit WARN "Cached $helper_name helper is missing; reinstall plugin after adding session workflows."
+        || emit WARN "Cached $helper_name helper is missing; reinstall plugin after adding session or MCP workflows."
     done
   else
     emit WARN "No Codex cache found for arscontexta $manifest_version at $cache_dir."

@@ -36,3 +36,19 @@ transcript API. The capture workflow writes a markdown handoff into
 Do not add Codex cron jobs, background automations, or auto-commit behavior as a
 hook replacement. If Codex later provides a stable hook API, add a new design
 issue that maps these explicit workflows onto that API.
+
+## Optional MCP
+
+Codex skills may use Ars Contexta MCP tools when a compatible server exists, but
+they must not require MCP. Prefer this order:
+
+1. MCP tool, when installed and compatible.
+2. Bundled deterministic script from `scripts/` or `plugins/arscontexta/scripts/`.
+3. Local `rg`, `find`, and shell inspection.
+
+The current MCP work is a CLI prototype, not a registered server:
+
+```bash
+scripts/mcp-vault-tools.sh links.check . --limit 25
+scripts/mcp-vault-tools.sh frontmatter.validate . --changed --limit 25
+```
