@@ -231,6 +231,46 @@ git status --short
 Restart Codex before testing plugin discovery. Existing chats do not reliably
 hot-reload plugin skills.
 
+### When Codex Updates
+
+Treat Codex app/runtime updates as compatibility events. Ars Contexta previously
+broke across Claude Code versions because plugin schemas, hooks, model names, and
+runtime assumptions changed underneath it. Codex can do the same.
+
+After each Codex update:
+
+1. Open the **Codex Plugins** sidebar and confirm **Agentic Note Taking** still
+   appears.
+2. Confirm **Ars Contexta** is still installed or enabled.
+3. Start a fresh chat in this repo and verify `$` shows `arscontexta-health`.
+4. Start a fresh chat in a real vault and run:
+
+   ```text
+   Use arscontexta-health to diagnose this vault.
+   ```
+
+5. Check `~/.codex/config.toml` for changed or unsupported model names.
+6. Re-run manifest validation:
+
+   ```bash
+   jq . .agents/plugins/marketplace.json
+   jq . plugins/arscontexta/.codex-plugin/plugin.json
+   ```
+
+7. Compare this repo's plugin layout against a known working cached plugin:
+
+   ```bash
+   find ~/.codex/plugins/cache -maxdepth 4 -name plugin.json -path '*/.codex-plugin/*'
+   ```
+
+8. If discovery breaks, first check marketplace shape, plugin manifest fields,
+   skill path conventions, and whether Codex now requires a cache refresh or
+   reinstall from the sidebar.
+
+Keep update fixes small and documented. If a Codex update requires a layout or
+schema change, update this README and create a compatibility issue explaining the
+observed failure, Codex version, config snippets, and the fix.
+
 ### Porting More Codex Skills
 
 Port Claude slash-command skills into Codex-native skills incrementally.
