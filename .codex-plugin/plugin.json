@@ -18,7 +18,7 @@
     "zettelkasten",
     "knowledge-graph"
   ],
-  "skills": "./codex-skills/",
+  "skills": "./skills/",
   "interface": {
     "displayName": "Ars Contexta",
     "shortDescription": "Operate and maintain an agent-native Obsidian knowledge system.",

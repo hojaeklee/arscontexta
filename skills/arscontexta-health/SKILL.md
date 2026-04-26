@@ -55,4 +55,4 @@ For `full`, extend the quick check with:
 - MOC coherence and sparse topic maps
 - Stale notes or old inbox items
 
-Load only the references needed for the requested check. The Claude skill at `../../skills/health/SKILL.md` can be used as a detailed compatibility reference, but do not copy its long command-style output unless the user asks for Claude parity.
+Load only the references needed for the requested check. The Claude skill at `../health/SKILL.md` can be used as a detailed compatibility reference, but do not copy its long command-style output unless the user asks for Claude parity.
