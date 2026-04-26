@@ -93,7 +93,6 @@ require_json_tools() {
 
 marketplace="$REPO_ROOT/.agents/plugins/marketplace.json"
 manifest="$REPO_ROOT/plugins/arscontexta/.codex-plugin/plugin.json"
-health_skill="$REPO_ROOT/plugins/arscontexta/skills/arscontexta-health/SKILL.md"
 health_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault-health.sh"
 
 if require_json_tools; then
@@ -150,16 +149,19 @@ if require_json_tools; then
   fi
 fi
 
-if [[ -f "$health_skill" ]]; then
-  emit PASS "arscontexta-health skill exists in installable plugin."
-  if awk 'NR == 1 && $0 == "---" { in_fm = 1; next } in_fm && $0 == "name: arscontexta-health" { found = 1 } in_fm && NR > 1 && $0 == "---" { exit } END { exit found ? 0 : 1 }' "$health_skill"; then
-    emit PASS "arscontexta-health skill frontmatter declares name."
+for skill_name in arscontexta-help arscontexta-health; do
+  skill_file="$REPO_ROOT/plugins/arscontexta/skills/$skill_name/SKILL.md"
+  if [[ -f "$skill_file" ]]; then
+    emit PASS "$skill_name skill exists in installable plugin."
+    if awk -v expected="name: $skill_name" 'NR == 1 && $0 == "---" { in_fm = 1; next } in_fm && $0 == expected { found = 1 } in_fm && NR > 1 && $0 == "---" { exit } END { exit found ? 0 : 1 }' "$skill_file"; then
+      emit PASS "$skill_name skill frontmatter declares name."
+    else
+      emit FAIL "$skill_name skill frontmatter is missing name: $skill_name."
+    fi
   else
-    emit FAIL "arscontexta-health skill frontmatter is missing name: arscontexta-health."
+    emit FAIL "$skill_name skill is missing from installable plugin."
   fi
-else
-  emit FAIL "arscontexta-health skill is missing from installable plugin."
-fi
+done
 
 if [[ -x "$health_helper" ]]; then
   emit PASS "Bundled vault health helper exists and is executable."
@@ -209,9 +211,11 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/.codex-plugin/plugin.json" ]] \
       && emit PASS "Cached plugin manifest exists." \
       || emit WARN "Cached plugin manifest is missing."
-    [[ -f "$cache_dir/skills/arscontexta-health/SKILL.md" ]] \
-      && emit PASS "Cached arscontexta-health skill exists." \
-      || emit WARN "Cached arscontexta-health skill is missing."
+    for skill_name in arscontexta-help arscontexta-health; do
+      [[ -f "$cache_dir/skills/$skill_name/SKILL.md" ]] \
+        && emit PASS "Cached $skill_name skill exists." \
+        || emit WARN "Cached $skill_name skill is missing; reinstall plugin after adding new Codex skills."
+    done
     [[ -f "$cache_dir/scripts/vault-health.sh" ]] \
       && emit PASS "Cached vault health helper exists." \
       || emit WARN "Cached vault health helper is missing; reinstall plugin after #10 changes."

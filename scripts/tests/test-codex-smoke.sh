@@ -39,6 +39,8 @@ trap cleanup EXIT
 plugin_output="$(CODEX_CACHE_ROOT="$tmp_dir/cache" "$PLUGIN_CHECK")"
 assert_contains "$plugin_output" "PASS .agents/plugins/marketplace.json parses."
 assert_contains "$plugin_output" "PASS Plugin manifest uses skills path ./skills/."
+assert_contains "$plugin_output" "PASS arscontexta-help skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS arscontexta-health skill exists in installable plugin."
 
 bad_config="$tmp_dir/bad-config.toml"
 cat > "$bad_config" <<EOF

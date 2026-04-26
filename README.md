@@ -13,7 +13,7 @@ ported to Codex as a first-class local plugin.
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| Codex | In progress | Local plugin scaffold exists. First Codex-native skill is `arscontexta-health`. |
+| Codex | In progress | Local plugin scaffold exists. Codex-native help and health skills are available. |
 | Claude Code | Available | Original plugin remains intact under `.claude-plugin/` and `skills/`. |
 | MCP | Not implemented | Good future target for deterministic vault operations, not the main methodology. |
 
@@ -44,6 +44,7 @@ Codex support is installed through a local marketplace entry in this repo:
 ```text
 .agents/plugins/marketplace.json
 plugins/arscontexta/.codex-plugin/plugin.json
+plugins/arscontexta/skills/arscontexta-help/SKILL.md
 plugins/arscontexta/skills/arscontexta-health/SKILL.md
 ```
 
@@ -62,15 +63,22 @@ Then open Codex, go to **Codex Plugins** in the left sidebar, open the
 **Agentic Note Taking** marketplace, and install or enable **Ars Contexta**.
 Start a fresh chat after installing.
 
-### Supported Codex Skill
+### Supported Codex Skills
 
-The first Codex-native skill is:
+The current Codex-native skills are:
 
 ```text
+arscontexta-help
 arscontexta-health
 ```
 
-Use it from an Ars Contexta or Obsidian vault:
+Use help when you want orientation in the plugin repo, a vault, or a generic directory:
+
+```text
+What can Ars Contexta do here?
+```
+
+Use health from an Ars Contexta or Obsidian vault:
 
 ```text
 Run an Ars Contexta health check on this vault.
@@ -138,7 +146,9 @@ arscontexta/
 |-- .agents/plugins/marketplace.json       # Codex local marketplace
 |-- plugins/arscontexta/                   # Installable Codex plugin package
 |   |-- .codex-plugin/plugin.json
-|   +-- skills/arscontexta-health/SKILL.md
+|   +-- skills/
+|       |-- arscontexta-help/SKILL.md
+|       +-- arscontexta-health/SKILL.md
 |-- .codex-plugin/plugin.json              # Root Codex manifest for development/reference
 |-- .claude-plugin/
 |   |-- plugin.json                        # Claude plugin manifest
@@ -147,6 +157,7 @@ arscontexta/
 |   |-- setup/
 |   |-- help/
 |   |-- health/
+|   |-- arscontexta-help/
 |   +-- arscontexta-health/
 |-- skill-sources/                         # Generated vault skill templates
 |-- hooks/                                 # Claude hook configuration and scripts
@@ -217,7 +228,9 @@ editing plugin metadata or the first skill:
 .codex-plugin/plugin.json
 plugins/arscontexta/.codex-plugin/plugin.json
 skills/arscontexta-health/SKILL.md
+skills/arscontexta-help/SKILL.md
 plugins/arscontexta/skills/arscontexta-health/SKILL.md
+plugins/arscontexta/skills/arscontexta-help/SKILL.md
 ```
 
 After editing:
@@ -252,7 +265,8 @@ Then confirm the Codex UI state that scripts cannot inspect directly:
 1. Open the **Codex Plugins** sidebar and confirm **Agentic Note Taking** still
    appears.
 2. Confirm **Ars Contexta** is still installed or enabled.
-3. Start a fresh chat in this repo and verify `$` shows `arscontexta-health`.
+3. Start a fresh chat in this repo and verify `$` shows `arscontexta-help` and
+   `arscontexta-health`.
 4. Start a fresh chat in a real vault and run:
 
    ```text
@@ -272,14 +286,12 @@ observed failure, Codex version, config snippets, and the fix.
 Port Claude slash-command skills into Codex-native skills incrementally.
 Recommended order:
 
-1. `arscontexta-help`
-2. `arscontexta-setup`
-3. `arscontexta-ask`
-4. `arscontexta-reduce`
-5. `arscontexta-reflect`
-6. `arscontexta-reweave`
-7. `arscontexta-verify`
-8. `arscontexta-remember`
+1. `arscontexta-ask`
+2. `arscontexta-reduce`
+3. `arscontexta-reflect`
+4. `arscontexta-reweave`
+5. `arscontexta-verify`
+6. `arscontexta-remember`
 
 Codex skills should be shorter than the Claude command bodies. Put only the core
 workflow in `SKILL.md`, move long methodology into `reference/`, and use scripts
@@ -340,10 +352,12 @@ If **Agentic Note Taking** is not visible in the Codex plugin sidebar:
 - Confirm `.agents/plugins/marketplace.json` exists in this repo.
 - Fully quit and reopen Codex.
 
-If **Agentic Note Taking** is visible but `arscontexta-health` is not:
+If **Agentic Note Taking** is visible but `arscontexta-help` or
+`arscontexta-health` is not:
 
 - Confirm **Ars Contexta** is installed or enabled from the sidebar.
 - Confirm `plugins/arscontexta/.codex-plugin/plugin.json` has `"skills": "./skills/"`.
+- Confirm `plugins/arscontexta/skills/arscontexta-help/SKILL.md` exists.
 - Confirm `plugins/arscontexta/skills/arscontexta-health/SKILL.md` exists.
 - Start a fresh chat after installing.
 
@@ -378,7 +392,7 @@ note creation, and vault indexing.
 | Preserve Claude Code plugin | Done |
 | Add Codex marketplace and plugin scaffold | Done |
 | Port `arscontexta-health` to Codex | Done |
-| Port `arscontexta-help` to Codex | Next |
+| Port `arscontexta-help` to Codex | Done |
 | Port Codex setup flow | Planned |
 | Add deterministic MCP tools | Later |
 
