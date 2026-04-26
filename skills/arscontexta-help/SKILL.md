@@ -30,6 +30,7 @@ Available now:
 - `arscontexta-setup`: minimal Codex-native vault scaffolding.
 - `scripts/vault-health.sh`: bounded link-health helper.
 - `scripts/setup-vault.sh`: deterministic minimal setup helper.
+- `arscontexta-validate`: detailed read-only note/schema validation.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -54,6 +55,7 @@ Available now in Codex:
 - Ask for Ars Contexta help to orient yourself.
 - Run `arscontexta-health` to check vault structure, schema signals, links, orphans, queues, and health state.
 - Run `arscontexta-setup` to create or complete minimal Codex vault scaffolding.
+- Run `arscontexta-validate` to check note frontmatter, schema fields, descriptions, enums, and wiki links.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
