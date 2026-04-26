@@ -1,88 +1,274 @@
 # Ars Contexta
 
-**A second brain for your agent.**
+**Agent-native knowledge-system architecture for local markdown vaults.**
 
-A Claude Code plugin that generates complete knowledge systems from conversation.
-You describe how you think and work. The engine derives a cognitive architecture
--- folder structure, context files, processing pipeline, hooks, navigation maps,
-and note templates -- tailored to your domain and backed by 249 research claims.
+Ars Contexta helps an AI agent maintain a durable thinking system: plain
+markdown notes, wiki links, processing queues, operational memory, and
+Obsidian-friendly navigation. It began as a Claude Code plugin and is now being
+ported to Codex as a first-class local plugin.
 
-No templates. No configuration. Just conversation.
+**v0.8.1** | Codex plugin in progress | Claude Code plugin available | MIT
 
-**v0.8.1** · Claude Code plugin · MIT
+## Current Status
 
----
+| Platform | Status | Notes |
+|----------|--------|-------|
+| Codex | In progress | Local plugin scaffold exists. First Codex-native skill is `arscontexta-health`. |
+| Claude Code | Available | Original plugin remains intact under `.claude-plugin/` and `skills/`. |
+| MCP | Not implemented | Good future target for deterministic vault operations, not the main methodology. |
 
-## Installation
-
-1. Add the marketplace to Claude Code:
-   ```
-   /plugin marketplace add agenticnotetaking/arscontexta
-   ```
-
-2. Install the plugin:
-   ```
-   /plugin install arscontexta@agenticnotetaking
-   ```
-
-3. Restart Claude Code, then run:
-   ```
-   /arscontexta:setup
-   ```
-
-4. Answer 2-4 questions about your domain (~20 minutes -- token-intensive but one-time)
-
-5. The engine generates your complete knowledge system
-
-6. Restart Claude Code again to activate generated hooks and skills
-
-7. Run `/arscontexta:help` to see everything available
-
----
+The repo intentionally keeps Claude and Codex support side by side. Do not remove
+the Claude plugin while porting Codex skills.
 
 ## What It Does
 
-Most AI tools start every session blank. Ars Contexta changes that by generating
-a persistent thinking system derived from how you actually work.
+Most agent sessions start blank. Ars Contexta gives the agent a local memory
+architecture it can inspect and maintain across sessions.
 
-**What you get:**
+You get:
 
-- **A vault** -- plain markdown files connected by wiki links, forming a traversable
-  knowledge graph. No database, no cloud, no lock-in.
-- **A processing pipeline** -- skills that extract insights, find connections, update
-  old notes with new context, and verify quality.
-- **Automation** -- hooks that enforce structure on every write, detect maintenance
-  needs, capture session state, and auto-commit.
-- **Navigation** -- Maps of Content (MOCs) at hub, domain, and topic levels.
-- **Templates** -- note templates with `_schema` blocks as single source of truth.
-- **A user manual** -- 7 pages of domain-native documentation generated alongside.
+- A markdown vault connected by wiki links.
+- A three-space architecture: `self/`, domain notes, and `ops/`.
+- Processing workflows for capture, reduction, reflection, reweaving, and verification.
+- Templates and schema conventions for consistent notes.
+- Maintenance checks for links, frontmatter, orphans, queues, and drift.
+- A methodology graph that explains why the system is shaped this way.
 
-**The key differentiator:** derivation, not templating. Every choice traces to
-specific research claims. The engine reasons from principles about what your
-domain needs and why.
+The core idea is **derivation, not templating**. A vault should be shaped by how
+the user thinks and works, while still preserving stable operating principles.
 
----
+## Use With Codex
 
-## The Setup Flow
+Codex support is installed through a local marketplace entry in this repo:
 
-`/arscontexta:setup` runs a 6-phase process:
+```text
+.agents/plugins/marketplace.json
+plugins/arscontexta/.codex-plugin/plugin.json
+plugins/arscontexta/skills/arscontexta-health/SKILL.md
+```
 
-| Phase | What Happens |
-|-------|-------------|
-| **Detection** | Detects Claude Code environment and capabilities |
-| **Understanding** | 2-4 conversation turns where you describe your domain |
-| **Derivation** | Maps signals to eight configuration dimensions with confidence scoring |
-| **Proposal** | Shows what will be generated and why, in your vocabulary |
-| **Generation** | Produces all files: context file, folders, templates, skills, hooks, manual |
-| **Validation** | Checks all 15 kernel primitives, runs pipeline smoke test |
+Add this marketplace to `~/.codex/config.toml`:
 
-The whole process takes about 20 minutes. It's token-intensive because the engine
-reads research claims, reasons about your domain, and generates substantial output.
-This is a one-time investment -- after setup, your agent remembers.
+```toml
+[marketplaces.agenticnotetaking]
+source_type = "local"
+source = "/Users/hlee/Desktop/playgrounds/arscontexta"
 
-For advanced users: `/arscontexta:setup --advanced` to configure dimensions directly.
+[plugins."arscontexta@agenticnotetaking"]
+enabled = true
+```
 
----
+Then open Codex, go to **Codex Plugins** in the left sidebar, open the
+**Agentic Note Taking** marketplace, and install or enable **Ars Contexta**.
+Start a fresh chat after installing.
+
+### Supported Codex Skill
+
+The first Codex-native skill is:
+
+```text
+arscontexta-health
+```
+
+Use it from an Ars Contexta or Obsidian vault:
+
+```text
+Run an Ars Contexta health check on this vault.
+```
+
+or explicitly:
+
+```text
+Use arscontexta-health to diagnose this Obsidian vault.
+```
+
+### Codex Model Note
+
+If you use Codex with a ChatGPT account, avoid this config:
+
+```toml
+model = "gpt-5-codex"
+```
+
+Use a supported model instead, for example:
+
+```toml
+model = "gpt-5.5"
+```
+
+Otherwise Codex may fail with:
+
+```text
+The 'gpt-5-codex' model is not supported when using Codex with a ChatGPT account.
+```
+
+## Use With Claude Code
+
+Claude Code remains the mature implementation.
+
+Add the marketplace:
+
+```text
+/plugin marketplace add agenticnotetaking/arscontexta
+```
+
+Install the plugin:
+
+```text
+/plugin install arscontexta@agenticnotetaking
+```
+
+Restart Claude Code, then run:
+
+```text
+/arscontexta:setup
+```
+
+After setup, restart Claude Code again so generated hooks and skills activate.
+Then run:
+
+```text
+/arscontexta:help
+```
+
+## Repository Layout
+
+```text
+arscontexta/
+|-- .agents/plugins/marketplace.json       # Codex local marketplace
+|-- plugins/arscontexta/                   # Installable Codex plugin package
+|   |-- .codex-plugin/plugin.json
+|   +-- skills/arscontexta-health/SKILL.md
+|-- .codex-plugin/plugin.json              # Root Codex manifest for development/reference
+|-- .claude-plugin/
+|   |-- plugin.json                        # Claude plugin manifest
+|   +-- marketplace.json                   # Claude marketplace listing
+|-- skills/                                # Claude plugin skills plus Codex-port candidates
+|   |-- setup/
+|   |-- help/
+|   |-- health/
+|   +-- arscontexta-health/
+|-- skill-sources/                         # Generated vault skill templates
+|-- hooks/                                 # Claude hook configuration and scripts
+|-- generators/                            # CLAUDE.md and feature generation sources
+|-- methodology/                           # Research claims and methodology notes
+|-- reference/                             # Core references and templates
+|-- platforms/                             # Platform-specific adapters
+|-- presets/                               # Starter configurations
+|-- scripts/                               # Utility scripts
++-- README.md
+```
+
+The installable Codex package currently duplicates a small manifest and skill
+under `plugins/arscontexta/` because Codex local marketplaces expect the
+conventional `plugins/<name>` layout.
+
+## Maintainer Workflow
+
+### Local Git Identity
+
+This repo should commit as the personal GitHub account:
+
+```text
+Hojae Lee <43919952+hojaeklee@users.noreply.github.com>
+```
+
+Check with:
+
+```bash
+git config --get user.name
+git config --get user.email
+```
+
+### Remotes
+
+`origin` should point at the personal fork through the personal SSH alias:
+
+```text
+origin git@github-hojaeklee:hojaeklee/arscontexta.git
+```
+
+`upstream` is fetch-only:
+
+```text
+upstream git@github.com:agenticnotetaking/arscontexta.git (fetch)
+upstream DISABLED (push)
+```
+
+This prevents accidental pushes to the original repository.
+
+### Updating From Upstream
+
+If the original repository ever changes:
+
+```bash
+git fetch upstream
+git log --oneline main..upstream/main
+```
+
+Then merge or cherry-pick deliberately. Do not assume upstream is maintained.
+
+### Updating The Codex Plugin
+
+For now, keep the Codex install package and root development files in sync when
+editing plugin metadata or the first skill:
+
+```text
+.codex-plugin/plugin.json
+plugins/arscontexta/.codex-plugin/plugin.json
+skills/arscontexta-health/SKILL.md
+plugins/arscontexta/skills/arscontexta-health/SKILL.md
+```
+
+After editing:
+
+```bash
+jq . .agents/plugins/marketplace.json
+jq . plugins/arscontexta/.codex-plugin/plugin.json
+git status --short
+```
+
+Restart Codex before testing plugin discovery. Existing chats do not reliably
+hot-reload plugin skills.
+
+### Porting More Codex Skills
+
+Port Claude slash-command skills into Codex-native skills incrementally.
+Recommended order:
+
+1. `arscontexta-help`
+2. `arscontexta-setup`
+3. `arscontexta-ask`
+4. `arscontexta-reduce`
+5. `arscontexta-reflect`
+6. `arscontexta-reweave`
+7. `arscontexta-verify`
+8. `arscontexta-remember`
+
+Codex skills should be shorter than the Claude command bodies. Put only the core
+workflow in `SKILL.md`, move long methodology into `reference/`, and use scripts
+for deterministic checks.
+
+## Claude Commands
+
+Plugin-level Claude commands:
+
+| Command | What It Does |
+|---------|-------------|
+| `/arscontexta:setup` | Conversational onboarding and vault generation |
+| `/arscontexta:help` | Contextual command guidance |
+| `/arscontexta:tutorial` | Interactive walkthrough |
+| `/arscontexta:ask` | Query methodology and vault knowledge |
+| `/arscontexta:health` | Run vault diagnostics |
+| `/arscontexta:recommend` | Get architecture advice |
+| `/arscontexta:architect` | Research-backed evolution guidance |
+| `/arscontexta:add-domain` | Add a knowledge domain |
+| `/arscontexta:reseed` | Re-derive when drift accumulates |
+| `/arscontexta:upgrade` | Apply plugin knowledge-base updates |
+
+Generated vault commands include `reduce`, `reflect`, `reweave`, `verify`,
+`validate`, `seed`, `ralph`, `pipeline`, `tasks`, `stats`, `graph`, `next`,
+`learn`, `remember`, `rethink`, and `refactor`.
 
 ## Three-Space Architecture
 
@@ -90,297 +276,87 @@ Every generated system separates content into three spaces:
 
 | Space | Purpose | Growth |
 |-------|---------|--------|
-| **self/** | Agent persistent mind -- identity, methodology, goals | Slow (tens of files) |
-| **notes/** | Knowledge graph -- the reason the system exists | Steady (10-50/week) |
-| **ops/** | Operational coordination -- queue state, sessions | Fluctuating |
+| `self/` | Agent identity, methodology, goals, persistent operating memory | Slow |
+| Domain notes | The knowledge graph itself | Steady |
+| `ops/` | Queues, sessions, observations, tensions, health reports | Fluctuating |
 
-Names adapt to your domain (`notes/` might become `reflections/`, `claims/`,
-or `decisions/`), but the separation is invariant.
-
----
-
-## Commands
-
-### Plugin-Level (always available)
-
-| Command | What It Does |
-|---------|-------------|
-| `/arscontexta:setup` | Conversational onboarding -- generates your full system |
-| `/arscontexta:help` | Contextual guidance and command discovery |
-| `/arscontexta:tutorial` | Interactive walkthrough (learn by doing) |
-| `/arscontexta:ask` | Query the research graph for methodology answers |
-| `/arscontexta:health` | Run diagnostic checks on your vault |
-| `/arscontexta:recommend` | Get architecture advice for your use case |
-| `/arscontexta:architect` | Research-backed evolution guidance |
-| `/arscontexta:add-domain` | Add a new knowledge domain to an existing system |
-| `/arscontexta:reseed` | Re-derive from first principles when drift accumulates |
-| `/arscontexta:upgrade` | Apply plugin knowledge base updates to your system |
-
-### Generated (available after setup)
-
-| Command | What It Does |
-|---------|-------------|
-| `/reduce` | Extract insights from sources |
-| `/reflect` | Find connections, update MOCs |
-| `/reweave` | Update older notes with new connections |
-| `/verify` | Combined quality check: description + schema + health |
-| `/validate` | Schema compliance checking |
-| `/seed` | Create extraction task with duplicate detection |
-| `/ralph` | Queue-based orchestration with fresh context per phase |
-| `/pipeline` | End-to-end source processing |
-| `/tasks` | Queue management |
-| `/stats` | Vault metrics |
-| `/graph` | Graph analysis |
-| `/next` | Next-action recommendation |
-| `/learn` | Research and grow |
-| `/remember` | Mine session learnings |
-| `/rethink` | Challenge system assumptions |
-| `/refactor` | Structural improvements |
-
----
+The domain notes folder may be named `notes/`, `claims/`, `reflections/`,
+`decisions/`, or something else. The separation is the invariant.
 
 ## Processing Pipeline
 
-The vault implements the **6 Rs**, extending Cornell Note-Taking's 5 Rs with a
-meta-cognitive layer:
+The vault implements the six Rs:
 
-| Phase | What Happens | Command |
-|-------|-------------|---------|
-| **Record** | Zero-friction capture into inbox/ | Manual |
-| **Reduce** | Extract insights with domain-native categories | `/reduce` |
-| **Reflect** | Find connections, update MOCs | `/reflect` |
-| **Reweave** | Update older notes with new context | `/reweave` |
-| **Verify** | Description + schema + health checks | `/verify` |
-| **Rethink** | Challenge system assumptions | `/rethink` |
+| Phase | Purpose |
+|-------|---------|
+| Record | Capture raw material with low friction |
+| Reduce | Extract durable notes or claims |
+| Reflect | Find connections and update topic maps |
+| Reweave | Update older notes with new context |
+| Verify | Check schema, links, descriptions, and quality |
+| Rethink | Challenge assumptions and evolve methodology |
 
-### Fresh Context Per Phase
+## Troubleshooting Codex Plugin Discovery
 
-Each phase runs in its own context window via subagent spawning. LLM attention
-degrades as context fills. By spawning a fresh subagent per phase, every phase
-operates in the "smart zone."
+If **Agentic Note Taking** is not visible in the Codex plugin sidebar:
 
-```
-/ralph 5
-  |-- Read queue, find next unblocked task
-  |-- Spawn subagent (fresh context)
-  |   +-- Runs skill, updates task file, returns handoff
-  |-- Parse handoff, capture learnings
-  |-- Advance phase in queue
-  +-- Repeat for 5 tasks
-```
+- Confirm `~/.codex/config.toml` has the `marketplaces.agenticnotetaking` block.
+- Confirm `.agents/plugins/marketplace.json` exists in this repo.
+- Fully quit and reopen Codex.
 
----
+If **Agentic Note Taking** is visible but `arscontexta-health` is not:
 
-## Hooks
+- Confirm **Ars Contexta** is installed or enabled from the sidebar.
+- Confirm `plugins/arscontexta/.codex-plugin/plugin.json` has `"skills": "./skills/"`.
+- Confirm `plugins/arscontexta/skills/arscontexta-health/SKILL.md` exists.
+- Start a fresh chat after installing.
 
-Four hooks automate quality enforcement:
+If the skill fails with a model error:
 
-| Hook | Event | What It Does |
-|------|-------|-------------|
-| **Session Orient** | `SessionStart` | Injects workspace tree, loads identity, surfaces maintenance signals |
-| **Write Validate** | `PostToolUse` (Write) | Schema enforcement on every note write |
-| **Auto Commit** | `PostToolUse` (Write, async) | Git auto-commit, non-blocking |
-| **Session Capture** | `Stop` | Persists session state to `ops/sessions/` |
+- Change `~/.codex/config.toml` from `gpt-5-codex` to a supported model such as
+  `gpt-5.5`.
 
----
+## Semantic Search
 
-## The Research Graph
+Semantic search is optional. The system should work with `rg` and wiki-link
+traversal alone.
 
-The `methodology/` directory contains **249 interconnected research claims**
-about tools for thought, knowledge management, and agent-native cognitive
-architecture. These claims back every configuration decision.
-
-### Synthesizes
-
-Zettelkasten -- Cornell Note-Taking -- Evergreen Notes -- PARA -- GTD -- Memory
-Palaces -- Cognitive Science (extended mind, spreading activation, generation
-effect) -- Network Theory (small-world topology, betweenness centrality) --
-Agent Architecture (context windows, session boundaries, multi-agent patterns)
-
-### How Claims Back Decisions
-
-Every kernel primitive includes `cognitive_grounding` linking to specific research:
-
-- **MOC hierarchy** -- context-switching cost research (Leroy 2009)
-- **Description field** -- progressive disclosure principles
-- **Wiki links** -- spreading activation theory
-
-Query directly: `/arscontexta:ask "Why does my system use atomic notes?"`
-
----
-
-## Semantic Search (optional)
-
-[qmd](https://github.com/tobi/qmd) adds concept matching across vocabularies.
-Not required -- the system works fully with ripgrep + MOC traversal.
-
-`/setup` should perform this configuration automatically when semantic search is active.
-The commands below are manual fallback/setup verification.
+`qmd` may become useful later as an MCP-backed search bridge:
 
 ```bash
-# Install qmd
 npm install -g @tobilu/qmd
-# or
-bun install -g @tobilu/qmd
-
 cd your-vault/
 qmd init
-qmd collection add . --name <notes_directory_name> --mask "<notes_directory_name>/**/*.md"
+qmd collection add . --name notes --mask "notes/**/*.md"
 qmd embed
 ```
 
-Create or merge `.mcp.json` in the vault root:
-
-```json
-{
-  "mcpServers": {
-    "qmd": {
-      "command": "qmd",
-      "args": ["mcp"],
-      "autoapprove": [
-        "mcp__qmd__search",
-        "mcp__qmd__vector_search",
-        "mcp__qmd__deep_search",
-        "mcp__qmd__get",
-        "mcp__qmd__multi_get",
-        "mcp__qmd__status"
-      ]
-    }
-  }
-}
-```
-
-Keep qmd MCP configuration and tool preapproval in `.mcp.json`.
-
----
-
-## Prerequisites
-
-| Dependency | Required | Purpose |
-|-----------|----------|---------|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) v1.0.33+ | Yes | Plugin host |
-| `tree` | Yes | Workspace structure injection |
-| `ripgrep` (`rg`) | Yes | YAML queries, schema validation |
-| [qmd](https://github.com/tobi/qmd) | Optional | Semantic search |
-
----
-
-## Project Structure
-
-```
-arscontexta/
-|-- .claude-plugin/
-|   |-- plugin.json              # Plugin manifest
-|   +-- marketplace.json         # Marketplace listing
-|-- skills/                      # 10 plugin-level commands
-|   |-- setup/                   # Conversational onboarding
-|   |-- help/                    # Contextual guidance
-|   |-- tutorial/                # Interactive walkthrough
-|   |-- ask/                     # Query the research graph
-|   |-- health/                  # Diagnostic checks
-|   |-- recommend/               # Architecture advice
-|   |-- architect/               # Evolution guidance
-|   |-- reseed/                  # Re-derive from first principles
-|   |-- upgrade/                 # Apply knowledge base updates
-|   +-- add-domain/              # Multi-domain extension
-|-- skill-sources/               # 16 generated command templates
-|   |-- reduce/                  # Extract insights
-|   |-- reflect/                 # Find connections
-|   |-- reweave/                 # Backward pass
-|   |-- verify/                  # Combined quality check
-|   +-- ...                      # 12 more processing commands
-|-- agents/
-|   +-- knowledge-guide.md       # Pipeline subagent
-|-- hooks/
-|   |-- hooks.json               # Hook configuration
-|   +-- scripts/                 # Hook implementations
-|-- generators/
-|   |-- claude-md.md             # CLAUDE.md template
-|   +-- features/                # 17 composable feature blocks
-|-- methodology/                 # 249 research claims
-|-- reference/                   # Core reference documents
-|   |-- kernel.yaml              # 15 kernel primitives
-|   |-- three-spaces.md          # Architecture spec
-|   +-- use-case-presets.md      # Pre-validated configs
-|-- platforms/                   # Platform-specific adapters
-|   |-- claude-code/
-|   +-- shared/
-|-- presets/                     # Pre-validated configurations
-|-- scripts/                     # Utility scripts
-+-- README.md
-```
-
----
-
-## Development
-
-Clone this repo and add the marketplace to Claude Code:
-
-```
-/plugin marketplace add ~/path-to-arscontexta
-```
-
-Install the plugin:
-
-```
-/plugin install arscontexta@agenticnotetaking
-```
-
-Every time you make changes, re-install the plugin:
-
-```
-/plugin uninstall arscontexta@agenticnotetaking
-/plugin install arscontexta@agenticnotetaking
-```
-
-### Key Files for Contributors
-
-- `reference/kernel.yaml` -- 15 primitives every system must include
-- `generators/features/*.md` -- composable feature blocks
-- `skill-sources/*/SKILL.md` -- generated command templates
-- `skills/setup/SKILL.md` -- the derivation engine
-- `reference/use-case-presets.md` -- preset definitions
-
----
-
-## Presets
-
-Three pre-validated configurations for common use cases:
-
-| Preset | For | What You Get |
-|--------|-----|-------------|
-| **Research** | Academic work, literature reviews, synthesis | Atomic claims, citation tracking, methodology MOCs |
-| **Personal** | Life management, journaling, relationships | Reflective notes, goal tracking, relationship MOCs |
-| **Experimental** | Testing, iteration, rapid prototyping | Lightweight structure, fast capture, minimal ceremony |
-
-Presets provide starting defaults. The derivation engine adapts from there based
-on your conversation.
-
----
+MCP integration should be reserved for deterministic operations such as graph
+analysis, YAML/frontmatter validation, link checks, queue operations, schema-aware
+note creation, and vault indexing.
 
 ## Roadmap
 
-| Feature | Status |
-|---------|--------|
-| Claude Code plugin | Available |
-| Marketplace listing | Available |
-| Multi-agent processing | In progress |
-
----
+| Work | Status |
+|------|--------|
+| Preserve Claude Code plugin | Done |
+| Add Codex marketplace and plugin scaffold | Done |
+| Port `arscontexta-health` to Codex | Done |
+| Port `arscontexta-help` to Codex | Next |
+| Port Codex setup flow | Planned |
+| Add deterministic MCP tools | Later |
 
 ## Philosophy
 
-The name connects to a tradition. **Ars Combinatoria**, **Ars Memoria**,
-**Ars Contexta**: the art of context.
+The name connects to a tradition: **Ars Combinatoria**, **Ars Memoria**,
+**Ars Contexta**. The art of context.
 
-Llull's rotating wheels generated truth through combination. Bruno's memory wheels
-created millions of image combinations. They were external thinking systems -- tools
-to think with rather than just store in. The missing piece: they required a human
-mind to do the traversing. Now LLMs can traverse. The wheels can spin again.
+Llull's wheels generated truth through combination. Bruno's memory wheels
+created image combinations for recall. They were external thinking systems:
+tools to think with, not just places to store things. Ars Contexta brings that
+lineage into agent-operated knowledge graphs.
 
-Built on [Tools for Thought for Agents](https://github.com/agenticnotetaking) research.
-
----
+Built on the Tools for Thought for Agents research tradition.
 
 ## License
 
