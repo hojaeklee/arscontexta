@@ -95,6 +95,9 @@ marketplace="$REPO_ROOT/.agents/plugins/marketplace.json"
 manifest="$REPO_ROOT/plugins/arscontexta/.codex-plugin/plugin.json"
 health_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault-health.sh"
 setup_helper="$REPO_ROOT/plugins/arscontexta/scripts/setup-vault.sh"
+session_orient_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-orient.sh"
+session_validate_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-validate.sh"
+session_capture_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-capture.sh"
 
 if require_json_tools; then
   if [[ -f "$marketplace" ]]; then
@@ -150,7 +153,7 @@ if require_json_tools; then
   fi
 fi
 
-for skill_name in arscontexta-help arscontexta-health arscontexta-setup; do
+for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session; do
   skill_file="$REPO_ROOT/plugins/arscontexta/skills/$skill_name/SKILL.md"
   if [[ -f "$skill_file" ]]; then
     emit PASS "$skill_name skill exists in installable plugin."
@@ -179,6 +182,22 @@ elif [[ -f "$setup_helper" ]]; then
 else
   emit FAIL "Bundled vault setup helper is missing."
 fi
+
+for helper in \
+  "$session_orient_helper:session orientation" \
+  "$session_validate_helper:session validation" \
+  "$session_capture_helper:session capture"
+do
+  helper_path="${helper%%:*}"
+  helper_label="${helper#*:}"
+  if [[ -x "$helper_path" ]]; then
+    emit PASS "Bundled $helper_label helper exists and is executable."
+  elif [[ -f "$helper_path" ]]; then
+    emit WARN "Bundled $helper_label helper exists but is not executable."
+  else
+    emit FAIL "Bundled $helper_label helper is missing."
+  fi
+done
 
 if [[ -f "$CODEX_CONFIG_PATH" ]]; then
   emit PASS "Codex config found at $CODEX_CONFIG_PATH."
@@ -220,7 +239,7 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/.codex-plugin/plugin.json" ]] \
       && emit PASS "Cached plugin manifest exists." \
       || emit WARN "Cached plugin manifest is missing."
-    for skill_name in arscontexta-help arscontexta-health arscontexta-setup; do
+    for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session; do
       [[ -f "$cache_dir/skills/$skill_name/SKILL.md" ]] \
         && emit PASS "Cached $skill_name skill exists." \
         || emit WARN "Cached $skill_name skill is missing; reinstall plugin after adding new Codex skills."
@@ -231,6 +250,11 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/scripts/setup-vault.sh" ]] \
       && emit PASS "Cached vault setup helper exists." \
       || emit WARN "Cached vault setup helper is missing; reinstall plugin after adding setup."
+    for helper_name in session-orient.sh session-validate.sh session-capture.sh; do
+      [[ -f "$cache_dir/scripts/$helper_name" ]] \
+        && emit PASS "Cached $helper_name helper exists." \
+        || emit WARN "Cached $helper_name helper is missing; reinstall plugin after adding session workflows."
+    done
   else
     emit WARN "No Codex cache found for arscontexta $manifest_version at $cache_dir."
   fi

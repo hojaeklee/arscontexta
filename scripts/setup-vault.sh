@@ -166,14 +166,15 @@ write_file() {
         "- \`arscontexta-help\`: orient to this vault or the plugin." \
         "- \`arscontexta-health\`: run a bounded, read-only health check." \
         "- \`arscontexta-setup\`: create or complete minimal Codex vault scaffolding." \
+        "- \`arscontexta-session\`: orient, validate recent writes, and capture session handoffs explicitly." \
         "" \
         "## Current Limits" \
         "" \
-        "This Codex setup creates a minimal usable vault. Full setup parity, query skills, and processing pipeline skills are still being ported." \
+        "This Codex setup creates a minimal usable vault. Full setup parity, query skills, processing pipeline skills, and background hooks are still being ported." \
         "" \
         "## Next Action" \
         "" \
-        "After setup, run \`arscontexta-health\` to verify the vault." \
+        "After setup, run \`arscontexta-session orient\`, then \`arscontexta-health\` to verify the vault." \
         > "$path"
       ;;
     ops/derivation.md)
@@ -243,6 +244,7 @@ write_file() {
         "automation:" \
         "  claude_hooks: false" \
         "  codex_background_hooks: false" \
+        "  codex_session_workflow: arscontexta-session" \
         "processing:" \
         "  mode: minimal" \
         "  pipeline_skills: planned" \
@@ -352,7 +354,7 @@ write_file() {
         "" \
         "# Getting Started" \
         "" \
-        "Start by adding raw thoughts or source material to \`inbox/\`. When you want a checkup, ask Codex to run \`arscontexta-health\`." \
+        "Start by adding raw thoughts or source material to \`inbox/\`. At session start, ask Codex to run \`arscontexta-session orient\`. When you want a checkup, ask Codex to run \`arscontexta-health\`." \
         "" \
         "Use \`notes/\` for durable $note_type files and \`manual/\` for human-facing guidance." \
         > "$path"
@@ -372,6 +374,7 @@ write_file() {
         "- \`arscontexta-help\` -- orient to the vault and choose the next action." \
         "- \`arscontexta-health\` -- run bounded read-only diagnostics." \
         "- \`arscontexta-setup\` -- create or complete minimal vault scaffolding." \
+        "- \`arscontexta-session\` -- replace Claude hooks with explicit orient, validate, and capture workflows." \
         "" \
         "Planned migration work includes query, recommendation, processing, and evolution skills." \
         > "$path"

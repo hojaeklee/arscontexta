@@ -47,6 +47,7 @@ plugins/arscontexta/.codex-plugin/plugin.json
 plugins/arscontexta/skills/arscontexta-help/SKILL.md
 plugins/arscontexta/skills/arscontexta-health/SKILL.md
 plugins/arscontexta/skills/arscontexta-setup/SKILL.md
+plugins/arscontexta/skills/arscontexta-session/SKILL.md
 ```
 
 Add this marketplace to `~/.codex/config.toml`:
@@ -72,6 +73,7 @@ The current Codex-native skills are:
 arscontexta-help
 arscontexta-health
 arscontexta-setup
+arscontexta-session
 ```
 
 Use help when you want orientation in the plugin repo, a vault, or a generic directory:
@@ -101,7 +103,19 @@ Set up Ars Contexta here for my research notes.
 
 Minimal Codex setup creates `AGENTS.md`, `.arscontexta`, core folders, starter
 manual pages, templates, and operational config. Full Claude setup parity,
-runtime processing skills, and hooks are still being ported.
+runtime processing skills, and background hooks are still being ported.
+
+Use session workflows when you want Codex to do the work Claude hooks used to do
+automatically:
+
+```text
+Use arscontexta-session to orient in this vault.
+Use arscontexta-session to validate changed notes.
+Use arscontexta-session to capture a handoff for the next session.
+```
+
+Codex session workflows are explicit. They do not auto-commit or run in the
+background.
 
 ### Codex Model Note
 
@@ -245,9 +259,11 @@ plugins/arscontexta/.codex-plugin/plugin.json
 skills/arscontexta-health/SKILL.md
 skills/arscontexta-help/SKILL.md
 skills/arscontexta-setup/SKILL.md
+skills/arscontexta-session/SKILL.md
 plugins/arscontexta/skills/arscontexta-health/SKILL.md
 plugins/arscontexta/skills/arscontexta-help/SKILL.md
 plugins/arscontexta/skills/arscontexta-setup/SKILL.md
+plugins/arscontexta/skills/arscontexta-session/SKILL.md
 ```
 
 After editing:
@@ -319,7 +335,8 @@ for deterministic checks.
 ### Minimal Codex Setup
 
 Codex setup is available as a conservative first slice. It creates the smallest
-usable Ars Contexta vault without Claude hooks:
+usable Ars Contexta vault without Claude hooks. Instead of installing background
+hooks, it points Codex at explicit session workflows:
 
 ```bash
 scripts/setup-vault.sh /path/to/new-vault --preset research --domain "research notes"
@@ -340,7 +357,10 @@ Run an Ars Contexta health check on this vault.
 ```
 
 The Codex setup path generates `AGENTS.md` only. It preserves any existing
-`CLAUDE.md` and does not install `.claude/` hooks or settings.
+`CLAUDE.md` and does not install `.claude/` hooks or settings. Use
+`arscontexta-session orient`, `arscontexta-session validate`, and
+`arscontexta-session capture` when you want Codex to perform the session-rhythm
+work that Claude hooks automate.
 
 ## Claude Commands
 

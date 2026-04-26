@@ -42,6 +42,10 @@ assert_contains "$plugin_output" "PASS Plugin manifest uses skills path ./skills
 assert_contains "$plugin_output" "PASS arscontexta-help skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-health skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-setup skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS arscontexta-session skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS Bundled session orientation helper exists and is executable."
+assert_contains "$plugin_output" "PASS Bundled session validation helper exists and is executable."
+assert_contains "$plugin_output" "PASS Bundled session capture helper exists and is executable."
 
 bad_config="$tmp_dir/bad-config.toml"
 cat > "$bad_config" <<EOF
