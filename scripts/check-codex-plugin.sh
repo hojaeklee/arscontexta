@@ -94,6 +94,7 @@ require_json_tools() {
 marketplace="$REPO_ROOT/.agents/plugins/marketplace.json"
 manifest="$REPO_ROOT/plugins/arscontexta/.codex-plugin/plugin.json"
 health_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault-health.sh"
+setup_helper="$REPO_ROOT/plugins/arscontexta/scripts/setup-vault.sh"
 
 if require_json_tools; then
   if [[ -f "$marketplace" ]]; then
@@ -149,7 +150,7 @@ if require_json_tools; then
   fi
 fi
 
-for skill_name in arscontexta-help arscontexta-health; do
+for skill_name in arscontexta-help arscontexta-health arscontexta-setup; do
   skill_file="$REPO_ROOT/plugins/arscontexta/skills/$skill_name/SKILL.md"
   if [[ -f "$skill_file" ]]; then
     emit PASS "$skill_name skill exists in installable plugin."
@@ -169,6 +170,14 @@ elif [[ -f "$health_helper" ]]; then
   emit WARN "Bundled vault health helper exists but is not executable."
 else
   emit FAIL "Bundled vault health helper is missing."
+fi
+
+if [[ -x "$setup_helper" ]]; then
+  emit PASS "Bundled vault setup helper exists and is executable."
+elif [[ -f "$setup_helper" ]]; then
+  emit WARN "Bundled vault setup helper exists but is not executable."
+else
+  emit FAIL "Bundled vault setup helper is missing."
 fi
 
 if [[ -f "$CODEX_CONFIG_PATH" ]]; then
@@ -211,7 +220,7 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/.codex-plugin/plugin.json" ]] \
       && emit PASS "Cached plugin manifest exists." \
       || emit WARN "Cached plugin manifest is missing."
-    for skill_name in arscontexta-help arscontexta-health; do
+    for skill_name in arscontexta-help arscontexta-health arscontexta-setup; do
       [[ -f "$cache_dir/skills/$skill_name/SKILL.md" ]] \
         && emit PASS "Cached $skill_name skill exists." \
         || emit WARN "Cached $skill_name skill is missing; reinstall plugin after adding new Codex skills."
@@ -219,6 +228,9 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/scripts/vault-health.sh" ]] \
       && emit PASS "Cached vault health helper exists." \
       || emit WARN "Cached vault health helper is missing; reinstall plugin after #10 changes."
+    [[ -f "$cache_dir/scripts/setup-vault.sh" ]] \
+      && emit PASS "Cached vault setup helper exists." \
+      || emit WARN "Cached vault setup helper is missing; reinstall plugin after adding setup."
   else
     emit WARN "No Codex cache found for arscontexta $manifest_version at $cache_dir."
   fi

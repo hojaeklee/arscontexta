@@ -13,7 +13,7 @@ ported to Codex as a first-class local plugin.
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| Codex | In progress | Local plugin scaffold exists. Codex-native help and health skills are available. |
+| Codex | In progress | Local plugin scaffold exists. Codex-native help, health, and minimal setup skills are available. |
 | Claude Code | Available | Original plugin remains intact under `.claude-plugin/` and `skills/`. |
 | MCP | Not implemented | Good future target for deterministic vault operations, not the main methodology. |
 
@@ -46,6 +46,7 @@ Codex support is installed through a local marketplace entry in this repo:
 plugins/arscontexta/.codex-plugin/plugin.json
 plugins/arscontexta/skills/arscontexta-help/SKILL.md
 plugins/arscontexta/skills/arscontexta-health/SKILL.md
+plugins/arscontexta/skills/arscontexta-setup/SKILL.md
 ```
 
 Add this marketplace to `~/.codex/config.toml`:
@@ -70,6 +71,7 @@ The current Codex-native skills are:
 ```text
 arscontexta-help
 arscontexta-health
+arscontexta-setup
 ```
 
 Use help when you want orientation in the plugin repo, a vault, or a generic directory:
@@ -89,6 +91,17 @@ or explicitly:
 ```text
 Use arscontexta-health to diagnose this Obsidian vault.
 ```
+
+Use setup in an empty directory or existing markdown vault when you want Codex to
+create minimal Ars Contexta scaffolding:
+
+```text
+Set up Ars Contexta here for my research notes.
+```
+
+Minimal Codex setup creates `AGENTS.md`, `.arscontexta`, core folders, starter
+manual pages, templates, and operational config. Full Claude setup parity,
+runtime processing skills, and hooks are still being ported.
 
 ### Codex Model Note
 
@@ -148,7 +161,8 @@ arscontexta/
 |   |-- .codex-plugin/plugin.json
 |   +-- skills/
 |       |-- arscontexta-help/SKILL.md
-|       +-- arscontexta-health/SKILL.md
+|       |-- arscontexta-health/SKILL.md
+|       +-- arscontexta-setup/SKILL.md
 |-- .codex-plugin/plugin.json              # Root Codex manifest for development/reference
 |-- .claude-plugin/
 |   |-- plugin.json                        # Claude plugin manifest
@@ -158,7 +172,8 @@ arscontexta/
 |   |-- help/
 |   |-- health/
 |   |-- arscontexta-help/
-|   +-- arscontexta-health/
+|   |-- arscontexta-health/
+|   +-- arscontexta-setup/
 |-- skill-sources/                         # Generated vault skill templates
 |-- hooks/                                 # Claude hook configuration and scripts
 |-- generators/                            # CLAUDE.md and feature generation sources
@@ -229,8 +244,10 @@ editing plugin metadata or the first skill:
 plugins/arscontexta/.codex-plugin/plugin.json
 skills/arscontexta-health/SKILL.md
 skills/arscontexta-help/SKILL.md
+skills/arscontexta-setup/SKILL.md
 plugins/arscontexta/skills/arscontexta-health/SKILL.md
 plugins/arscontexta/skills/arscontexta-help/SKILL.md
+plugins/arscontexta/skills/arscontexta-setup/SKILL.md
 ```
 
 After editing:
@@ -265,8 +282,8 @@ Then confirm the Codex UI state that scripts cannot inspect directly:
 1. Open the **Codex Plugins** sidebar and confirm **Agentic Note Taking** still
    appears.
 2. Confirm **Ars Contexta** is still installed or enabled.
-3. Start a fresh chat in this repo and verify `$` shows `arscontexta-help` and
-   `arscontexta-health`.
+3. Start a fresh chat in this repo and verify `$` shows `arscontexta-help`,
+   `arscontexta-health`, and `arscontexta-setup`.
 4. Start a fresh chat in a real vault and run:
 
    ```text
@@ -287,15 +304,43 @@ Port Claude slash-command skills into Codex-native skills incrementally.
 Recommended order:
 
 1. `arscontexta-ask`
-2. `arscontexta-reduce`
-3. `arscontexta-reflect`
-4. `arscontexta-reweave`
-5. `arscontexta-verify`
-6. `arscontexta-remember`
+2. `arscontexta-recommend`
+3. `arscontexta-reduce`
+4. `arscontexta-reflect`
+5. `arscontexta-reweave`
+6. `arscontexta-verify`
+7. `arscontexta-remember`
+8. maintenance and evolution skills beyond health
 
 Codex skills should be shorter than the Claude command bodies. Put only the core
 workflow in `SKILL.md`, move long methodology into `reference/`, and use scripts
 for deterministic checks.
+
+### Minimal Codex Setup
+
+Codex setup is available as a conservative first slice. It creates the smallest
+usable Ars Contexta vault without Claude hooks:
+
+```bash
+scripts/setup-vault.sh /path/to/new-vault --preset research --domain "research notes"
+scripts/check-vault.sh /path/to/new-vault
+```
+
+Available presets are `research`, `personal`, and `experimental`. Use
+`--dry-run` to preview files before writing:
+
+```bash
+scripts/setup-vault.sh /path/to/new-vault --preset personal --domain "life reflections" --dry-run
+```
+
+After setup, open the vault in Codex and run:
+
+```text
+Run an Ars Contexta health check on this vault.
+```
+
+The Codex setup path generates `AGENTS.md` only. It preserves any existing
+`CLAUDE.md` and does not install `.claude/` hooks or settings.
 
 ## Claude Commands
 
@@ -352,13 +397,14 @@ If **Agentic Note Taking** is not visible in the Codex plugin sidebar:
 - Confirm `.agents/plugins/marketplace.json` exists in this repo.
 - Fully quit and reopen Codex.
 
-If **Agentic Note Taking** is visible but `arscontexta-help` or
-`arscontexta-health` is not:
+If **Agentic Note Taking** is visible but `arscontexta-help`,
+`arscontexta-health`, or `arscontexta-setup` is not:
 
 - Confirm **Ars Contexta** is installed or enabled from the sidebar.
 - Confirm `plugins/arscontexta/.codex-plugin/plugin.json` has `"skills": "./skills/"`.
 - Confirm `plugins/arscontexta/skills/arscontexta-help/SKILL.md` exists.
 - Confirm `plugins/arscontexta/skills/arscontexta-health/SKILL.md` exists.
+- Confirm `plugins/arscontexta/skills/arscontexta-setup/SKILL.md` exists.
 - Start a fresh chat after installing.
 
 If the skill fails with a model error:
@@ -393,7 +439,8 @@ note creation, and vault indexing.
 | Add Codex marketplace and plugin scaffold | Done |
 | Port `arscontexta-health` to Codex | Done |
 | Port `arscontexta-help` to Codex | Done |
-| Port Codex setup flow | Planned |
+| Port minimal Codex setup flow | Done |
+| Port full setup parity | Planned |
 | Add deterministic MCP tools | Later |
 
 ## Philosophy

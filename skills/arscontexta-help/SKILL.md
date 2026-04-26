@@ -27,12 +27,14 @@ Available now:
 
 - `arscontexta-help`: contextual orientation for Codex.
 - `arscontexta-health`: quick vault health checks.
+- `arscontexta-setup`: minimal Codex-native vault scaffolding.
 - `scripts/vault-health.sh`: bounded link-health helper.
+- `scripts/setup-vault.sh`: deterministic minimal setup helper.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
 
-- setup and derivation
+- full setup and derivation parity
 - ask and recommendation workflows
 - processing pipeline skills
 - maintenance and evolution skills beyond health
@@ -51,11 +53,12 @@ Available now in Codex:
 
 - Ask for Ars Contexta help to orient yourself.
 - Run `arscontexta-health` to check vault structure, schema signals, links, orphans, queues, and health state.
+- Run `arscontexta-setup` to create or complete minimal Codex vault scaffolding.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
 
-- Codex-native setup
+- full setup parity
 - query and recommendation skills
 - reduce, reflect, reweave, verify, and pipeline skills
 - richer maintenance and evolution skills
@@ -73,7 +76,7 @@ Explain that this looks like a markdown vault, but Ars Contexta configuration wa
 Recommend one next action:
 
 - If the user wants diagnostics anyway, run `arscontexta-health` as a generic Obsidian-vault check.
-- If the user wants Ars Contexta structure, say setup is still being ported to Codex and Claude Code remains the mature setup path for now.
+- If the user wants Ars Contexta structure, recommend `arscontexta-setup` for minimal Codex scaffolding and note that full Claude setup parity is still being ported.
 
 ### Generic Directory
 
