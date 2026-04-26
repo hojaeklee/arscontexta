@@ -8,7 +8,7 @@
       "name": "arscontexta",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/arscontexta"
       },
       "policy": {
         "installation": "AVAILABLE",
