@@ -31,6 +31,7 @@ Available now:
 - `scripts/vault-health.sh`: bounded link-health helper.
 - `scripts/setup-vault.sh`: deterministic minimal setup helper.
 - `arscontexta-validate`: detailed read-only note/schema validation.
+- `arscontexta-tasks`: task stack and queue-state visibility for Codex.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -56,6 +57,7 @@ Available now in Codex:
 - Run `arscontexta-health` to check vault structure, schema signals, links, orphans, queues, and health state.
 - Run `arscontexta-setup` to create or complete minimal Codex vault scaffolding.
 - Run `arscontexta-validate` to check note frontmatter, schema fields, descriptions, enums, and wiki links.
+- Run `arscontexta-tasks` to inspect or explicitly update `ops/tasks.md`.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
