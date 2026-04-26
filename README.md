@@ -223,8 +223,7 @@ plugins/arscontexta/skills/arscontexta-health/SKILL.md
 After editing:
 
 ```bash
-jq . .agents/plugins/marketplace.json
-jq . plugins/arscontexta/.codex-plugin/plugin.json
+scripts/check-codex-plugin.sh
 git status --short
 ```
 
@@ -237,7 +236,18 @@ Treat Codex app/runtime updates as compatibility events. Ars Contexta previously
 broke across Claude Code versions because plugin schemas, hooks, model names, and
 runtime assumptions changed underneath it. Codex can do the same.
 
-After each Codex update:
+After each Codex update, run the compatibility smoke tests:
+
+```bash
+scripts/check-codex-plugin.sh
+scripts/check-vault.sh "/Users/hlee/Library/CloudStorage/GoogleDrive-hojae.k.lee@gmail.com/My Drive/knowledge-base"
+```
+
+The scripts print `PASS`, `WARN`, and `FAIL` lines. Warnings are diagnostic; a
+nonzero exit means at least one failure needs attention before trusting the
+plugin in a new session.
+
+Then confirm the Codex UI state that scripts cannot inspect directly:
 
 1. Open the **Codex Plugins** sidebar and confirm **Agentic Note Taking** still
    appears.
@@ -249,23 +259,9 @@ After each Codex update:
    Use arscontexta-health to diagnose this vault.
    ```
 
-5. Check `~/.codex/config.toml` for changed or unsupported model names.
-6. Re-run manifest validation:
-
-   ```bash
-   jq . .agents/plugins/marketplace.json
-   jq . plugins/arscontexta/.codex-plugin/plugin.json
-   ```
-
-7. Compare this repo's plugin layout against a known working cached plugin:
-
-   ```bash
-   find ~/.codex/plugins/cache -maxdepth 4 -name plugin.json -path '*/.codex-plugin/*'
-   ```
-
-8. If discovery breaks, first check marketplace shape, plugin manifest fields,
-   skill path conventions, and whether Codex now requires a cache refresh or
-   reinstall from the sidebar.
+5. If discovery breaks, first check marketplace shape, plugin manifest fields,
+   skill path conventions, `~/.codex/config.toml`, and whether Codex now requires
+   a cache refresh or reinstall from the sidebar.
 
 Keep update fixes small and documented. If a Codex update requires a layout or
 schema change, update this README and create a compatibility issue explaining the
