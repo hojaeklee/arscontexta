@@ -36,6 +36,7 @@ Available now:
 - `arscontexta-stats`: concise vault metrics and shareable graph snapshots.
 - `arscontexta-graph`: bounded graph diagnostics for orphans, hubs, sparse areas, and synthesis opportunities.
 - `arscontexta-ask`: source-grounded methodology Q&A for Codex.
+- `arscontexta-recommend`: read-only architecture advice for new vault use cases.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -66,6 +67,7 @@ Available now in Codex:
 - Run `arscontexta-stats` to summarize graph size, health, growth, and pipeline state.
 - Run `arscontexta-graph` to inspect graph structure and connection opportunities.
 - Run `arscontexta-ask` for source-grounded answers about Ars Contexta methodology.
+- Run `arscontexta-recommend` for research-backed architecture advice before setup.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
