@@ -33,6 +33,7 @@ Available now:
 - `arscontexta-validate`: detailed read-only note/schema validation.
 - `arscontexta-tasks`: task stack and queue-state visibility for Codex.
 - `arscontexta-next`: one read-only recommendation for what to do next.
+- `arscontexta-stats`: concise vault metrics and shareable graph snapshots.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -60,6 +61,7 @@ Available now in Codex:
 - Run `arscontexta-validate` to check note frontmatter, schema fields, descriptions, enums, and wiki links.
 - Run `arscontexta-tasks` to inspect or explicitly update `ops/tasks.md`.
 - Run `arscontexta-next` to get one bounded, rationale-backed next action.
+- Run `arscontexta-stats` to summarize graph size, health, growth, and pipeline state.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
