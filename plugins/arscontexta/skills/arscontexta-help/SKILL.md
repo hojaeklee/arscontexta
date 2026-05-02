@@ -40,6 +40,7 @@ Available now:
 - `arscontexta-reduce`: source extraction into durable notes with explicit write approval.
 - `arscontexta-reflect`: connection discovery and focused note/topic-map weaving.
 - `arscontexta-reweave`: backward-link and older-note refresh workflow.
+- `arscontexta-verify`: bounded quality gate for note readiness.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -74,6 +75,7 @@ Available now in Codex:
 - Run `arscontexta-reduce` to extract notes from source material or inbox items.
 - Run `arscontexta-reflect` to find and apply meaningful note connections.
 - Run `arscontexta-reweave` to revisit older or sparse notes with current context.
+- Run `arscontexta-verify` to quality-check one note or a small changed set.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
