@@ -159,7 +159,7 @@ if require_json_tools; then
   fi
 fi
 
-for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify; do
+for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify arscontexta-remember; do
   skill_file="$REPO_ROOT/plugins/arscontexta/skills/$skill_name/SKILL.md"
   if [[ -f "$skill_file" ]]; then
     emit PASS "$skill_name skill exists in installable plugin."
@@ -251,7 +251,7 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/.codex-plugin/plugin.json" ]] \
       && emit PASS "Cached plugin manifest exists." \
       || emit WARN "Cached plugin manifest is missing."
-    for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify; do
+    for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify arscontexta-remember; do
       [[ -f "$cache_dir/skills/$skill_name/SKILL.md" ]] \
         && emit PASS "Cached $skill_name skill exists." \
         || emit WARN "Cached $skill_name skill is missing; reinstall plugin after adding new Codex skills."

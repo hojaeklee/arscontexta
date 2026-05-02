@@ -41,6 +41,7 @@ Available now:
 - `arscontexta-reflect`: connection discovery and focused note/topic-map weaving.
 - `arscontexta-reweave`: backward-link and older-note refresh workflow.
 - `arscontexta-verify`: bounded quality gate for note readiness.
+- `arscontexta-remember`: confirmed methodology, observation, and tension capture.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -76,6 +77,7 @@ Available now in Codex:
 - Run `arscontexta-reflect` to find and apply meaningful note connections.
 - Run `arscontexta-reweave` to revisit older or sparse notes with current context.
 - Run `arscontexta-verify` to quality-check one note or a small changed set.
+- Run `arscontexta-remember` to capture confirmed learnings or session patterns.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
