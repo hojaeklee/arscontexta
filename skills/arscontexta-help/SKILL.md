@@ -42,6 +42,7 @@ Available now:
 - `arscontexta-reweave`: backward-link and older-note refresh workflow.
 - `arscontexta-verify`: bounded quality gate for note readiness.
 - `arscontexta-remember`: confirmed methodology, observation, and tension capture.
+- `arscontexta-rethink`: evidence-backed review of observations, tensions, drift, and proposals.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -78,6 +79,7 @@ Available now in Codex:
 - Run `arscontexta-reweave` to revisit older or sparse notes with current context.
 - Run `arscontexta-verify` to quality-check one note or a small changed set.
 - Run `arscontexta-remember` to capture confirmed learnings or session patterns.
+- Run `arscontexta-rethink` to review accumulated observations, tensions, or methodology drift.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
