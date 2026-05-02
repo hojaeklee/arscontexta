@@ -37,6 +37,7 @@ Available now:
 - `arscontexta-graph`: bounded graph diagnostics for orphans, hubs, sparse areas, and synthesis opportunities.
 - `arscontexta-ask`: source-grounded methodology Q&A for Codex.
 - `arscontexta-recommend`: read-only architecture advice for new vault use cases.
+- `arscontexta-reduce`: source extraction into durable notes with explicit write approval.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -68,6 +69,7 @@ Available now in Codex:
 - Run `arscontexta-graph` to inspect graph structure and connection opportunities.
 - Run `arscontexta-ask` for source-grounded answers about Ars Contexta methodology.
 - Run `arscontexta-recommend` for research-backed architecture advice before setup.
+- Run `arscontexta-reduce` to extract notes from source material or inbox items.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
