@@ -39,6 +39,7 @@ Available now:
 - `arscontexta-recommend`: read-only architecture advice for new vault use cases.
 - `arscontexta-reduce`: source extraction into durable notes with explicit write approval.
 - `arscontexta-reflect`: connection discovery and focused note/topic-map weaving.
+- `arscontexta-reweave`: backward-link and older-note refresh workflow.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -72,6 +73,7 @@ Available now in Codex:
 - Run `arscontexta-recommend` for research-backed architecture advice before setup.
 - Run `arscontexta-reduce` to extract notes from source material or inbox items.
 - Run `arscontexta-reflect` to find and apply meaningful note connections.
+- Run `arscontexta-reweave` to revisit older or sparse notes with current context.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
