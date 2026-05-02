@@ -34,6 +34,7 @@ Available now:
 - `arscontexta-tasks`: task stack and queue-state visibility for Codex.
 - `arscontexta-next`: one read-only recommendation for what to do next.
 - `arscontexta-stats`: concise vault metrics and shareable graph snapshots.
+- `arscontexta-graph`: bounded graph diagnostics for orphans, hubs, sparse areas, and synthesis opportunities.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -62,6 +63,7 @@ Available now in Codex:
 - Run `arscontexta-tasks` to inspect or explicitly update `ops/tasks.md`.
 - Run `arscontexta-next` to get one bounded, rationale-backed next action.
 - Run `arscontexta-stats` to summarize graph size, health, growth, and pipeline state.
+- Run `arscontexta-graph` to inspect graph structure and connection opportunities.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
