@@ -157,7 +157,7 @@ Hub MOC -> Entity MOCs (person/project/character)
 - Entity subdirectories for clean organization
 - Relationship-between-entities tracking
 
-**Decision framework:** Active research -> Three-Tier. Agent identity -> Flat Peer. Domain workflow with entities -> Hub-Plus-Entities. Never exceed 4 tiers.
+**Decision framework:** Active research -> Three-Tier. Agent identity -> Flat Peer. Domain workflow with entities -> Hub-Plus-Entities. Do not pre-create deep hierarchy; let additional tiers emerge locally when dense MOCs become hard to scan. Treat 4+ tier paths as review triggers requiring strong labels, context phrases, and maintenance evidence rather than as automatic failures.
 
 ## MOC Content Rules
 

@@ -58,7 +58,7 @@ Which research claims inform which configuration dimensions. The derivation engi
 
 ---
 
-## Dimension 5: Navigation Depth (2-tier ↔ 4-tier)
+## Dimension 5: Navigation Depth (2-tier ↔ emergent deep tiers)
 
 | Claim | What It Says | Informs |
 |-------|-------------|---------|
@@ -67,7 +67,7 @@ Which research claims inform which configuration dimensions. The derivation engi
 | basic level categorization determines optimal MOC granularity | Cognitive sweet spot for categorization depth | Tier count |
 | community detection algorithms can inform when MOCs should split or merge | Algorithmic signals for structural maintenance | Maintenance trigger |
 
-**Default position:** 3-tier (hub → domain → topic). Add 4th tier at >100 notes per topic.
+**Default position:** 3-tier (hub → domain → topic). Add deeper subtopic tiers only after an existing MOC becomes hard to scan, such as >50 linked notes or >100 notes in a topic territory. Depth beyond 4 tiers is a review trigger, not a prohibition: require clear context phrases, active maintenance, and evidence that the extra layer reduces navigation cost.
 
 ---
 

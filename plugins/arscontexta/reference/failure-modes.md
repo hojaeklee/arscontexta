@@ -90,7 +90,7 @@ How knowledge systems die. The init wizard uses this to include domain-specific 
 - Create MOCs only at 20+ related notes (not speculatively)
 - Merge small MOCs back when they have <10 notes
 - MOC health checks (size, freshness, coverage)
-- Max 4 tiers of hierarchy
+- Avoid speculative deep hierarchy. Review any 4+ tier path for label clarity, context phrases, freshness, and evidence that the extra layer reduces navigation cost.
 
 **Warning signs:** MOCs with <5 links. MOCs not updated in 60+ days. >50% of MOCs with no recent additions.
 

@@ -6,7 +6,7 @@ Ars Contexta helps Codex maintain a durable thinking system: plain markdown
 notes, wiki links, processing queues, operational memory, and
 Obsidian-friendly navigation.
 
-**v0.8.3** | Codex-only local plugin | MIT
+**v0.8.4** | Codex-only local plugin | MIT
 
 Codex is the only supported Ars Contexta distribution in this repo.
 Claude Code support, hooks, slash commands, and legacy generated skill templates have been removed.
