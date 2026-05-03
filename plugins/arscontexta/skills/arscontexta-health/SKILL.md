@@ -12,7 +12,7 @@ Run a focused vault health check for an Ars Contexta markdown knowledge graph. P
 1. Treat the current working directory as the vault unless the user gives another path.
 2. If the path contains `.arscontexta`, use it as an Ars Contexta vault.
 3. If `.arscontexta` is absent, continue only when the directory still appears to be a markdown vault; state that Ars Contexta configuration was not detected.
-4. If the user asks for `full` or `three-space`, load the shared reference at `reference/three-spaces.md` from the Ars Contexta repository root when available. Otherwise keep the check quick.
+4. If the user asks for `full` or `three-space`, load the shared reference at `plugins/arscontexta/reference/three-spaces.md` from the Ars Contexta plugin package when available. Otherwise keep the check quick.
 
 ## Quick Check
 

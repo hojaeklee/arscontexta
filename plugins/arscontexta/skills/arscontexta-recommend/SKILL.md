@@ -17,15 +17,15 @@ Give research-backed architecture recommendations from local Ars Contexta source
 
 ## Source Order
 
-Use local `reference/` and `methodology/` files first. Start with the most relevant of:
+Use local `plugins/arscontexta/reference/` and `plugins/arscontexta/methodology/` files first. Start with the most relevant of:
 
-- `reference/tradition-presets.md`
-- `reference/methodology.md`
-- `reference/components.md`
-- `reference/dimension-claim-map.md`
-- `reference/interaction-constraints.md`
-- `reference/claim-map.md`
-- related methodology claims under `methodology/`
+- `plugins/arscontexta/reference/tradition-presets.md`
+- `plugins/arscontexta/reference/methodology.md`
+- `plugins/arscontexta/reference/components.md`
+- `plugins/arscontexta/reference/dimension-claim-map.md`
+- `plugins/arscontexta/reference/interaction-constraints.md`
+- `plugins/arscontexta/reference/claim-map.md`
+- related methodology claims under `plugins/arscontexta/methodology/`
 
 Optional QMD, semantic search, or indexed knowledge tools may be used only when already available. Never require them and never present unavailable external tools as Codex requirements.
 

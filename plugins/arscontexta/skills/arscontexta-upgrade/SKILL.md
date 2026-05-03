@@ -29,7 +29,7 @@ Compare installed/generated vault practices against the current plugin methodolo
 
 ## Methodology Consultation
 
-- Compare methodology and practice against local plugin `methodology/` and `reference/` sources.
+- Compare methodology and practice against local plugin `plugins/arscontexta/methodology/` and `plugins/arscontexta/reference/` sources.
 - Prefer methodology comparison, not hash comparison: hashes only show file differences, while upgrade analysis asks whether the skill approach still reflects current knowledge.
 - Classify each finding as current, enhancement, correction, or extension.
 - For user-modified skills, determine whether the user change already covers the improvement, can coexist with it, or conflicts with it.

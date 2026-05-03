@@ -29,7 +29,7 @@ Review an existing vault architecture and recommend bounded evolution. Architect
 
 ## Research Grounding
 
-- Consult local `reference/` sources first:
+- Consult local `plugins/arscontexta/reference/` sources first:
   - `dimension-claim-map.md`
   - `interaction-constraints.md`
   - `methodology.md`

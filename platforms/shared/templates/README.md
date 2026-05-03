@@ -1,12 +1,12 @@
 # shared/templates/ -- Note Type Templates
 
-Note type templates live at `reference/templates/`. They define the YAML frontmatter schema and structural patterns for each note type a generated vault can contain.
+Note type templates live at `plugins/arscontexta/reference/templates/`. They define the YAML frontmatter schema and structural patterns for each note type a generated vault can contain.
 
 This directory does not duplicate those files. It exists to document the shared template layer from a distribution perspective.
 
 ## Canonical Source
 
-All template files: `reference/templates/`
+All template files: `plugins/arscontexta/reference/templates/`
 
 ## The 10 Note Type Templates
 

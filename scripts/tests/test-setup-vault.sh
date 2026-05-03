@@ -20,6 +20,10 @@ assert_dir() {
   [[ -d "$1" ]] || fail "expected directory: $1"
 }
 
+assert_no_dir() {
+  [[ ! -d "$1" ]] || fail "did not expect directory: $1"
+}
+
 assert_contains() {
   local file="$1"
   local needle="$2"
@@ -61,6 +65,8 @@ for preset in research personal experimental; do
   assert_dir "$vault/ops/tensions"
   assert_dir "$vault/ops/sessions"
   assert_dir "$vault/ops/methodology"
+  assert_no_dir "$vault/methodology"
+  assert_no_dir "$vault/reference"
 
   assert_contains "$vault/AGENTS.md" "Codex-oriented Ars Contexta vault"
   assert_contains "$vault/AGENTS.md" "explicit session workflows"

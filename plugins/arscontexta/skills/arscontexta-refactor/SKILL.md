@@ -29,7 +29,7 @@ Plan restructuring from a chosen architecture or configuration shift. Refactor c
 - Compare dimensions such as granularity, organization, linking, processing, navigation, maintenance, schema, and automation.
 - Compare feature flag state such as semantic search, processing pipeline, self space, session capture, and parallel workers when present.
 - For every detected shift, identify affected artifacts, likely sections, content impact, risk, reversibility, estimated effort, and validation checks.
-- Consult `reference/interaction-constraints.md` for interaction constraints before recommending cascaded changes.
+- Consult `plugins/arscontexta/reference/interaction-constraints.md` for interaction constraints before recommending cascaded changes.
 - Flag hard blocks clearly and do not recommend proceeding until the configuration is adjusted.
 
 ## Output

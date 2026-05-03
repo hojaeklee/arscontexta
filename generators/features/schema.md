@@ -146,4 +146,4 @@ The `_schema` block is the single source of truth for field validation. Skills a
 None — this is a foundational feature.
 
 ## Domain Extensions
-Append domain-specific fields based on use case selection. See `reference/templates/` for domain schemas.
+Append domain-specific fields based on use case selection. See `plugins/arscontexta/reference/templates/` for domain schemas.

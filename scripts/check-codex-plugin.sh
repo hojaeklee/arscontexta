@@ -108,6 +108,12 @@ seed_helper="$REPO_ROOT/plugins/arscontexta/scripts/seed-vault.sh"
 ralph_helper="$REPO_ROOT/plugins/arscontexta/scripts/ralph-vault.sh"
 pipeline_helper="$REPO_ROOT/plugins/arscontexta/scripts/pipeline-vault.sh"
 archive_batch_helper="$REPO_ROOT/plugins/arscontexta/scripts/archive-batch-vault.sh"
+methodology_index="$REPO_ROOT/plugins/arscontexta/methodology/index.md"
+methodology_claim="$REPO_ROOT/plugins/arscontexta/methodology/claims must be specific enough to be wrong.md"
+reference_methodology="$REPO_ROOT/plugins/arscontexta/reference/methodology.md"
+reference_claim_map="$REPO_ROOT/plugins/arscontexta/reference/claim-map.md"
+reference_base_template="$REPO_ROOT/plugins/arscontexta/reference/templates/base-note.md"
+reference_kernel_validator="$REPO_ROOT/plugins/arscontexta/reference/validate-kernel.sh"
 
 if require_json_tools; then
   if [[ -f "$marketplace" ]]; then
@@ -219,6 +225,23 @@ do
   fi
 done
 
+for knowledge in \
+  "$methodology_index:methodology index" \
+  "$methodology_claim:representative methodology claim" \
+  "$reference_methodology:methodology reference" \
+  "$reference_claim_map:claim map reference" \
+  "$reference_base_template:base note template" \
+  "$reference_kernel_validator:kernel validator reference"
+do
+  knowledge_path="${knowledge%%:*}"
+  knowledge_label="${knowledge#*:}"
+  if [[ -f "$knowledge_path" ]]; then
+    emit PASS "Bundled $knowledge_label exists in installable plugin."
+  else
+    emit FAIL "Bundled $knowledge_label is missing from installable plugin."
+  fi
+done
+
 if [[ -f "$CODEX_CONFIG_PATH" ]]; then
   emit PASS "Codex config found at $CODEX_CONFIG_PATH."
 
@@ -274,6 +297,20 @@ if [[ -n "${manifest_version:-}" ]]; then
       [[ -f "$cache_dir/scripts/$helper_name" ]] \
         && emit PASS "Cached $helper_name helper exists." \
         || emit WARN "Cached $helper_name helper is missing; reinstall plugin after adding session or MCP workflows."
+    done
+    for knowledge_name in \
+      "methodology/index.md:methodology index" \
+      "methodology/claims must be specific enough to be wrong.md:representative methodology claim" \
+      "reference/methodology.md:methodology reference" \
+      "reference/claim-map.md:claim map reference" \
+      "reference/templates/base-note.md:base note template" \
+      "reference/validate-kernel.sh:kernel validator reference"
+    do
+      knowledge_rel="${knowledge_name%%:*}"
+      knowledge_label="${knowledge_name#*:}"
+      [[ -f "$cache_dir/$knowledge_rel" ]] \
+        && emit PASS "Cached $knowledge_label exists." \
+        || emit WARN "Cached $knowledge_label is missing; reinstall plugin after bundling methodology and reference."
     done
   else
     emit WARN "No Codex cache found for arscontexta $manifest_version at $cache_dir."

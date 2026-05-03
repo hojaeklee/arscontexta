@@ -26,7 +26,7 @@ Analyze whether an existing vault needs principled re-derivation rather than inc
 
 ## Reference Grounding
 
-- Consult local `reference/` sources first:
+- Consult local `plugins/arscontexta/reference/` sources first:
   - `interaction-constraints.md`
   - `derivation-validation.md`
   - `three-spaces.md`

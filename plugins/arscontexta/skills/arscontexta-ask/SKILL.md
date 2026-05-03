@@ -24,8 +24,8 @@ Answer Ars Contexta methodology questions from local sources first. This skill i
 
 In the plugin repo, search these first:
 
-- `reference/`
-- `methodology/`
+- `plugins/arscontexta/reference/`
+- `plugins/arscontexta/methodology/`
 - `README.md`
 - relevant `plugins/arscontexta/skills/` docs
 

@@ -11,7 +11,7 @@ Seven validation milestones for the Ars Contexta v1.6 plugin. Each milestone tes
 **Prerequisites:**
 - A generated vault from /setup (any domain, any preset)
 - The vault must have at least 3 notes created (to exercise link and MOC checks)
-- `validate-kernel.sh` accessible at `./reference/validate-kernel.sh`
+- `validate-kernel.sh` accessible at `plugins/arscontexta/reference/validate-kernel.sh`
 
 **Pass criteria:** 15/15 checks pass (PASS status). WARN is acceptable for semantic search (primitive 8) if the platform does not support qmd and for self space (primitive 9) if disabled via configuration, but all other primitives must be PASS.
 
@@ -19,7 +19,7 @@ Seven validation milestones for the Ars Contexta v1.6 plugin. Each milestone tes
 
 ```bash
 # Run kernel validation against the generated vault
-./reference/validate-kernel.sh /path/to/generated-vault
+plugins/arscontexta/reference/validate-kernel.sh /path/to/generated-vault
 
 # Expected: 15 PASS lines, 0 FAIL lines
 # Acceptable: 14 PASS + 1 WARN (semantic search when qmd not configured, or self space when disabled)
@@ -718,7 +718,7 @@ for PRESET in "${PRESETS[@]}"; do
     # 1. Kernel validation
     echo ""
     echo "--- Kernel Validation ---"
-    ./reference/validate-kernel.sh "$VAULT"
+    plugins/arscontexta/reference/validate-kernel.sh "$VAULT"
     echo ""
 
     # 2. Vocabulary check (domain-specific terms)
@@ -866,7 +866,7 @@ Each preset should produce:
 # (assume /setup produces output in specified directories)
 
 # 2. Run milestones in order
-echo "=== Milestone 1: Kernel ===" && ./reference/validate-kernel.sh /tmp/test-research
+echo "=== Milestone 1: Kernel ===" && plugins/arscontexta/reference/validate-kernel.sh /tmp/test-research
 echo "=== Milestone 2: Context ==="  # (run section checks manually or via script above)
 echo "=== Milestone 3: Vocabulary ===" # (run against therapy vault)
 echo "=== Milestone 4: Pipeline ===" # (requires active agent session)

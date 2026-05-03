@@ -81,10 +81,10 @@ arscontexta/
 |-- .agents/plugins/marketplace.json       # Codex local marketplace
 |-- plugins/arscontexta/                   # Installable Codex plugin package
 |   |-- .codex-plugin/plugin.json
+|   |-- methodology/                       # Bundled research claims and methodology notes
+|   |-- reference/                         # Bundled references, templates, and fixtures
 |   |-- scripts/
 |   +-- skills/
-|-- methodology/                           # Research claims and methodology notes
-|-- reference/                             # Core references and templates
 |-- generators/features/                   # Reusable methodology feature blocks
 |-- platforms/codex/                       # Codex workflow notes
 |-- presets/                               # Starter configurations
@@ -93,7 +93,10 @@ arscontexta/
 ```
 
 plugins/arscontexta/ is the source of truth for the runtime plugin. Edit
-plugin metadata, Codex-native skills, and bundled scripts there.
+plugin metadata, Codex-native skills, bundled scripts, and bundled knowledge
+there. The plugin-side `plugins/arscontexta/methodology/` and
+`plugins/arscontexta/reference/` directories are not copied into user vaults;
+setup creates only the vault-local `ops/methodology/` self-knowledge space.
 
 ## Maintainer Workflow
 

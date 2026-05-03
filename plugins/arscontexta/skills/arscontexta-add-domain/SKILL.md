@@ -40,7 +40,7 @@ Distinguish system-level dimensions from domain-adjustable dimensions.
 - System-level dimensions usually stay shared: organization model, automation posture, navigation depth, shared `self/`, and shared `ops/`.
 - Domain-adjustable dimensions can vary by domain: granularity, processing intensity, maintenance cadence, schema detail, vocabulary transforms, and linking density.
 
-Consult local `reference/` files first, especially:
+Consult local `plugins/arscontexta/reference/` files first, especially:
 
 - `derivation-validation.md`
 - `three-spaces.md`
