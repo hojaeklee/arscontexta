@@ -127,7 +127,7 @@ EOF
 ready_output="$("$PIPELINE" "$ready_vault" --ready-to-archive --batch gamma --format json)"
 assert_contains "$ready_output" '"batch": "gamma"'
 assert_contains "$ready_output" '"ready_to_archive": true'
-assert_contains "$ready_output" '"next_action": "archive-batch is not ported yet; archive manually or wait for a future port"'
+assert_contains "$ready_output" '"next_action": "run arscontexta-archive-batch --batch gamma"'
 
 malformed_vault="$tmp_dir/malformed"
 mkdir -p "$malformed_vault/ops/queue"

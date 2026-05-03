@@ -149,7 +149,7 @@ def ready_to_archive?(tasks)
 end
 
 def next_action(batch, counts, ready)
-  return "archive-batch is not ported yet; archive manually or wait for a future port" if ready
+  return "run arscontexta-archive-batch --batch #{batch}" if ready
   return "resolve blocked tasks, then run arscontexta-ralph --batch #{batch}" if counts["blocked"].positive?
   return "wait for active tasks or inspect with arscontexta-ralph --batch #{batch}" if counts["active"].positive?
   return "run arscontexta-ralph --batch #{batch}" if counts["pending"].positive?

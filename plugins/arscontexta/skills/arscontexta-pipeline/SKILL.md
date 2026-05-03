@@ -26,6 +26,7 @@ Coordinate existing Codex-native skills:
 - `arscontexta-reflect` handles forward connection discovery.
 - `arscontexta-reweave` handles backward-link and older-note repair.
 - `arscontexta-verify` handles final quality gating.
+- `arscontexta-archive-batch` handles final completed-batch archival.
 
 The pipeline should call these skills conceptually and report the exact next command. It should not duplicate their internal behavior.
 
@@ -53,7 +54,7 @@ If a phase fails, stop and show how to resume. Queue state is the source of trut
 
 ## Archive Boundary
 
-For this Codex port, archive-batch is deferred. When all batch tasks are done, report ready-to-archive status and explain that archival must be manual or handled by a future archive-batch port. Do not move task files or generate archive summaries from this skill.
+When all batch tasks are done, report ready-to-archive status and recommend `arscontexta-archive-batch --batch ID`. Pipeline should not move task files or generate archive summaries directly; final cleanup belongs to `arscontexta-archive-batch`.
 
 ## Output Expectations
 

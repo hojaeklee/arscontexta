@@ -64,6 +64,7 @@ assert_contains "$plugin_output" "PASS arscontexta-add-domain skill exists in in
 assert_contains "$plugin_output" "PASS arscontexta-seed skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-ralph skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-pipeline skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS arscontexta-archive-batch skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-tutorial skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-learn skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS Bundled session orientation helper exists and is executable."
@@ -78,6 +79,7 @@ assert_contains "$plugin_output" "PASS Bundled vault graph helper exists and is 
 assert_contains "$plugin_output" "PASS Bundled vault seed helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled vault ralph helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled vault pipeline helper exists and is executable."
+assert_contains "$plugin_output" "PASS Bundled vault archive-batch helper exists and is executable."
 
 bad_config="$tmp_dir/bad-config.toml"
 cat > "$bad_config" <<EOF

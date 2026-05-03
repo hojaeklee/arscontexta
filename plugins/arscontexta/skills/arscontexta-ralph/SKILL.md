@@ -62,6 +62,7 @@ Report:
 - each worker result before queue advancement
 - queue updates made by `--advance` or `--fail`
 - remaining pending work and next suggested Ralph command
+- completed batches that are ready for `arscontexta-archive-batch`
 
 ## Boundaries
 

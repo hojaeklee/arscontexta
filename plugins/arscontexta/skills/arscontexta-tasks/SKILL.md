@@ -49,6 +49,6 @@ For status, report:
 - Current, completed, and discovery items from `ops/tasks.md`.
 - Queue counts split into pending, active, blocked, and completed.
 - Queue task id, phase, target, and batch when available.
-- Archivable batches when every task in a batch is completed.
+- Archivable batches when every task in a batch is completed, with `arscontexta-archive-batch` as the cleanup workflow.
 
 Keep output bounded. Prefer concrete task names and file paths over broad commentary.
