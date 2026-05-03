@@ -10,7 +10,7 @@ Show a concise, read-only snapshot of vault growth and health. Metrics are evide
 ## When Invoked
 
 1. Treat the current working directory as the vault unless the user gives another path.
-2. Prefer the deterministic helper when available:
+2. Prefer the deterministic helper when available. The public helper remains a shell command, but its implementation is Python and uses VaultIndex when a fresh index is available:
 
 ```bash
 plugins/arscontexta/scripts/stats-vault.sh . --limit 25 --format text

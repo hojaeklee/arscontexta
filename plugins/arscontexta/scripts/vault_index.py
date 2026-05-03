@@ -16,7 +16,7 @@ import sys
 from dataclasses import dataclass
 from typing import Any
 
-SCHEMA_VERSION = "1"
+SCHEMA_VERSION = "2"
 INDEX_REL = Path("ops/cache/index.sqlite")
 IGNORED_DIRS = {".git", ".obsidian", "node_modules"}
 DEFAULT_SCAN_INCLUDE = [
@@ -64,9 +64,10 @@ CREATE TABLE IF NOT EXISTS notes (
 
 CREATE TABLE IF NOT EXISTS links (
   source_path TEXT NOT NULL,
+  ordinal INTEGER NOT NULL,
   target TEXT NOT NULL,
   raw TEXT NOT NULL,
-  PRIMARY KEY (source_path, target, raw),
+  PRIMARY KEY (source_path, ordinal),
   FOREIGN KEY (source_path) REFERENCES notes(path) ON DELETE CASCADE
 );
 
@@ -323,15 +324,10 @@ def normalize_list(value: Any) -> list[str]:
 
 def wiki_links(text: str) -> list[dict[str, str]]:
     links: list[dict[str, str]] = []
-    seen: set[tuple[str, str]] = set()
     for match in WIKI_RE.findall(text):
         target = match.split("|", 1)[0].split("#", 1)[0].strip()
         if not target:
             continue
-        key = (target, match)
-        if key in seen:
-            continue
-        seen.add(key)
         links.append({"target": target, "raw": match})
     return links
 
@@ -352,6 +348,7 @@ class VaultIndex:
         if not self.vault.is_dir():
             raise ValueError(f"Vault path is not a directory: {vault}")
         self.index_path = self.vault / INDEX_REL
+        self.force_rescan = False
 
     def connect(self) -> sqlite3.Connection:
         self.index_path.parent.mkdir(parents=True, exist_ok=True)
@@ -361,12 +358,32 @@ class VaultIndex:
         self.ensure_schema(conn)
         return conn
 
+    def connect_readonly(self) -> sqlite3.Connection:
+        if not self.index_path.is_file():
+            raise FileNotFoundError(f"VaultIndex is missing: {self.index_path}")
+        conn = sqlite3.connect(f"{self.index_path.as_uri()}?mode=ro", uri=True)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
+        return conn
+
     def ensure_schema(self, conn: sqlite3.Connection) -> None:
+        if self.links_table_needs_rebuild(conn):
+            conn.execute("DROP TABLE links")
+            self.force_rescan = True
         conn.executescript(SCHEMA_SQL)
         conn.execute(
             "INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)",
             ("schema_version", SCHEMA_VERSION),
         )
+
+    def links_table_needs_rebuild(self, conn: sqlite3.Connection) -> bool:
+        existing = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'links'"
+        ).fetchone()
+        if not existing:
+            return False
+        columns = [row["name"] for row in conn.execute("PRAGMA table_info(links)")]
+        return "ordinal" not in columns
 
     def build(self) -> dict[str, Any]:
         scan = scan_markdown_files(self.vault)
@@ -393,7 +410,7 @@ class VaultIndex:
                 summary["deleted"] += 1
             for rel, path in current.items():
                 stat = path.stat()
-                previous = known.get(rel)
+                previous = None if self.force_rescan else known.get(rel)
                 if previous and previous["mtime_ns"] == stat.st_mtime_ns and previous["size"] == stat.st_size:
                     summary["skipped"] += 1
                     continue
@@ -465,8 +482,11 @@ class VaultIndex:
         conn.execute("DELETE FROM links WHERE source_path = ?", (note.path,))
         conn.execute("DELETE FROM warnings WHERE path = ?", (note.path,))
         conn.executemany(
-            "INSERT OR REPLACE INTO links(source_path, target, raw) VALUES (?, ?, ?)",
-            [(note.path, link["target"], link["raw"]) for link in note.links],
+            "INSERT OR REPLACE INTO links(source_path, ordinal, target, raw) VALUES (?, ?, ?, ?)",
+            [
+                (note.path, ordinal, link["target"], link["raw"])
+                for ordinal, link in enumerate(note.links)
+            ],
         )
         conn.executemany(
             "INSERT OR REPLACE INTO warnings(path, message) VALUES (?, ?)",
@@ -515,7 +535,7 @@ class VaultIndex:
             links = [
                 dict(row)
                 for row in conn.execute(
-                    "SELECT source_path, target, raw FROM links ORDER BY source_path, target, raw"
+                    "SELECT source_path, ordinal, target, raw FROM links ORDER BY source_path, ordinal"
                 )
             ]
             warnings = [

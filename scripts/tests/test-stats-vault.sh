@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
 STATS="$PROJECT_ROOT/plugins/arscontexta/scripts/stats-vault.sh"
+INDEX="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -16,8 +17,25 @@ assert_contains() {
   printf '%s' "$haystack" | grep -Fq -- "$needle" || fail "expected output to contain: $needle"
 }
 
+assert_not_contains() {
+  local haystack="$1"
+  local needle="$2"
+  if printf '%s' "$haystack" | grep -Fq -- "$needle"; then
+    fail "expected output not to contain: $needle"
+  fi
+}
+
 assert_not_exists() {
   [[ ! -e "$1" ]] || fail "expected file not to exist: $1"
+}
+
+run_stats_capture() {
+  local vault_path="$1"
+  local stdout_path="$2"
+  local stderr_path="$3"
+  shift 3
+
+  "$STATS" "$vault_path" "$@" >"$stdout_path" 2>"$stderr_path"
 }
 
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-stats-test.XXXXXX")"
@@ -167,5 +185,104 @@ assert_contains "$yaml_output" "Queue: 1 pending, 0 blocked, 1 done"
 
 "$STATS" "$vault" >/dev/null
 assert_not_exists "$vault/ops/stats-history.yaml"
+
+"$INDEX" build "$vault" >/dev/null
+indexed_stdout="$tmp_dir/indexed.out"
+indexed_stderr="$tmp_dir/indexed.err"
+run_stats_capture "$vault" "$indexed_stdout" "$indexed_stderr"
+indexed_output="$(cat "$indexed_stdout")"
+indexed_errors="$(cat "$indexed_stderr")"
+assert_contains "$indexed_output" "claims: 2"
+assert_contains "$indexed_output" "Connections: 8"
+assert_contains "$indexed_output" "Dangling: 1"
+assert_not_contains "$indexed_errors" "falling back"
+
+missing_index="$tmp_dir/missing-index"
+mkdir -p "$missing_index/notes"
+cat > "$missing_index/notes/one.md" <<'EOF'
+---
+description: One direct scan note
+topics: ["[[one]]"]
+---
+# one
+EOF
+missing_stdout="$tmp_dir/missing.out"
+missing_stderr="$tmp_dir/missing.err"
+run_stats_capture "$missing_index" "$missing_stdout" "$missing_stderr"
+assert_contains "$(cat "$missing_stdout")" "notes: 1"
+assert_contains "$(cat "$missing_stderr")" "VaultIndex is missing"
+assert_contains "$(cat "$missing_stderr")" "falling back to direct scan"
+
+stale_vault="$tmp_dir/stale-vault"
+mkdir -p "$stale_vault/notes"
+cat > "$stale_vault/notes/one.md" <<'EOF'
+---
+description: One indexed note
+topics: ["[[one]]"]
+---
+# one
+EOF
+"$INDEX" build "$stale_vault" >/dev/null
+cat > "$stale_vault/notes/two.md" <<'EOF'
+---
+description: Two added after index
+topics: ["[[one]]"]
+---
+# two
+EOF
+stale_stdout="$tmp_dir/stale.out"
+stale_stderr="$tmp_dir/stale.err"
+run_stats_capture "$stale_vault" "$stale_stdout" "$stale_stderr"
+assert_contains "$(cat "$stale_stdout")" "notes: 2"
+assert_contains "$(cat "$stale_stderr")" "VaultIndex is stale"
+assert_contains "$(cat "$stale_stderr")" "falling back to direct scan"
+
+corrupt_vault="$tmp_dir/corrupt-vault"
+mkdir -p "$corrupt_vault/notes" "$corrupt_vault/ops/cache"
+cat > "$corrupt_vault/notes/one.md" <<'EOF'
+---
+description: One corrupt-index fallback note
+topics: ["[[one]]"]
+---
+# one
+EOF
+printf 'not sqlite\n' > "$corrupt_vault/ops/cache/index.sqlite"
+corrupt_stdout="$tmp_dir/corrupt.out"
+corrupt_stderr="$tmp_dir/corrupt.err"
+run_stats_capture "$corrupt_vault" "$corrupt_stdout" "$corrupt_stderr"
+assert_contains "$(cat "$corrupt_stdout")" "notes: 1"
+assert_contains "$(cat "$corrupt_stderr")" "VaultIndex is unreadable"
+assert_contains "$(cat "$corrupt_stderr")" "falling back to direct scan"
+
+duplicate_vault="$tmp_dir/duplicate-vault"
+mkdir -p "$duplicate_vault/notes/a" "$duplicate_vault/notes/b"
+cat > "$duplicate_vault/notes/a/same.md" <<'EOF'
+---
+description: First duplicate basename note
+topics: ["[[notes/b/same]]"]
+---
+# same
+
+Links to [[notes/b/same]] and [[ghost]].
+EOF
+cat > "$duplicate_vault/notes/b/same.md" <<'EOF'
+---
+description: Second duplicate basename note
+topics: ["[[notes/a/same]]"]
+---
+# same
+
+Links to [[notes/a/same]].
+EOF
+"$INDEX" build "$duplicate_vault" >/dev/null
+duplicate_stdout="$tmp_dir/duplicate.out"
+duplicate_stderr="$tmp_dir/duplicate.err"
+run_stats_capture "$duplicate_vault" "$duplicate_stdout" "$duplicate_stderr"
+duplicate_output="$(cat "$duplicate_stdout")"
+assert_not_contains "$(cat "$duplicate_stderr")" "falling back"
+assert_contains "$duplicate_output" "notes: 2"
+assert_contains "$duplicate_output" "Connections: 5"
+assert_contains "$duplicate_output" "Orphans: 0"
+assert_contains "$duplicate_output" "Dangling: 1"
 
 printf 'PASS: stats-vault checks\n'

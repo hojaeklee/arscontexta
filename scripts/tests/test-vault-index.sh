@@ -57,7 +57,7 @@ created: 2026-05-03
 
 # First Duplicate
 
-Links to [[Second Duplicate]] and [[missing target]].
+Links to [[Second Duplicate]], [[missing target]], and [[missing target]] again.
 EOF
 
 cat > "$vault/notes/b/duplicate.md" <<'EOF'
@@ -114,6 +114,7 @@ assert_contains "$status_json" '"indexed_notes": 3'
 assert_contains "$status_json" '"ignored_files": 6'
 assert_contains "$status_json" '"ignored_include_miss": 0'
 assert_contains "$status_json" '"ignored_exclude_match": 6'
+assert_contains "$status_json" '"links": 6'
 assert_contains "$status_json" '"warnings": 1'
 assert_contains "$status_json" '"duplicate_basenames": 1'
 
@@ -121,6 +122,7 @@ export_json="$("$INDEX" export "$vault" --format json)"
 assert_contains "$export_json" '"path": "notes/a/duplicate.md"'
 assert_contains "$export_json" '"path": "notes/b/duplicate.md"'
 assert_contains "$export_json" '"basename": "duplicate"'
+assert_contains "$export_json" '"ordinal": 3'
 assert_contains "$export_json" '"target": "Second Duplicate"'
 assert_contains "$export_json" '"message": "Unterminated frontmatter block."'
 

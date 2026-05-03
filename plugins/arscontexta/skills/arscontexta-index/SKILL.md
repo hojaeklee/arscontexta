@@ -31,7 +31,7 @@ plugins/arscontexta/scripts/vault-index.sh export . --format json
 - `build` writes only `ops/cache/index.sqlite`.
 - `status` and `export` are read-only.
 - Scan rules only decide which markdown files are analyzed; ignored files are never deleted.
-- Do not migrate or rewrite stats, graph, health, validate, notes, links, queues, or task state.
+- Do not migrate or rewrite graph, health, validate, notes, queues, or task state.
 - Do not edit a vault `.gitignore` unless the user explicitly asks.
 
 ## Output

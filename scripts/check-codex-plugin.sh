@@ -103,6 +103,7 @@ validate_helper="$REPO_ROOT/plugins/arscontexta/scripts/validate-vault.sh"
 tasks_helper="$REPO_ROOT/plugins/arscontexta/scripts/tasks-vault.sh"
 next_helper="$REPO_ROOT/plugins/arscontexta/scripts/next-vault.sh"
 stats_helper="$REPO_ROOT/plugins/arscontexta/scripts/stats-vault.sh"
+stats_python_helper="$REPO_ROOT/plugins/arscontexta/scripts/stats_vault.py"
 graph_helper="$REPO_ROOT/plugins/arscontexta/scripts/graph-vault.sh"
 seed_helper="$REPO_ROOT/plugins/arscontexta/scripts/seed-vault.sh"
 ralph_helper="$REPO_ROOT/plugins/arscontexta/scripts/ralph-vault.sh"
@@ -217,6 +218,7 @@ for helper in \
   "$tasks_helper:vault tasks" \
   "$next_helper:vault next action" \
   "$stats_helper:vault stats" \
+  "$stats_python_helper:vault stats Python" \
   "$graph_helper:vault graph" \
   "$seed_helper:vault seed" \
   "$ralph_helper:vault ralph" \
@@ -311,7 +313,7 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/scripts/setup-vault.sh" ]] \
       && emit PASS "Cached vault setup helper exists." \
       || emit WARN "Cached vault setup helper is missing; reinstall plugin after adding setup."
-    for helper_name in session-orient.sh session-validate.sh session-capture.sh mcp-vault-tools.sh validate-vault.sh tasks-vault.sh next-vault.sh stats-vault.sh graph-vault.sh seed-vault.sh ralph-vault.sh pipeline-vault.sh archive-batch-vault.sh vault-index.sh vault_index.py; do
+    for helper_name in session-orient.sh session-validate.sh session-capture.sh mcp-vault-tools.sh validate-vault.sh tasks-vault.sh next-vault.sh stats-vault.sh stats_vault.py graph-vault.sh seed-vault.sh ralph-vault.sh pipeline-vault.sh archive-batch-vault.sh vault-index.sh vault_index.py; do
       [[ -f "$cache_dir/scripts/$helper_name" ]] \
         && emit PASS "Cached $helper_name helper exists." \
         || emit WARN "Cached $helper_name helper is missing; reinstall plugin after adding session or MCP workflows."
