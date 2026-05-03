@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-PIPELINE="$PROJECT_ROOT/scripts/pipeline-vault.sh"
+PIPELINE="$PROJECT_ROOT/plugins/arscontexta/scripts/pipeline-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2

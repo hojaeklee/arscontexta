@@ -21,7 +21,7 @@ Run a bounded quality gate for one note, recent notes, or a small changed set. V
 
 ## Verification Workflow
 
-- Use `scripts/validate-vault.sh` or `plugins/arscontexta/scripts/validate-vault.sh` when available for deterministic schema/frontmatter, description, enum, wiki-link, and `relevant_notes` validation.
+- Use `plugins/arscontexta/scripts/validate-vault.sh` when available for deterministic schema/frontmatter, description, enum, wiki-link, and `relevant_notes` validation.
 - Combine helper output with a Codex review of description quality, topic-map/MOC integration, sparse/orphan risk, and obvious health issues.
 - Use local `rg`, wiki-link traversal, backlinks, and bounded graph/health helpers before optional semantic tooling.
 - Optional QMD or semantic search may be used only when already available; never require it.

@@ -20,15 +20,15 @@ Show and explicitly manage the human task stack in `ops/tasks.md` while also rep
 3. Prefer the deterministic helper when available:
 
 ```bash
-scripts/tasks-vault.sh . --status --limit 25 --format text
-scripts/tasks-vault.sh . --discoveries --limit 25 --format text
-scripts/tasks-vault.sh . --add "Review inbox notes"
-scripts/tasks-vault.sh . --done 1
-scripts/tasks-vault.sh . --drop 2
-scripts/tasks-vault.sh . --reorder 3 1
+plugins/arscontexta/scripts/tasks-vault.sh . --status --limit 25 --format text
+plugins/arscontexta/scripts/tasks-vault.sh . --discoveries --limit 25 --format text
+plugins/arscontexta/scripts/tasks-vault.sh . --add "Review inbox notes"
+plugins/arscontexta/scripts/tasks-vault.sh . --done 1
+plugins/arscontexta/scripts/tasks-vault.sh . --drop 2
+plugins/arscontexta/scripts/tasks-vault.sh . --reorder 3 1
 ```
 
-From an installed plugin package or the repository development mirror, discover the helper relative to the plugin or repo root:
+From an installed plugin package or the repository, discover the helper relative to the plugin or repo root:
 
 ```bash
 plugins/arscontexta/scripts/tasks-vault.sh . --status --limit 25 --format text

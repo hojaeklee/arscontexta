@@ -13,12 +13,12 @@ Show a concise, read-only snapshot of vault growth and health. Metrics are evide
 2. Prefer the deterministic helper when available:
 
 ```bash
-scripts/stats-vault.sh . --limit 25 --format text
-scripts/stats-vault.sh . --share --format text
-scripts/stats-vault.sh . --format json
+plugins/arscontexta/scripts/stats-vault.sh . --limit 25 --format text
+plugins/arscontexta/scripts/stats-vault.sh . --share --format text
+plugins/arscontexta/scripts/stats-vault.sh . --format json
 ```
 
-From an installed plugin package or repository development mirror, discover the helper relative to the plugin or repo root:
+From an installed plugin package or the repository, discover the helper relative to the plugin or repo root:
 
 ```bash
 plugins/arscontexta/scripts/stats-vault.sh . --limit 25 --format text

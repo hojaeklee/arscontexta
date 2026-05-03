@@ -72,7 +72,7 @@ for file in ops/derivation-manifest.md ops/derivation.md ops/config.yaml; do
   fi
 done
 
-helper="$REPO_ROOT/scripts/vault-health.sh"
+helper="$REPO_ROOT/plugins/arscontexta/scripts/vault-health.sh"
 if [[ -x "$helper" ]]; then
   if output="$("$helper" "$vault_abs" --mode quick --limit 5 --format json 2>&1)"; then
     if printf '%s\n' "$output" | json_parse_stdin; then
@@ -84,7 +84,7 @@ if [[ -x "$helper" ]]; then
     emit FAIL "Bounded vault health helper failed: $output"
   fi
 else
-  emit WARN "Bounded vault health helper is not executable at scripts/vault-health.sh."
+  emit WARN "Bounded vault health helper is not executable at plugins/arscontexta/scripts/vault-health.sh."
 fi
 
 printf 'Summary: %s PASS, %s WARN, %s FAIL\n' "$PASS_COUNT" "$WARN_COUNT" "$FAIL_COUNT"

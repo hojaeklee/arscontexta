@@ -12,8 +12,8 @@ Pipeline is an orchestration skill, not a new queue engine. It coordinates `arsc
 1. Treat the current working directory as the vault unless the user gives another path.
 2. Require plan/status before processing. Show a plan for a source or status for an existing batch before running phase work.
 3. Prefer the deterministic helper for planning and status:
-   - repo development: `scripts/pipeline-vault.sh [vault-path] --plan --file PATH --format text|json`
-   - installed plugin: `plugins/arscontexta/scripts/pipeline-vault.sh [vault-path] --status --batch ID --format text|json`
+   - `plugins/arscontexta/scripts/pipeline-vault.sh [vault-path] --plan --file PATH --format text|json`
+   - `plugins/arscontexta/scripts/pipeline-vault.sh [vault-path] --status --batch ID --format text|json`
 4. Keep all queue state under `ops/queue/`. Do not create hidden pipeline state.
 
 ## Phase Partners

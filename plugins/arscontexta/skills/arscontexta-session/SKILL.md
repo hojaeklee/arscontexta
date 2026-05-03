@@ -22,7 +22,7 @@ path.
 Run the bounded helper when available:
 
 ```bash
-scripts/session-orient.sh . --limit 25 --format text
+plugins/arscontexta/scripts/session-orient.sh . --limit 25 --format text
 ```
 
 From an installed plugin package, discover the helper relative to the plugin
@@ -46,8 +46,8 @@ Orientation is read-only. Do not run full health scans unless the user asks.
 Run lightweight hook-equivalent validation:
 
 ```bash
-scripts/session-validate.sh . --file notes/example.md --limit 25 --format text
-scripts/session-validate.sh . --changed --limit 25 --format text
+plugins/arscontexta/scripts/session-validate.sh . --file notes/example.md --limit 25 --format text
+plugins/arscontexta/scripts/session-validate.sh . --changed --limit 25 --format text
 ```
 
 Validation is warning-only. It checks frontmatter, `description:`, `topics:`,
@@ -66,7 +66,7 @@ state that it is not a complete transcript.
 Write the summary to a temporary file, then run:
 
 ```bash
-scripts/session-capture.sh . --summary-file /tmp/summary.md
+plugins/arscontexta/scripts/session-capture.sh . --summary-file /tmp/summary.md
 ```
 
 Add `--next-file /tmp/next.md` when the handoff has a separate next-action

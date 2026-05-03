@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-TASKS="$PROJECT_ROOT/scripts/tasks-vault.sh"
+TASKS="$PROJECT_ROOT/plugins/arscontexta/scripts/tasks-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2

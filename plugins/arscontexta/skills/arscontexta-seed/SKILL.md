@@ -13,8 +13,7 @@ Seed adds one local source file to the processing queue. It prepares determinist
 2. Read vocabulary and path hints from `ops/derivation-manifest.md`, `ops/derivation.md`, and `ops/config.yaml` when present.
 3. Require a local file path. If the user provides no path, inspect the configured inbox and ask which file to seed.
 4. Prefer the bundled helper:
-   - repo development: `scripts/seed-vault.sh [vault-path] --file PATH --format text|json`
-   - installed plugin: `plugins/arscontexta/scripts/seed-vault.sh [vault-path] --file PATH --format text|json`
+   - `plugins/arscontexta/scripts/seed-vault.sh [vault-path] --file PATH --format text|json`
 
 ## Helper Behavior
 

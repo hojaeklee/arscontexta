@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-ARCHIVE="$PROJECT_ROOT/scripts/archive-batch-vault.sh"
+ARCHIVE="$PROJECT_ROOT/plugins/arscontexta/scripts/archive-batch-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2

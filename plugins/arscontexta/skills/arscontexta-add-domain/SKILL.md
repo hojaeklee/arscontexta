@@ -93,7 +93,7 @@ After approved writes, run or recommend validation that covers:
 - vocabulary isolation between domains
 - template usability and MOC discoverability
 
-Use existing validation helpers when available, such as `scripts/check-vault.sh`, `scripts/validate-vault.sh`, and `arscontexta-validate`.
+Use existing validation helpers when available, such as `scripts/check-vault.sh`, `plugins/arscontexta/scripts/validate-vault.sh`, and `arscontexta-validate`.
 
 ## Boundaries
 

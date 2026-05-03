@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-RALPH="$PROJECT_ROOT/scripts/ralph-vault.sh"
+RALPH="$PROJECT_ROOT/plugins/arscontexta/scripts/ralph-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2

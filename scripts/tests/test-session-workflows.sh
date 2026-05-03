@@ -3,9 +3,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-ORIENT="$PROJECT_ROOT/scripts/session-orient.sh"
-VALIDATE="$PROJECT_ROOT/scripts/session-validate.sh"
-CAPTURE="$PROJECT_ROOT/scripts/session-capture.sh"
+ORIENT="$PROJECT_ROOT/plugins/arscontexta/scripts/session-orient.sh"
+VALIDATE="$PROJECT_ROOT/plugins/arscontexta/scripts/session-validate.sh"
+CAPTURE="$PROJECT_ROOT/plugins/arscontexta/scripts/session-capture.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2

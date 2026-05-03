@@ -32,10 +32,10 @@ Infer a preset when obvious:
 Prefer the deterministic helper:
 
 ```bash
-scripts/setup-vault.sh . --preset research --domain "my domain"
+plugins/arscontexta/scripts/setup-vault.sh . --preset research --domain "my domain"
 ```
 
-From an installed plugin package, discover the helper relative to the plugin root:
+From an installed plugin package or the repository, discover the helper relative to the plugin root:
 
 ```bash
 plugins/arscontexta/scripts/setup-vault.sh . --preset research --domain "my domain"

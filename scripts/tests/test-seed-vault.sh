@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SEED="$PROJECT_ROOT/scripts/seed-vault.sh"
+SEED="$PROJECT_ROOT/plugins/arscontexta/scripts/seed-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2

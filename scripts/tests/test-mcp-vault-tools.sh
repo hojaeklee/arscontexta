@@ -3,8 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-TOOL="$PROJECT_ROOT/scripts/mcp-vault-tools.sh"
-PLUGIN_TOOL="$PROJECT_ROOT/plugins/arscontexta/scripts/mcp-vault-tools.sh"
+TOOL="$PROJECT_ROOT/plugins/arscontexta/scripts/mcp-vault-tools.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -98,7 +97,5 @@ assert_contains "$changed_output" '"file":"notes/changed.md"'
 
 usage_output="$(assert_exit 2 "$TOOL" frontmatter.validate "$vault" --file notes/index.md --changed)"
 assert_contains "$usage_output" "Use only one of --file, --changed, or --all."
-
-diff -u "$TOOL" "$PLUGIN_TOOL" >/dev/null || fail "root and plugin mcp-vault-tools.sh differ"
 
 printf 'PASS: MCP vault tools tests\n'

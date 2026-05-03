@@ -12,8 +12,7 @@ Archive Batch is deterministic queue cleanup for completed processing batches. I
 1. Treat the current directory as the vault unless the user gives another path.
 2. Require an explicit batch id. If the user does not provide one, inspect queue status and ask which completed batch to archive.
 3. Prefer the deterministic helper:
-   - repo development: `scripts/archive-batch-vault.sh [vault-path] --batch ID --format text|json`
-   - installed plugin: `plugins/arscontexta/scripts/archive-batch-vault.sh [vault-path] --batch ID --format text|json`
+   - `plugins/arscontexta/scripts/archive-batch-vault.sh [vault-path] --batch ID --format text|json`
 4. Use Codex file workflows and visible helper output; do not hide queue mutations.
 
 ## Preconditions

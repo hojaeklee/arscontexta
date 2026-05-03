@@ -17,12 +17,12 @@ Run detailed, read-only schema validation for an Ars Contexta or Obsidian markdo
 3. Prefer the deterministic helper when available:
 
 ```bash
-scripts/validate-vault.sh . --file notes/example.md --limit 25 --format text
-scripts/validate-vault.sh . --changed --limit 25 --format text
-scripts/validate-vault.sh . --all --limit 25 --format text
+plugins/arscontexta/scripts/validate-vault.sh . --file notes/example.md --limit 25 --format text
+plugins/arscontexta/scripts/validate-vault.sh . --changed --limit 25 --format text
+plugins/arscontexta/scripts/validate-vault.sh . --all --limit 25 --format text
 ```
 
-From an installed plugin package or the repository development mirror, discover the helper relative to the plugin or repo root:
+From an installed plugin package or the repository, discover the helper relative to the plugin or repo root:
 
 ```bash
 plugins/arscontexta/scripts/validate-vault.sh . --changed --limit 25 --format text

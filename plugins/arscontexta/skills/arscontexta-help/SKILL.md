@@ -28,8 +28,8 @@ Available now:
 - `arscontexta-help`: contextual orientation for Codex.
 - `arscontexta-health`: quick vault health checks.
 - `arscontexta-setup`: minimal Codex-native vault scaffolding.
-- `scripts/vault-health.sh`: bounded link-health helper.
-- `scripts/setup-vault.sh`: deterministic minimal setup helper.
+- `plugins/arscontexta/scripts/vault-health.sh`: bounded link-health helper.
+- `plugins/arscontexta/scripts/setup-vault.sh`: deterministic minimal setup helper.
 - `arscontexta-validate`: detailed read-only note/schema validation.
 - `arscontexta-tasks`: task stack and queue-state visibility for Codex.
 - `arscontexta-next`: one read-only recommendation for what to do next.

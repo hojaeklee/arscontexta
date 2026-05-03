@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-VALIDATE="$PROJECT_ROOT/scripts/validate-vault.sh"
+VALIDATE="$PROJECT_ROOT/plugins/arscontexta/scripts/validate-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2

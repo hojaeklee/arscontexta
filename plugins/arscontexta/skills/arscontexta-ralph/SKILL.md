@@ -12,8 +12,7 @@ Ralph is the standalone queue worker for Ars Contexta. Keep it separate from `ar
 1. Treat the current working directory as the vault unless the user gives another path.
 2. Start with dry-run or report-only planning before processing queue tasks.
 3. Prefer the deterministic helper for queue inspection and queue-state mutation:
-   - repo development: `scripts/ralph-vault.sh [vault-path] --dry-run --limit N --format text|json`
-   - installed plugin: `plugins/arscontexta/scripts/ralph-vault.sh [vault-path] --dry-run --limit N --format text|json`
+   - `plugins/arscontexta/scripts/ralph-vault.sh [vault-path] --dry-run --limit N --format text|json`
 4. Keep all queue processing state under `ops/queue/`.
 
 ## Helper Responsibilities

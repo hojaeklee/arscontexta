@@ -22,10 +22,10 @@ Prefer the bounded helper when it exists:
 plugins/arscontexta/scripts/vault-health.sh . --mode quick --limit 25 --format text
 ```
 
-When running from an installed plugin package or a vault, discover the helper relative to the Ars Contexta repository or plugin root if needed. The repository development mirror is:
+When running from an installed plugin package or a vault, discover the helper relative to the Ars Contexta repository or plugin root if needed:
 
 ```bash
-scripts/vault-health.sh . --mode quick --limit 25 --format text
+plugins/arscontexta/scripts/vault-health.sh . --mode quick --limit 25 --format text
 ```
 
 Quick health checks are read-only. Do not write `ops/health/YYYY-MM-DD-report.md` unless the user explicitly asks for a persisted report.

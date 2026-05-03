@@ -27,6 +27,6 @@ add a design issue before wiring it into Ars Contexta.
 Codex skills may use compatible search tools when available, but they must not
 require them. Prefer this order:
 
-1. Bundled deterministic script from `scripts/` or `plugins/arscontexta/scripts/`.
+1. Bundled deterministic script from `plugins/arscontexta/scripts/`.
 2. Local `rg`, `find`, and shell inspection.
 3. Optional indexed or semantic search tooling when the user has installed it.

@@ -175,7 +175,7 @@ the observed failure, Codex version, config snippets, and fix.
 Codex setup creates a minimal usable Ars Contexta vault:
 
 ```bash
-scripts/setup-vault.sh /path/to/new-vault --preset research --domain "research notes"
+plugins/arscontexta/scripts/setup-vault.sh /path/to/new-vault --preset research --domain "research notes"
 scripts/check-vault.sh /path/to/new-vault
 ```
 
@@ -183,7 +183,7 @@ Available presets are `research`, `personal`, and `experimental`. Use
 `--dry-run` to preview files before writing:
 
 ```bash
-scripts/setup-vault.sh /path/to/new-vault --preset personal --domain "life reflections" --dry-run
+plugins/arscontexta/scripts/setup-vault.sh /path/to/new-vault --preset personal --domain "life reflections" --dry-run
 ```
 
 After setup, open the vault in Codex and run:
@@ -251,8 +251,8 @@ traversal, and bundled deterministic helper scripts.
 The current deterministic helpers are CLI scripts, not a registered server:
 
 ```bash
-scripts/mcp-vault-tools.sh links.check . --limit 25
-scripts/mcp-vault-tools.sh frontmatter.validate . --file notes/example.md --limit 25
+plugins/arscontexta/scripts/mcp-vault-tools.sh links.check . --limit 25
+plugins/arscontexta/scripts/mcp-vault-tools.sh frontmatter.validate . --file notes/example.md --limit 25
 ```
 
 Skills must continue to fall back to bundled scripts, `rg`, and wiki-link

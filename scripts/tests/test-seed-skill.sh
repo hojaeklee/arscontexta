@@ -31,7 +31,6 @@ assert_not_contains() {
 assert_file "$SKILL"
 assert_contains "$SKILL" "name: arscontexta-seed"
 assert_contains "$SKILL" "Use when the user asks Codex to add a source file"
-assert_contains "$SKILL" "scripts/seed-vault.sh"
 assert_contains "$SKILL" "plugins/arscontexta/scripts/seed-vault.sh"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/derivation.md"

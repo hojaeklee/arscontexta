@@ -3,10 +3,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SETUP_SCRIPT="$PROJECT_ROOT/scripts/setup-vault.sh"
-PLUGIN_SETUP_SCRIPT="$PROJECT_ROOT/plugins/arscontexta/scripts/setup-vault.sh"
+SETUP_SCRIPT="$PROJECT_ROOT/plugins/arscontexta/scripts/setup-vault.sh"
 CHECK_VAULT="$PROJECT_ROOT/scripts/check-vault.sh"
-HEALTH_SCRIPT="$PROJECT_ROOT/scripts/vault-health.sh"
+HEALTH_SCRIPT="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-health.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -97,7 +96,5 @@ new_hash="$(shasum "$existing/old.md")"
 [[ "$old_hash" == "$new_hash" ]] || fail "existing markdown file changed"
 assert_file "$existing/.arscontexta"
 assert_file "$existing/AGENTS.md"
-
-diff -u "$SETUP_SCRIPT" "$PLUGIN_SETUP_SCRIPT" >/dev/null || fail "setup helper copies differ"
 
 printf 'PASS: setup vault fixtures\n'
