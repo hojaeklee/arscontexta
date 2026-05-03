@@ -108,6 +108,7 @@ seed_helper="$REPO_ROOT/plugins/arscontexta/scripts/seed-vault.sh"
 ralph_helper="$REPO_ROOT/plugins/arscontexta/scripts/ralph-vault.sh"
 pipeline_helper="$REPO_ROOT/plugins/arscontexta/scripts/pipeline-vault.sh"
 archive_batch_helper="$REPO_ROOT/plugins/arscontexta/scripts/archive-batch-vault.sh"
+agent_knowledge_guide="$REPO_ROOT/plugins/arscontexta/agents/knowledge-guide.md"
 methodology_index="$REPO_ROOT/plugins/arscontexta/methodology/index.md"
 methodology_claim="$REPO_ROOT/plugins/arscontexta/methodology/claims must be specific enough to be wrong.md"
 reference_methodology="$REPO_ROOT/plugins/arscontexta/reference/methodology.md"
@@ -232,6 +233,7 @@ do
 done
 
 for knowledge in \
+  "$agent_knowledge_guide:knowledge guide agent" \
   "$methodology_index:methodology index" \
   "$methodology_claim:representative methodology claim" \
   "$reference_methodology:methodology reference" \
@@ -311,6 +313,7 @@ if [[ -n "${manifest_version:-}" ]]; then
         || emit WARN "Cached $helper_name helper is missing; reinstall plugin after adding session or MCP workflows."
     done
     for knowledge_name in \
+      "agents/knowledge-guide.md:knowledge guide agent" \
       "methodology/index.md:methodology index" \
       "methodology/claims must be specific enough to be wrong.md:representative methodology claim" \
       "reference/methodology.md:methodology reference" \

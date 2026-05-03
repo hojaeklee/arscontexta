@@ -6,7 +6,7 @@ Ars Contexta helps Codex maintain a durable thinking system: plain markdown
 notes, wiki links, processing queues, operational memory, and
 Obsidian-friendly navigation.
 
-**v0.8.2** | Codex-only local plugin | MIT
+**v0.8.3** | Codex-only local plugin | MIT
 
 Codex is the only supported Ars Contexta distribution in this repo.
 Claude Code support, hooks, slash commands, and legacy generated skill templates have been removed.
@@ -81,6 +81,7 @@ arscontexta/
 |-- .agents/plugins/marketplace.json       # Codex local marketplace
 |-- plugins/arscontexta/                   # Installable Codex plugin package
 |   |-- .codex-plugin/plugin.json
+|   |-- agents/                            # Bundled agent guidance definitions
 |   |-- generators/                        # Bundled context and feature generators
 |   |-- methodology/                       # Bundled research claims and methodology notes
 |   |-- presets/                           # Bundled preset configs and starter notes
@@ -93,12 +94,13 @@ arscontexta/
 ```
 
 plugins/arscontexta/ is the source of truth for the runtime plugin. Edit
-plugin metadata, Codex-native skills, bundled scripts, generators, presets,
-and bundled knowledge there. The plugin-side
-`plugins/arscontexta/generators/`, `plugins/arscontexta/presets/`,
-`plugins/arscontexta/methodology/`, and `plugins/arscontexta/reference/`
-directories are not copied into user vaults; setup creates only derived vault
-artifacts and the vault-local `ops/methodology/` self-knowledge space.
+plugin metadata, Codex-native skills, bundled scripts, agents, generators,
+presets, and bundled knowledge there. The plugin-side
+`plugins/arscontexta/agents/`, `plugins/arscontexta/generators/`,
+`plugins/arscontexta/presets/`, `plugins/arscontexta/methodology/`, and
+`plugins/arscontexta/reference/` directories are not copied into user vaults;
+setup creates only derived vault artifacts and the vault-local
+`ops/methodology/` self-knowledge space.
 
 ## Maintainer Workflow
 

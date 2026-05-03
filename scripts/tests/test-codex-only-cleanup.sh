@@ -35,6 +35,7 @@ for legacy_path in \
   "platforms/shared/skill-blocks" \
   "skills" \
   "skill-sources" \
+  "agents" \
   "generators" \
   "presets"
 do
