@@ -106,6 +106,7 @@ stats_helper="$REPO_ROOT/plugins/arscontexta/scripts/stats-vault.sh"
 graph_helper="$REPO_ROOT/plugins/arscontexta/scripts/graph-vault.sh"
 seed_helper="$REPO_ROOT/plugins/arscontexta/scripts/seed-vault.sh"
 ralph_helper="$REPO_ROOT/plugins/arscontexta/scripts/ralph-vault.sh"
+pipeline_helper="$REPO_ROOT/plugins/arscontexta/scripts/pipeline-vault.sh"
 
 if require_json_tools; then
   if [[ -f "$marketplace" ]]; then
@@ -161,7 +162,7 @@ if require_json_tools; then
   fi
 fi
 
-for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify arscontexta-remember arscontexta-rethink arscontexta-architect arscontexta-refactor arscontexta-reseed arscontexta-upgrade arscontexta-add-domain arscontexta-seed arscontexta-ralph; do
+for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify arscontexta-remember arscontexta-rethink arscontexta-architect arscontexta-refactor arscontexta-reseed arscontexta-upgrade arscontexta-add-domain arscontexta-seed arscontexta-ralph arscontexta-pipeline; do
   skill_file="$REPO_ROOT/plugins/arscontexta/skills/$skill_name/SKILL.md"
   if [[ -f "$skill_file" ]]; then
     emit PASS "$skill_name skill exists in installable plugin."
@@ -202,7 +203,8 @@ for helper in \
   "$stats_helper:vault stats" \
   "$graph_helper:vault graph" \
   "$seed_helper:vault seed" \
-  "$ralph_helper:vault ralph"
+  "$ralph_helper:vault ralph" \
+  "$pipeline_helper:vault pipeline"
 do
   helper_path="${helper%%:*}"
   helper_label="${helper#*:}"
@@ -255,7 +257,7 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/.codex-plugin/plugin.json" ]] \
       && emit PASS "Cached plugin manifest exists." \
       || emit WARN "Cached plugin manifest is missing."
-    for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify arscontexta-remember arscontexta-rethink arscontexta-architect arscontexta-refactor arscontexta-reseed arscontexta-upgrade arscontexta-add-domain arscontexta-seed arscontexta-ralph; do
+    for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify arscontexta-remember arscontexta-rethink arscontexta-architect arscontexta-refactor arscontexta-reseed arscontexta-upgrade arscontexta-add-domain arscontexta-seed arscontexta-ralph arscontexta-pipeline; do
       [[ -f "$cache_dir/skills/$skill_name/SKILL.md" ]] \
         && emit PASS "Cached $skill_name skill exists." \
         || emit WARN "Cached $skill_name skill is missing; reinstall plugin after adding new Codex skills."
@@ -266,7 +268,7 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/scripts/setup-vault.sh" ]] \
       && emit PASS "Cached vault setup helper exists." \
       || emit WARN "Cached vault setup helper is missing; reinstall plugin after adding setup."
-    for helper_name in session-orient.sh session-validate.sh session-capture.sh mcp-vault-tools.sh validate-vault.sh tasks-vault.sh next-vault.sh stats-vault.sh graph-vault.sh seed-vault.sh ralph-vault.sh; do
+    for helper_name in session-orient.sh session-validate.sh session-capture.sh mcp-vault-tools.sh validate-vault.sh tasks-vault.sh next-vault.sh stats-vault.sh graph-vault.sh seed-vault.sh ralph-vault.sh pipeline-vault.sh; do
       [[ -f "$cache_dir/scripts/$helper_name" ]] \
         && emit PASS "Cached $helper_name helper exists." \
         || emit WARN "Cached $helper_name helper is missing; reinstall plugin after adding session or MCP workflows."
