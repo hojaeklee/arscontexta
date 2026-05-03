@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import datetime as dt
 import fnmatch
 import hashlib
@@ -18,6 +19,7 @@ from typing import Any
 
 SCHEMA_VERSION = "2"
 INDEX_REL = Path("ops/cache/index.sqlite")
+EXPORT_REL = Path("ops/cache/exports")
 IGNORED_DIRS = {".git", ".obsidian", "node_modules"}
 DEFAULT_SCAN_INCLUDE = [
     "notes/**",
@@ -342,6 +344,63 @@ def title_from(body: str, path: Path, frontmatter: dict[str, Any]) -> str:
     return path.stem
 
 
+def add_lookup_value(lookup: dict[str, set[str]], key: str, path: str) -> None:
+    key = str(key).strip()
+    if key:
+        lookup.setdefault(key, set()).add(path)
+
+
+def build_target_lookup(notes: list[dict[str, Any]]) -> dict[str, set[str]]:
+    lookup: dict[str, set[str]] = {}
+    for note in notes:
+        path = str(note["path"])
+        path_no_suffix = path[:-3] if path.endswith(".md") else path
+        add_lookup_value(lookup, path, path)
+        add_lookup_value(lookup, path_no_suffix, path)
+        add_lookup_value(lookup, str(note.get("basename", "")), path)
+        add_lookup_value(lookup, str(note.get("title", "")), path)
+        for alias in normalize_list(note.get("aliases", [])):
+            add_lookup_value(lookup, alias, path)
+    return lookup
+
+
+def resolve_target(target: str, lookup: dict[str, set[str]]) -> tuple[str, str]:
+    normalized = target[:-3] if target.endswith(".md") else target
+    matches = lookup.get(normalized) or lookup.get(target) or set()
+    if len(matches) == 1:
+        return "resolved", next(iter(matches))
+    if len(matches) > 1:
+        return "ambiguous", ""
+    return "missing", ""
+
+
+def csv_cell(value: Any) -> Any:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (list, dict)):
+        return json_dumps(value)
+    if value is None:
+        return ""
+    return value
+
+
+def markdown_cell(value: Any) -> str:
+    text = str(csv_cell(value))
+    return text.replace("|", "\\|").replace("\n", " ")
+
+
+def markdown_table(headers: list[str], rows: list[dict[str, Any]]) -> list[str]:
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join("---" for _header in headers) + " |",
+    ]
+    for row in rows:
+        lines.append("| " + " | ".join(markdown_cell(row.get(header, "")) for header in headers) + " |")
+    if not rows:
+        lines.append("| " + " | ".join("" for _header in headers) + " |")
+    return lines
+
+
 class VaultIndex:
     def __init__(self, vault: str | Path) -> None:
         self.vault = Path(vault).expanduser().resolve()
@@ -549,13 +608,219 @@ class VaultIndex:
             note["frontmatter"] = json.loads(note.pop("frontmatter_json"))
             note["topics"] = json.loads(note.pop("topics_json"))
             note["is_moc"] = bool(note["is_moc"])
+
+        lookup = build_target_lookup(notes)
+        resolved_links: list[dict[str, Any]] = []
+        incoming: dict[str, set[str]] = {str(note["path"]): set() for note in notes}
+        for link in links:
+            status, resolved_path = resolve_target(str(link["target"]), lookup)
+            enriched = {
+                **link,
+                "resolution_status": status,
+                "resolved_path": resolved_path,
+            }
+            resolved_links.append(enriched)
+            source_path = str(link["source_path"])
+            if status == "resolved" and resolved_path and resolved_path != source_path:
+                incoming.setdefault(resolved_path, set()).add(source_path)
+
+        dangling_links = sorted(
+            [link for link in resolved_links if link["resolution_status"] == "missing"],
+            key=lambda link: (str(link["target"]), str(link["source_path"]), int(link["ordinal"])),
+        )
+        orphan_candidates = [
+            {
+                "path": note["path"],
+                "basename": note["basename"],
+                "title": note["title"],
+                "description": note["description"],
+            }
+            for note in notes
+            if not note["is_moc"] and not incoming.get(str(note["path"]), set())
+        ]
+        basename_counts: dict[str, int] = {}
+        for note in notes:
+            basename = str(note["basename"])
+            basename_counts[basename] = basename_counts.get(basename, 0) + 1
+        summary = {
+            "indexed_notes": len(notes),
+            "content_notes": sum(1 for note in notes if not note["is_moc"]),
+            "mocs": sum(1 for note in notes if note["is_moc"]),
+            "links": len(resolved_links),
+            "resolved_links": sum(
+                1 for link in resolved_links if link["resolution_status"] == "resolved"
+            ),
+            "dangling_links": len(dangling_links),
+            "orphan_candidates": len(orphan_candidates),
+            "warnings": len(warnings),
+            "duplicate_basenames": sum(1 for count in basename_counts.values() if count > 1),
+        }
         return {
             "vault": str(self.vault),
             "index": str(self.index_path),
+            "exports": str(self.vault / EXPORT_REL),
+            "summary": summary,
             "notes": notes,
-            "links": links,
+            "links": resolved_links,
+            "dangling_links": dangling_links,
+            "orphan_candidates": orphan_candidates,
             "warnings": warnings,
         }
+
+    def write_exports(self, formats: tuple[str, ...] = ("markdown", "csv")) -> dict[str, Any]:
+        normalized = set(formats)
+        if "all" in normalized:
+            normalized.update({"markdown", "csv"})
+        export_dir = self.vault / EXPORT_REL
+        export_dir.mkdir(parents=True, exist_ok=True)
+        payload = self.export()
+        paths: list[Path] = []
+        if "markdown" in normalized:
+            paths.append(self.write_markdown_export(export_dir / "vault-index.md", payload))
+        if "csv" in normalized:
+            paths.extend(self.write_csv_exports(export_dir, payload))
+        return {
+            "summary": payload["summary"],
+            "exports": [rel_id(path, self.vault) for path in paths],
+        }
+
+    def write_markdown_export(self, path: Path, payload: dict[str, Any]) -> Path:
+        summary_rows = [
+            {"metric": key, "value": value}
+            for key, value in sorted(payload["summary"].items(), key=lambda item: item[0])
+        ]
+        note_rows = [
+            {
+                "path": note["path"],
+                "basename": note["basename"],
+                "title": note["title"],
+                "type": note["note_type"],
+                "moc": note["is_moc"],
+                "description": note["description"],
+            }
+            for note in payload["notes"]
+        ]
+        link_rows = [
+            {
+                "source_path": link["source_path"],
+                "ordinal": link["ordinal"],
+                "target": link["target"],
+                "status": link["resolution_status"],
+                "resolved_path": link["resolved_path"],
+            }
+            for link in payload["links"]
+        ]
+        dangling_rows = [
+            {
+                "target": link["target"],
+                "source_path": link["source_path"],
+                "ordinal": link["ordinal"],
+                "raw": link["raw"],
+            }
+            for link in payload["dangling_links"]
+        ]
+        warning_rows = [
+            {"path": warning["path"], "message": warning["message"]}
+            for warning in payload["warnings"]
+        ]
+
+        lines = ["# VaultIndex Export", ""]
+        for heading, headers, rows in [
+            ("Summary Metrics", ["metric", "value"], summary_rows),
+            ("Notes", ["path", "basename", "title", "type", "moc", "description"], note_rows),
+            ("Links", ["source_path", "ordinal", "target", "status", "resolved_path"], link_rows),
+            ("Dangling Links", ["target", "source_path", "ordinal", "raw"], dangling_rows),
+            (
+                "Orphan Candidates",
+                ["path", "basename", "title", "description"],
+                payload["orphan_candidates"],
+            ),
+            ("Parse Warnings", ["path", "message"], warning_rows),
+        ]:
+            lines.append(f"## {heading}")
+            lines.extend(markdown_table(headers, rows))
+            lines.append("")
+        path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+        return path
+
+    def write_csv_exports(self, export_dir: Path, payload: dict[str, Any]) -> list[Path]:
+        specs: list[tuple[str, list[str], list[dict[str, Any]]]] = [
+            (
+                "vault-index-summary.csv",
+                ["metric", "value"],
+                [
+                    {"metric": key, "value": value}
+                    for key, value in sorted(payload["summary"].items(), key=lambda item: item[0])
+                ],
+            ),
+            (
+                "vault-index-notes.csv",
+                [
+                    "path",
+                    "basename",
+                    "title",
+                    "description",
+                    "note_type",
+                    "is_moc",
+                    "aliases",
+                    "topics",
+                    "created",
+                    "size",
+                    "mtime_ns",
+                    "content_hash",
+                ],
+                [
+                    {
+                        "path": note["path"],
+                        "basename": note["basename"],
+                        "title": note["title"],
+                        "description": note["description"],
+                        "note_type": note["note_type"],
+                        "is_moc": note["is_moc"],
+                        "aliases": note["aliases"],
+                        "topics": note["topics"],
+                        "created": note["created"],
+                        "size": note["size"],
+                        "mtime_ns": note["mtime_ns"],
+                        "content_hash": note["content_hash"],
+                    }
+                    for note in payload["notes"]
+                ],
+            ),
+            (
+                "vault-index-links.csv",
+                ["source_path", "ordinal", "target", "raw", "resolution_status", "resolved_path"],
+                payload["links"],
+            ),
+            (
+                "vault-index-dangling-links.csv",
+                ["target", "source_path", "ordinal", "raw"],
+                payload["dangling_links"],
+            ),
+            (
+                "vault-index-orphan-candidates.csv",
+                ["path", "basename", "title", "description"],
+                payload["orphan_candidates"],
+            ),
+            (
+                "vault-index-warnings.csv",
+                ["path", "message"],
+                payload["warnings"],
+            ),
+        ]
+        paths = []
+        for filename, fieldnames, rows in specs:
+            path = export_dir / filename
+            self.write_csv_file(path, fieldnames, rows)
+            paths.append(path)
+        return paths
+
+    def write_csv_file(self, path: Path, fieldnames: list[str], rows: list[dict[str, Any]]) -> None:
+        with path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            for row in rows:
+                writer.writerow({field: csv_cell(row.get(field, "")) for field in fieldnames})
 
 
 def print_payload(payload: dict[str, Any], fmt: str) -> None:
@@ -575,13 +840,34 @@ def print_payload(payload: dict[str, Any], fmt: str) -> None:
         print(f"{key}: {value}")
 
 
+def print_export_result(result: dict[str, Any]) -> None:
+    print("--=={ vault index exports }==--")
+    for export_path in result["exports"]:
+        print(f"generated: {export_path}")
+    summary = result.get("summary", {})
+    if summary:
+        print(f"indexed_notes: {summary.get('indexed_notes', 0)}")
+        print(f"dangling_links: {summary.get('dangling_links', 0)}")
+        print(f"orphan_candidates: {summary.get('orphan_candidates', 0)}")
+        print(f"warnings: {summary.get('warnings', 0)}")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="vault_index.py")
     parser.add_argument("command", choices=["build", "status", "export"])
     parser.add_argument("vault")
-    parser.add_argument("--format", choices=["text", "json"], default="text")
+    parser.add_argument("--format", choices=["text", "json", "markdown", "csv", "all"], default="text")
     args = parser.parse_args(argv)
+    if args.command != "export" and args.format not in {"text", "json"}:
+        parser.error(f"--format {args.format} is only supported for export")
     index = VaultIndex(args.vault)
+    if args.command == "export":
+        if args.format == "json":
+            print_payload(index.export(), "json")
+            return 0
+        formats = ("markdown", "csv") if args.format in {"text", "all"} else (args.format,)
+        print_export_result(index.write_exports(formats))
+        return 0
     payload = getattr(index, args.command)()
     print_payload(payload, args.format)
     return 0

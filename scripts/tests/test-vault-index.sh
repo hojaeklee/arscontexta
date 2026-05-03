@@ -126,6 +126,54 @@ assert_contains "$export_json" '"ordinal": 3'
 assert_contains "$export_json" '"target": "Second Duplicate"'
 assert_contains "$export_json" '"message": "Unterminated frontmatter block."'
 
+export_all="$("$INDEX" export "$vault" --format all)"
+assert_contains "$export_all" "ops/cache/exports/vault-index.md"
+assert_contains "$export_all" "ops/cache/exports/vault-index-notes.csv"
+exports_dir="$vault/ops/cache/exports"
+assert_file "$exports_dir/vault-index.md"
+assert_file "$exports_dir/vault-index-summary.csv"
+assert_file "$exports_dir/vault-index-notes.csv"
+assert_file "$exports_dir/vault-index-links.csv"
+assert_file "$exports_dir/vault-index-dangling-links.csv"
+assert_file "$exports_dir/vault-index-orphan-candidates.csv"
+assert_file "$exports_dir/vault-index-warnings.csv"
+
+export_markdown="$(cat "$exports_dir/vault-index.md")"
+assert_contains "$export_markdown" "# VaultIndex Export"
+assert_contains "$export_markdown" "## Summary Metrics"
+assert_contains "$export_markdown" "## Notes"
+assert_contains "$export_markdown" "## Links"
+assert_contains "$export_markdown" "## Dangling Links"
+assert_contains "$export_markdown" "## Orphan Candidates"
+assert_contains "$export_markdown" "## Parse Warnings"
+assert_contains "$export_markdown" "notes/a/duplicate.md"
+assert_contains "$export_markdown" "notes/b/duplicate.md"
+assert_contains "$export_markdown" "missing target"
+assert_contains "$export_markdown" "notes/bad.md"
+assert_contains "$export_markdown" "Unterminated frontmatter block."
+
+notes_csv="$(cat "$exports_dir/vault-index-notes.csv")"
+assert_contains "$notes_csv" "path,basename,title"
+assert_contains "$notes_csv" "notes/a/duplicate.md,duplicate,First Duplicate"
+assert_contains "$notes_csv" "notes/b/duplicate.md,duplicate,Second Duplicate"
+
+links_csv="$(cat "$exports_dir/vault-index-links.csv")"
+assert_contains "$links_csv" "source_path,ordinal,target,raw,resolution_status,resolved_path"
+assert_contains "$links_csv" "notes/a/duplicate.md,1,Second Duplicate,Second Duplicate,resolved,notes/b/duplicate.md"
+
+dangling_csv="$(cat "$exports_dir/vault-index-dangling-links.csv")"
+assert_contains "$dangling_csv" "target,source_path,ordinal,raw"
+assert_contains "$dangling_csv" "missing target,notes/a/duplicate.md"
+
+orphans_csv="$(cat "$exports_dir/vault-index-orphan-candidates.csv")"
+assert_contains "$orphans_csv" "path,basename,title,description"
+assert_contains "$orphans_csv" "notes/bad.md,bad,Bad,"
+assert_not_contains "$orphans_csv" "notes/b/duplicate.md"
+
+warnings_csv="$(cat "$exports_dir/vault-index-warnings.csv")"
+assert_contains "$warnings_csv" "path,message"
+assert_contains "$warnings_csv" "notes/bad.md,Unterminated frontmatter block."
+
 rm "$vault/notes/a/duplicate.md"
 delete_output="$("$INDEX" build "$vault")"
 assert_contains "$delete_output" "deleted: 1"
