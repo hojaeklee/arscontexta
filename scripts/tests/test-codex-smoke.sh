@@ -65,6 +65,7 @@ assert_contains "$plugin_output" "PASS arscontexta-seed skill exists in installa
 assert_contains "$plugin_output" "PASS arscontexta-ralph skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-pipeline skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-tutorial skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS arscontexta-learn skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS Bundled session orientation helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled session validation helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled session capture helper exists and is executable."
