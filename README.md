@@ -13,12 +13,13 @@ ported to Codex as a first-class local plugin.
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| Codex | In progress | Local plugin scaffold exists. Codex-native help, health, and minimal setup skills are available. |
-| Claude Code | Available | Original plugin remains intact under `.claude-plugin/` and `skills/`. |
+| Codex | In progress | Local plugin package exists. Codex-native skills and bundled helpers are the active migration target. |
+| Claude Code | Retired packaging | Claude-oriented source and reference files remain only where they have not been migrated or are still useful as methodology references. |
 | MCP | Not implemented | Good future target for deterministic vault operations, not the main methodology. |
 
-The repo keeps Claude and Codex support side by side during migration. Remove
-Claude-specific files only after the equivalent Codex plugin skill, script, or
+The repo keeps Claude-oriented source and Codex support side by side during
+migration, but Codex is now the only packaged plugin distribution in this repo.
+Remove Claude-specific files after the equivalent Codex plugin skill, script, or
 workflow has been migrated and verified.
 
 ## What It Does
@@ -138,35 +139,6 @@ Otherwise Codex may fail with:
 The 'gpt-5-codex' model is not supported when using Codex with a ChatGPT account.
 ```
 
-## Use With Claude Code
-
-Claude Code remains the mature implementation.
-
-Add the marketplace:
-
-```text
-/plugin marketplace add agenticnotetaking/arscontexta
-```
-
-Install the plugin:
-
-```text
-/plugin install arscontexta@agenticnotetaking
-```
-
-Restart Claude Code, then run:
-
-```text
-/arscontexta:setup
-```
-
-After setup, restart Claude Code again so generated hooks and skills activate.
-Then run:
-
-```text
-/arscontexta:help
-```
-
 ## Repository Layout
 
 ```text
@@ -178,17 +150,14 @@ arscontexta/
 |       |-- arscontexta-help/SKILL.md
 |       |-- arscontexta-health/SKILL.md
 |       +-- arscontexta-setup/SKILL.md
-|-- .claude-plugin/
-|   |-- plugin.json                        # Claude plugin manifest
-|   +-- marketplace.json                   # Claude marketplace listing
-|-- skills/                                # Claude plugin skills
+|-- skills/                                # Legacy Claude-oriented skills and migration reference
 |   |-- setup/
 |   |-- help/
 |   |-- health/
 |   |-- ask/
 |   +-- tutorial/
 |-- skill-sources/                         # Generated vault skill templates
-|-- hooks/                                 # Claude hook configuration and scripts
+|-- hooks/                                 # Legacy Claude hook configuration and scripts
 |-- generators/                            # CLAUDE.md and feature generation sources
 |-- methodology/                           # Research claims and methodology notes
 |-- reference/                             # Core references and templates
@@ -358,7 +327,11 @@ The Codex setup path generates `AGENTS.md` only. It preserves any existing
 `arscontexta-session capture` when you want Codex to perform the session-rhythm
 work that Claude hooks automate.
 
-## Claude Commands
+## Legacy Claude Commands
+
+Claude plugin packaging has been retired from this repo. The command list below
+is kept as migration reference until each workflow is available through
+`plugins/arscontexta/` or explicitly removed.
 
 Plugin-level Claude commands:
 
@@ -460,7 +433,7 @@ MCP is unavailable.
 
 | Work | Status |
 |------|--------|
-| Preserve Claude Code plugin | Done |
+| Retire Claude Code plugin packaging | Done |
 | Add Codex marketplace and plugin scaffold | Done |
 | Port `arscontexta-health` to Codex | Done |
 | Port `arscontexta-help` to Codex | Done |
