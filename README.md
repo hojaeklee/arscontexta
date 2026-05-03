@@ -177,17 +177,15 @@ arscontexta/
 |       |-- arscontexta-help/SKILL.md
 |       |-- arscontexta-health/SKILL.md
 |       +-- arscontexta-setup/SKILL.md
-|-- .codex-plugin/plugin.json              # Root Codex manifest for development/reference
 |-- .claude-plugin/
 |   |-- plugin.json                        # Claude plugin manifest
 |   +-- marketplace.json                   # Claude marketplace listing
-|-- skills/                                # Claude plugin skills plus Codex-port candidates
+|-- skills/                                # Claude plugin skills
 |   |-- setup/
 |   |-- help/
 |   |-- health/
-|   |-- arscontexta-help/
-|   |-- arscontexta-health/
-|   +-- arscontexta-setup/
+|   |-- ask/
+|   +-- tutorial/
 |-- skill-sources/                         # Generated vault skill templates
 |-- hooks/                                 # Claude hook configuration and scripts
 |-- generators/                            # CLAUDE.md and feature generation sources
@@ -199,9 +197,8 @@ arscontexta/
 +-- README.md
 ```
 
-The installable Codex package currently duplicates a small manifest and skill
-under `plugins/arscontexta/` because Codex local marketplaces expect the
-conventional `plugins/<name>` layout.
+The installable Codex package lives under `plugins/arscontexta/` because Codex
+local marketplaces expect the conventional `plugins/<name>` layout.
 
 ## Maintainer Workflow
 
@@ -250,20 +247,13 @@ Then merge or cherry-pick deliberately. Do not assume upstream is maintained.
 
 ### Updating The Codex Plugin
 
-For now, keep the Codex install package and root development files in sync when
-editing plugin metadata or the first skill:
+For Codex, treat the installable package as the source of truth. Edit plugin
+metadata and Codex-native skills under:
 
 ```text
-.codex-plugin/plugin.json
 plugins/arscontexta/.codex-plugin/plugin.json
-skills/arscontexta-health/SKILL.md
-skills/arscontexta-help/SKILL.md
-skills/arscontexta-setup/SKILL.md
-skills/arscontexta-session/SKILL.md
-plugins/arscontexta/skills/arscontexta-health/SKILL.md
-plugins/arscontexta/skills/arscontexta-help/SKILL.md
-plugins/arscontexta/skills/arscontexta-setup/SKILL.md
-plugins/arscontexta/skills/arscontexta-session/SKILL.md
+plugins/arscontexta/skills/<skill-name>/SKILL.md
+plugins/arscontexta/scripts/
 ```
 
 After editing:

@@ -89,7 +89,7 @@ classify_path() {
     ops/queue/*|ops/health/*|ops/sessions/*|ops/session*|ops/observations/*|ops/tensions/*|ops/logs/*|ops/archive/*)
       printf 'operational'
       ;;
-    AGENTS.md|CLAUDE.md|README.md|SKILL.md|templates/*|reference/*|platforms/*|generators/*|hooks/*|skills/*|skill-sources/*|plugins/*|presets/*|agents/*|codex-skills/*)
+    AGENTS.md|CLAUDE.md|README.md|SKILL.md|templates/*|reference/*|platforms/*|generators/*|hooks/*|skills/*|skill-sources/*|plugins/*|presets/*|agents/*)
       printf 'noise'
       ;;
     *)
@@ -145,7 +145,7 @@ if command -v rg >/dev/null 2>&1; then
       if (rel ~ /^ops\/(queue|health|sessions|observations|tensions|logs|archive)\//) return "operational"
       if (rel ~ /^ops\/session/) return "operational"
       if (rel ~ /^(AGENTS\.md|CLAUDE\.md|README\.md|SKILL\.md)$/) return "noise"
-      if (rel ~ /^(templates|reference|platforms|generators|hooks|skills|skill-sources|plugins|presets|agents|codex-skills)\//) return "noise"
+      if (rel ~ /^(templates|reference|platforms|generators|hooks|skills|skill-sources|plugins|presets|agents)\//) return "noise"
       return "noise"
     }
     {
