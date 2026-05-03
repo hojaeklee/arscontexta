@@ -35,7 +35,15 @@ cleanup() {
 trap cleanup EXIT
 
 vault="$tmp_dir/vault"
-mkdir -p "$vault/notes/a" "$vault/notes/b" "$vault/ops"
+mkdir -p \
+  "$vault/notes/a" \
+  "$vault/notes/b" \
+  "$vault/archive" \
+  "$vault/imported" \
+  "$vault/attachments" \
+  "$vault/ops/cache" \
+  "$vault/ops/health" \
+  "$vault/ops/sessions"
 
 cat > "$vault/notes/a/duplicate.md" <<'EOF'
 ---
@@ -76,10 +84,22 @@ type: claim
 This file should produce a parse warning without aborting the scan.
 EOF
 
+for ignored_rel in \
+  archive/old.md \
+  imported/source.md \
+  attachments/file.md \
+  ops/cache/generated.md \
+  ops/health/report.md \
+  ops/sessions/session.md
+do
+  printf '# Ignored\n\nThis file should not be indexed.\n' > "$vault/$ignored_rel"
+done
+
 first_output="$("$INDEX" build "$vault")"
 assert_contains "$first_output" "scanned: 3"
 assert_contains "$first_output" "skipped: 0"
 assert_contains "$first_output" "deleted: 0"
+assert_contains "$first_output" "ignored: 6"
 assert_contains "$first_output" "warnings: 1"
 assert_file "$vault/ops/cache/index.sqlite"
 
@@ -87,9 +107,13 @@ second_output="$("$INDEX" build "$vault")"
 assert_contains "$second_output" "scanned: 0"
 assert_contains "$second_output" "skipped: 3"
 assert_contains "$second_output" "deleted: 0"
+assert_contains "$second_output" "ignored: 6"
 
 status_json="$("$INDEX" status "$vault" --format json)"
 assert_contains "$status_json" '"indexed_notes": 3'
+assert_contains "$status_json" '"ignored_files": 6'
+assert_contains "$status_json" '"ignored_include_miss": 0'
+assert_contains "$status_json" '"ignored_exclude_match": 6'
 assert_contains "$status_json" '"warnings": 1'
 assert_contains "$status_json" '"duplicate_basenames": 1'
 
@@ -107,5 +131,53 @@ assert_contains "$delete_output" "deleted: 1"
 after_delete_json="$("$INDEX" export "$vault" --format json)"
 assert_not_contains "$after_delete_json" '"path": "notes/a/duplicate.md"'
 assert_contains "$after_delete_json" '"path": "notes/b/duplicate.md"'
+
+include_vault="$tmp_dir/include-vault"
+mkdir -p "$include_vault/research" "$include_vault/notes"
+cat > "$include_vault/ops-config-placeholder" <<'EOF'
+placeholder
+EOF
+mkdir -p "$include_vault/ops"
+cat > "$include_vault/ops/config.yaml" <<'EOF'
+scan:
+  include:
+    - research/**
+  exclude: []
+EOF
+printf '# Included\n' > "$include_vault/research/keep.md"
+printf '# Include miss\n' > "$include_vault/notes/skip.md"
+
+include_output="$("$INDEX" build "$include_vault")"
+assert_contains "$include_output" "scanned: 1"
+assert_contains "$include_output" "ignored: 1"
+include_json="$("$INDEX" status "$include_vault" --format json)"
+assert_contains "$include_json" '"indexed_notes": 1'
+assert_contains "$include_json" '"ignored_include_miss": 1'
+assert_contains "$include_json" '"ignored_exclude_match": 0'
+include_export="$("$INDEX" export "$include_vault" --format json)"
+assert_contains "$include_export" '"path": "research/keep.md"'
+assert_not_contains "$include_export" '"path": "notes/skip.md"'
+
+override_vault="$tmp_dir/override-vault"
+mkdir -p "$override_vault/notes/private" "$override_vault/ops"
+cat > "$override_vault/ops/config.yaml" <<'EOF'
+scan:
+  include:
+    - notes/**
+  exclude:
+    - notes/private/**
+EOF
+printf '# Public\n' > "$override_vault/notes/public.md"
+printf '# Private\n' > "$override_vault/notes/private/secret.md"
+
+override_output="$("$INDEX" build "$override_vault")"
+assert_contains "$override_output" "scanned: 1"
+assert_contains "$override_output" "ignored: 1"
+override_json="$("$INDEX" status "$override_vault" --format json)"
+assert_contains "$override_json" '"ignored_include_miss": 0'
+assert_contains "$override_json" '"ignored_exclude_match": 1'
+override_export="$("$INDEX" export "$override_vault" --format json)"
+assert_contains "$override_export" '"path": "notes/public.md"'
+assert_not_contains "$override_export" '"path": "notes/private/secret.md"'
 
 printf 'PASS: vault-index checks\n'

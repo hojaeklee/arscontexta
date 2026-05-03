@@ -23,12 +23,14 @@ plugins/arscontexta/scripts/vault-index.sh export . --format json
    - "show index status", "is the index fresh", or "VaultIndex status" -> run `status --format text`, unless JSON is requested.
    - "export the index" or "show index JSON" -> run `export --format json`.
 4. After `build`, mention that the index is stored at `ops/cache/index.sqlite`.
-5. If the vault is tracked in git, recommend ignoring `ops/cache/`.
+5. Mention ignored-file counts when present; scan rules come from the user-editable `ops/config.yaml` `scan:` section.
+6. If the vault is tracked in git, recommend ignoring `ops/cache/`.
 
 ## Safety
 
 - `build` writes only `ops/cache/index.sqlite`.
 - `status` and `export` are read-only.
+- Scan rules only decide which markdown files are analyzed; ignored files are never deleted.
 - Do not migrate or rewrite stats, graph, health, validate, notes, links, queues, or task state.
 - Do not edit a vault `.gitignore` unless the user explicitly asks.
 

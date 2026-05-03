@@ -6,7 +6,7 @@ Ars Contexta helps Codex maintain a durable thinking system: plain markdown
 notes, wiki links, processing queues, operational memory, and
 Obsidian-friendly navigation.
 
-**v0.8.5** | Codex-only local plugin | MIT
+**v0.11.0** | Codex-only local plugin | MIT
 
 Codex is the only supported Ars Contexta distribution in this repo.
 Claude Code support, hooks, slash commands, and legacy generated skill templates have been removed.
@@ -202,6 +202,40 @@ Run an Ars Contexta health check on this vault.
 The setup path reads bundled plugin presets and generator templates, then
 generates `AGENTS.md`, `.arscontexta`, core folders, starter manual pages,
 templates, starter notes, and operational config.
+
+## Vault Configuration
+
+`ops/config.yaml` is the vault-local configuration contract. Setup generates
+safe defaults, and users may edit it when the live vault shape changes.
+
+The `scan:` section controls which markdown files deterministic helpers treat
+as active vault content. Include rules define the candidate file set, and
+exclude rules win when both match. This keeps imported sources, archives,
+attachments, generated reports, cache files, and old operational history from
+polluting index, status, and later large-vault command output.
+
+```yaml
+scan:
+  include:
+    - notes/**
+    - self/**
+    - manual/**
+    - inbox/**
+    - ops/derivation.md
+    - ops/derivation-manifest.md
+  exclude:
+    - archive/**
+    - imported/**
+    - attachments/**
+    - ops/cache/**
+    - ops/health/**
+    - ops/sessions/**
+    - ops/queue/archive/**
+```
+
+`arscontexta-index` reports ignored-file counts after a build and in status
+output. If expected notes are missing from the index, inspect `scan.include`
+and `scan.exclude` first.
 
 ## Three-Space Architecture
 

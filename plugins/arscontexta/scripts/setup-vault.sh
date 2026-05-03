@@ -316,6 +316,22 @@ write_file() {
           printf 'extraction_categories: []\n'
         fi
         printf '%s\n' \
+          "scan:" \
+          "  include:" \
+          "    - notes/**" \
+          "    - self/**" \
+          "    - manual/**" \
+          "    - inbox/**" \
+          "    - ops/derivation.md" \
+          "    - ops/derivation-manifest.md" \
+          "  exclude:" \
+          "    - archive/**" \
+          "    - imported/**" \
+          "    - attachments/**" \
+          "    - ops/cache/**" \
+          "    - ops/health/**" \
+          "    - ops/sessions/**" \
+          "    - ops/queue/archive/**" \
           "automation:" \
           "  session_workflow: arscontexta-session" \
           "  explicit_user_confirmation: true" \

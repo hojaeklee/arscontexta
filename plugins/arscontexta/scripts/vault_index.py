@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import fnmatch
 import hashlib
 import json
 import os
@@ -18,6 +19,23 @@ from typing import Any
 SCHEMA_VERSION = "1"
 INDEX_REL = Path("ops/cache/index.sqlite")
 IGNORED_DIRS = {".git", ".obsidian", "node_modules"}
+DEFAULT_SCAN_INCLUDE = [
+    "notes/**",
+    "self/**",
+    "manual/**",
+    "inbox/**",
+    "ops/derivation.md",
+    "ops/derivation-manifest.md",
+]
+DEFAULT_SCAN_EXCLUDE = [
+    "archive/**",
+    "imported/**",
+    "attachments/**",
+    "ops/cache/**",
+    "ops/health/**",
+    "ops/sessions/**",
+    "ops/queue/archive/**",
+]
 WIKI_RE = re.compile(r"\[\[([^\]]+)\]\]")
 HEADING_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 
@@ -84,6 +102,23 @@ class ParsedNote:
     warnings: list[str]
 
 
+@dataclass(frozen=True)
+class ScanRules:
+    include: list[str]
+    exclude: list[str]
+
+
+@dataclass(frozen=True)
+class ScanResult:
+    files: list[Path]
+    ignored_include_miss: int
+    ignored_exclude_match: int
+
+    @property
+    def ignored(self) -> int:
+        return self.ignored_include_miss + self.ignored_exclude_match
+
+
 def utc_now() -> str:
     return dt.datetime.now(dt.timezone.utc).isoformat()
 
@@ -92,14 +127,137 @@ def json_dumps(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True)
 
 
-def markdown_files(vault: Path) -> list[Path]:
+def strip_yaml_comment(line: str) -> str:
+    in_single = False
+    in_double = False
+    for idx, char in enumerate(line):
+        if char == "'" and not in_double:
+            in_single = not in_single
+        elif char == '"' and not in_single:
+            in_double = not in_double
+        elif char == "#" and not in_single and not in_double:
+            return line[:idx]
+    return line
+
+
+def parse_yaml_scalar(value: str) -> str:
+    value = value.strip()
+    if (value.startswith('"') and value.endswith('"')) or (
+        value.startswith("'") and value.endswith("'")
+    ):
+        return value[1:-1]
+    return value
+
+
+def parse_inline_yaml_list(value: str) -> list[str] | None:
+    value = value.strip()
+    if value == "[]":
+        return []
+    if not (value.startswith("[") and value.endswith("]")):
+        return None
+    inner = value[1:-1].strip()
+    if not inner:
+        return []
+    return [parse_yaml_scalar(item.strip()) for item in inner.split(",") if item.strip()]
+
+
+def load_scan_rules(vault: Path) -> ScanRules:
+    include: list[str] | None = None
+    exclude: list[str] | None = None
+    config = vault / "ops/config.yaml"
+    if not config.is_file():
+        return ScanRules(DEFAULT_SCAN_INCLUDE.copy(), DEFAULT_SCAN_EXCLUDE.copy())
+
+    current_key = ""
+    in_scan = False
+    for raw_line in config.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = strip_yaml_comment(raw_line).rstrip()
+        if not line.strip():
+            continue
+        indent = len(line) - len(line.lstrip(" "))
+        stripped = line.strip()
+
+        if indent == 0:
+            in_scan = stripped == "scan:"
+            current_key = ""
+            continue
+        if not in_scan:
+            continue
+        if indent <= 2 and stripped.endswith(":"):
+            key = stripped[:-1].strip()
+            if key in {"include", "exclude"}:
+                current_key = key
+                if key == "include" and include is None:
+                    include = []
+                if key == "exclude" and exclude is None:
+                    exclude = []
+            else:
+                current_key = ""
+            continue
+        if indent <= 2 and ":" in stripped:
+            key, raw_value = stripped.split(":", 1)
+            key = key.strip()
+            parsed = parse_inline_yaml_list(raw_value)
+            if key == "include" and parsed is not None:
+                include = parsed
+                current_key = ""
+            elif key == "exclude" and parsed is not None:
+                exclude = parsed
+                current_key = ""
+            else:
+                current_key = ""
+            continue
+        if indent >= 4 and stripped.startswith("- ") and current_key in {"include", "exclude"}:
+            value = parse_yaml_scalar(stripped[2:].strip())
+            if current_key == "include":
+                include = [] if include is None else include
+                include.append(value)
+            else:
+                exclude = [] if exclude is None else exclude
+                exclude.append(value)
+
+    return ScanRules(
+        DEFAULT_SCAN_INCLUDE.copy() if include is None else include,
+        DEFAULT_SCAN_EXCLUDE.copy() if exclude is None else exclude,
+    )
+
+
+def pattern_matches(pattern: str, rel: str) -> bool:
+    pattern = pattern.strip().lstrip("/")
+    if not pattern:
+        return False
+    if pattern.endswith("/**"):
+        prefix = pattern[:-3].rstrip("/")
+        return rel == prefix or rel.startswith(f"{prefix}/")
+    return fnmatch.fnmatchcase(rel, pattern)
+
+
+def matches_any(patterns: list[str], rel: str) -> bool:
+    return any(pattern_matches(pattern, rel) for pattern in patterns)
+
+
+def scan_markdown_files(vault: Path) -> ScanResult:
+    rules = load_scan_rules(vault)
     files: list[Path] = []
+    ignored_include_miss = 0
+    ignored_exclude_match = 0
     for root, dirs, names in os.walk(vault):
         dirs[:] = [name for name in dirs if name not in IGNORED_DIRS]
         for name in names:
             if name.endswith(".md"):
-                files.append(Path(root) / name)
-    return sorted(files)
+                path = Path(root) / name
+                rel = rel_id(path, vault)
+                if matches_any(rules.exclude, rel):
+                    ignored_exclude_match += 1
+                elif not matches_any(rules.include, rel):
+                    ignored_include_miss += 1
+                else:
+                    files.append(path)
+    return ScanResult(
+        files=sorted(files),
+        ignored_include_miss=ignored_include_miss,
+        ignored_exclude_match=ignored_exclude_match,
+    )
 
 
 def rel_id(path: Path, vault: Path) -> str:
@@ -211,9 +369,19 @@ class VaultIndex:
         )
 
     def build(self) -> dict[str, Any]:
-        files = markdown_files(self.vault)
+        scan = scan_markdown_files(self.vault)
+        files = scan.files
         current = {rel_id(path, self.vault): path for path in files}
-        summary = {"scanned": 0, "skipped": 0, "deleted": 0, "warnings": 0, "index": str(self.index_path)}
+        summary = {
+            "scanned": 0,
+            "skipped": 0,
+            "deleted": 0,
+            "ignored": scan.ignored,
+            "ignored_include_miss": scan.ignored_include_miss,
+            "ignored_exclude_match": scan.ignored_exclude_match,
+            "warnings": 0,
+            "index": str(self.index_path),
+        }
         with self.connect() as conn:
             known = {
                 row["path"]: row
@@ -241,6 +409,10 @@ class VaultIndex:
                 summary["scanned"] += 1
                 summary["warnings"] += len(note.warnings)
             conn.execute("INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)", ("last_build_at", utc_now()))
+            conn.execute(
+                "INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)",
+                ("last_build_summary_json", json_dumps(summary)),
+            )
         return summary
 
     def parse_note(self, path: Path, rel: str, stat: os.stat_result) -> ParsedNote:
@@ -310,10 +482,27 @@ class VaultIndex:
                 "SELECT COUNT(*) AS count FROM (SELECT basename FROM notes GROUP BY basename HAVING COUNT(*) > 1)"
             ).fetchone()["count"]
             last_build = conn.execute("SELECT value FROM meta WHERE key = 'last_build_at'").fetchone()
+            last_summary = conn.execute(
+                "SELECT value FROM meta WHERE key = 'last_build_summary_json'"
+            ).fetchone()
+        ignored = 0
+        ignored_include_miss = 0
+        ignored_exclude_match = 0
+        if last_summary:
+            try:
+                summary = json.loads(last_summary["value"])
+                ignored = int(summary.get("ignored", 0))
+                ignored_include_miss = int(summary.get("ignored_include_miss", 0))
+                ignored_exclude_match = int(summary.get("ignored_exclude_match", 0))
+            except (TypeError, ValueError, json.JSONDecodeError):
+                pass
         return {
             "vault": str(self.vault),
             "index": str(self.index_path),
             "indexed_notes": indexed,
+            "ignored_files": ignored,
+            "ignored_include_miss": ignored_include_miss,
+            "ignored_exclude_match": ignored_exclude_match,
             "links": links,
             "warnings": warnings,
             "duplicate_basenames": duplicate_basenames,
@@ -356,6 +545,7 @@ def print_payload(payload: dict[str, Any], fmt: str) -> None:
         print(f"scanned: {payload['scanned']}")
         print(f"skipped: {payload['skipped']}")
         print(f"deleted: {payload['deleted']}")
+        print(f"ignored: {payload.get('ignored', 0)}")
         print(f"warnings: {payload['warnings']}")
         print(f"index: {payload['index']}")
         return

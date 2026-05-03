@@ -75,6 +75,11 @@ for preset in research personal experimental; do
   assert_contains "$vault/AGENTS.md" "no hidden background automation"
   assert_contains "$vault/ops/config.yaml" "vocabulary:"
   assert_contains "$vault/ops/config.yaml" "extraction_categories:"
+  assert_contains "$vault/ops/config.yaml" "scan:"
+  assert_contains "$vault/ops/config.yaml" "  include:"
+  assert_contains "$vault/ops/config.yaml" "  exclude:"
+  assert_contains "$vault/ops/config.yaml" "    - notes/**"
+  assert_contains "$vault/ops/config.yaml" "    - ops/cache/**"
 
   "$CHECK_VAULT" "$vault" >/dev/null
   "$HEALTH_SCRIPT" "$vault" --mode quick --limit 5 --format json >/dev/null

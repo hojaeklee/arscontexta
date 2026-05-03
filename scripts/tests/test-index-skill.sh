@@ -34,6 +34,8 @@ assert_contains "$skill_text" "status"
 assert_contains "$skill_text" "export"
 assert_contains "$skill_text" "ops/cache/index.sqlite"
 assert_contains "$skill_text" "ops/cache/"
+assert_contains "$skill_text" "scan rules"
+assert_contains "$skill_text" "ignored"
 assert_not_contains "$skill_text" "vault_index.py"
 
 printf 'PASS: index skill checks\n'

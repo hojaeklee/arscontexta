@@ -69,6 +69,7 @@ Recommend one next action:
 ### Ars Contexta Vault
 
 Explain that the directory is an Ars Contexta vault: markdown notes, wiki links, `ops/` state, and optional `self/` memory.
+Mention that `ops/config.yaml` is the user-editable vault configuration surface for folders, vocabulary, workflows, and scan rules; it is not hidden internal state.
 
 Available now in Codex:
 
