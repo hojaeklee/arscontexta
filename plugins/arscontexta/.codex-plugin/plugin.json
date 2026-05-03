@@ -3,11 +3,11 @@
   "version": "0.8.1",
   "description": "Agent-native knowledge-system architecture and Obsidian vault workflows for Codex.",
   "author": {
-    "name": "Heinrich",
-    "email": "arscontexta@proton.me",
-    "url": "https://arscontexta.org"
+    "name": "Hojae Lee",
+    "email": "43919952+hojaeklee@users.noreply.github.com",
+    "url": "https://github.com/hojaeklee"
   },
-  "homepage": "https://arscontexta.org",
+  "homepage": "https://github.com/hojaeklee/arscontexta",
   "repository": "https://github.com/hojaeklee/arscontexta",
   "license": "MIT",
   "keywords": [
@@ -23,14 +23,14 @@
     "displayName": "Ars Contexta",
     "shortDescription": "Operate and maintain an agent-native Obsidian knowledge system.",
     "longDescription": "Ars Contexta provides Codex skills for deriving, maintaining, querying, and evolving a local markdown knowledge graph, with Obsidian-friendly conventions and agent-native workflows.",
-    "developerName": "Heinrich",
+    "developerName": "Hojae Lee",
     "category": "Productivity",
     "capabilities": [
       "Read",
       "Write",
       "Interactive"
     ],
-    "websiteURL": "https://arscontexta.org",
+    "websiteURL": "https://github.com/hojaeklee/arscontexta",
     "defaultPrompt": [
       "Run an Ars Contexta health check.",
       "Set up Ars Contexta for my vault.",
