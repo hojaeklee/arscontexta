@@ -49,6 +49,7 @@ Available now:
 - `arscontexta-upgrade`: advisory generated-skill upgrade analysis against current methodology.
 - `arscontexta-add-domain`: previewed composition of a new domain into an existing vault.
 - `arscontexta-seed`: deterministic queue seeding for inbox or local source files.
+- `arscontexta-ralph`: dry-run and run explicit queue phases with Codex subagent boundaries.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -92,6 +93,7 @@ Available now in Codex:
 - Run `arscontexta-upgrade` to compare generated vault skills against current methodology.
 - Run `arscontexta-add-domain` to derive and preview a new domain addition.
 - Run `arscontexta-seed` to add an inbox or local source file to the processing queue.
+- Run `arscontexta-ralph` to dry-run or process pending queue phases explicitly.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
