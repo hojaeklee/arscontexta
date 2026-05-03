@@ -355,7 +355,7 @@ class VaultIndex:
         conn = sqlite3.connect(self.index_path)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
-        self.ensure_schema(conn)
+        self.force_rescan = self.ensure_schema(conn)
         return conn
 
     def connect_readonly(self) -> sqlite3.Connection:
@@ -366,15 +366,17 @@ class VaultIndex:
         conn.execute("PRAGMA foreign_keys = ON")
         return conn
 
-    def ensure_schema(self, conn: sqlite3.Connection) -> None:
+    def ensure_schema(self, conn: sqlite3.Connection) -> bool:
+        links_invalidated = False
         if self.links_table_needs_rebuild(conn):
             conn.execute("DROP TABLE links")
-            self.force_rescan = True
+            links_invalidated = True
         conn.executescript(SCHEMA_SQL)
         conn.execute(
             "INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)",
             ("schema_version", SCHEMA_VERSION),
         )
+        return links_invalidated
 
     def links_table_needs_rebuild(self, conn: sqlite3.Connection) -> bool:
         existing = conn.execute(

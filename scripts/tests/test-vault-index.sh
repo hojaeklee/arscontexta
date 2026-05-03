@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-INDEX="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh"
+INDEX="${ARS_CONTEXTA_INDEX:-$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh}"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -181,5 +181,52 @@ assert_contains "$override_json" '"ignored_exclude_match": 1'
 override_export="$("$INDEX" export "$override_vault" --format json)"
 assert_contains "$override_export" '"path": "notes/public.md"'
 assert_not_contains "$override_export" '"path": "notes/private/secret.md"'
+
+migrate_vault="$tmp_dir/migrate-vault"
+mkdir -p "$migrate_vault/notes" "$migrate_vault/ops/cache"
+cat > "$migrate_vault/notes/alpha.md" <<'EOF'
+---
+description: Alpha claim
+type: claim
+---
+
+# Alpha
+
+Links to [[Beta]] and [[Gamma]].
+EOF
+
+cat > "$migrate_vault/notes/beta.md" <<'EOF'
+---
+description: Beta claim
+type: claim
+---
+
+# Beta
+
+Links back to [[Alpha]].
+EOF
+
+migrate_initial="$("$INDEX" build "$migrate_vault")"
+assert_contains "$migrate_initial" "scanned: 2"
+assert_contains "$migrate_initial" "skipped: 0"
+
+sqlite3 "$migrate_vault/ops/cache/index.sqlite" <<'SQL'
+DROP TABLE links;
+CREATE TABLE links (
+  source_path TEXT NOT NULL,
+  target TEXT NOT NULL,
+  raw TEXT NOT NULL,
+  PRIMARY KEY (source_path, target, raw),
+  FOREIGN KEY (source_path) REFERENCES notes(path) ON DELETE CASCADE
+);
+INSERT OR REPLACE INTO meta(key, value) VALUES ('schema_version', '1');
+SQL
+
+migrate_rebuild="$("$INDEX" build "$migrate_vault")"
+assert_contains "$migrate_rebuild" "scanned: 2"
+assert_contains "$migrate_rebuild" "skipped: 0"
+migrate_status="$("$INDEX" status "$migrate_vault" --format json)"
+assert_contains "$migrate_status" '"indexed_notes": 2'
+assert_contains "$migrate_status" '"links": 3'
 
 printf 'PASS: vault-index checks\n'
