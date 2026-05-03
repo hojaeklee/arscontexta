@@ -53,7 +53,7 @@ assert_contains "$SKILL" "topics"
 assert_contains "$SKILL" "arscontexta-validate"
 assert_contains "$SKILL" 'Do not automatically mutate `ops/queue/*`'
 assert_contains "$SKILL" 'Do not create `ops/observations/` or `ops/tensions/` side-effect files'
-assert_contains "$SKILL" "Do not assume Claude slash-command invocation"
+assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__qmd__"
 assert_not_contains "$SKILL" "/reduce"

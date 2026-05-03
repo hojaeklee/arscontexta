@@ -51,7 +51,7 @@ assert_contains "$SKILL" "arscontexta-reduce"
 assert_contains "$SKILL" "arscontexta-reflect"
 assert_contains "$SKILL" "arscontexta-reweave"
 assert_contains "$SKILL" "arscontexta-verify"
-assert_contains "$SKILL" "Do not assume Claude slash-command invocation"
+assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"
 

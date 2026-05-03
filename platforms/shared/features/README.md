@@ -1,6 +1,8 @@
 # shared/features/ -- Canonical Feature Blocks
 
-The 16 canonical feature blocks live at `generators/features/`. They are composable context file fragments that the derivation engine selects, transforms with domain vocabulary, and composes into a coherent system document.
+The legacy feature blocks live at `generators/features/`. They are composable
+context file fragments retained as migration reference for future Codex-native
+workflow design.
 
 This directory does not duplicate those files. It exists to document the shared feature layer from a distribution perspective.
 
@@ -67,4 +69,4 @@ Each block has a defined layer, dependencies, and platform requirements:
 | 15 | `helper-functions.md` | Automation | None |
 | 16 | `graph-analysis.md` | Automation | wiki-links, schema |
 
-Feature blocks are platform-agnostic. They are composed into the Claude Code context file format (CLAUDE.md).
+Feature blocks are platform-agnostic migration reference material.

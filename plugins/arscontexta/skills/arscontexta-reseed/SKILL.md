@@ -56,4 +56,4 @@ Analyze whether an existing vault needs principled re-derivation rather than inc
 
 - Require explicit approval before restructuring, folder moves, template edits, derivation rewrites, MOC changes, self-space updates, or broad note edits.
 - Do not automatically apply the re-derived architecture, mutate `ops/queue/*`, regenerate skills, rewrite vault content, or run destructive migrations in this first Codex port.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

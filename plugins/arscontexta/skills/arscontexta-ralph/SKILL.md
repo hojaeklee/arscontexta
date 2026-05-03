@@ -70,4 +70,4 @@ Report:
 - Ralph does not mutate queue state invisibly.
 - Ralph does not replace `arscontexta-pipeline`; it is the explicit queue worker that pipeline may call later.
 - Do not process non-pending tasks.
-- Do not assume Claude slash-command invocation, Claude-only tools, or generated slash-command behavior. Use Codex file workflows, local inspection, explicit user intent, and bounded subagent orchestration.
+- Use Codex file workflows, local inspection, explicit user intent, and bounded subagent orchestration.

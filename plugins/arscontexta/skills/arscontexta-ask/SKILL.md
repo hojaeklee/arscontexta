@@ -27,7 +27,7 @@ In the plugin repo, search these first:
 - `reference/`
 - `methodology/`
 - `README.md`
-- relevant `skills/`, `skill-sources/`, or `plugins/arscontexta/skills/` docs
+- relevant `plugins/arscontexta/skills/` docs
 
 In an Ars Contexta vault, search these first when present:
 
@@ -37,7 +37,7 @@ In an Ars Contexta vault, search these first when present:
 - `self/`
 - relevant markdown notes under the configured notes directory
 
-Optional QMD, semantic search, or MCP knowledge tools may be used only when already available. Never require them and never present Claude slash-command tools as Codex requirements.
+Optional QMD, semantic search, or indexed knowledge tools may be used only when already available. Never require them and never present unavailable external tools as Codex requirements.
 
 ## Answer Shape
 
@@ -52,4 +52,4 @@ Optional QMD, semantic search, or MCP knowledge tools may be used only when alre
 
 - Do not produce full architecture recommendation reports; use `arscontexta-recommend` when that port exists.
 - Do not validate or mutate notes; use `arscontexta-validate`, `arscontexta-health`, or explicit editing tasks for those.
-- Do not assume Claude slash-command invocation; use Codex skill language instead.
+- Use Codex skill language and explicit user intent.

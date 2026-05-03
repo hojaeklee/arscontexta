@@ -168,9 +168,9 @@ write_file() {
         "- \`arscontexta-setup\`: create or complete minimal Codex vault scaffolding." \
         "- \`arscontexta-session\`: orient, validate recent writes, and capture session handoffs explicitly." \
         "" \
-        "## Current Limits" \
+        "## Operating Model" \
         "" \
-        "This Codex setup creates a minimal usable vault. Full setup parity, query skills, processing pipeline skills, and background hooks are still being ported." \
+        "This Codex setup creates a usable vault with explicit session workflows, deterministic helper scripts, and no hidden background automation." \
         "" \
         "## Next Action" \
         "" \
@@ -195,15 +195,15 @@ write_file() {
         "- Preset: $preset" \
         "- Platform: Codex" \
         "- Context file: AGENTS.md" \
-        "- Claude hooks: not installed" \
+        "- Session workflow: arscontexta-session" \
         "" \
         "## Migration Notes" \
         "" \
         "Existing markdown files, if any, were left in place. This setup adds Ars Contexta scaffolding around the workspace without moving user content." \
         "" \
-        "## Current Limits" \
+        "## Operating Model" \
         "" \
-        "This is not full Claude setup parity. Runtime processing skills and advanced derivation remain migration work." \
+        "Codex works through explicit user intent, local file reads, and approved writes. Background automation is not required." \
         > "$path"
       ;;
     ops/derivation-manifest.md)
@@ -217,7 +217,6 @@ write_file() {
         "platform:" \
         "  primary: codex" \
         "  context_file: AGENTS.md" \
-        "  claude_hooks: false" \
         "vocabulary:" \
         "  notes: notes" \
         "  inbox: inbox" \
@@ -242,12 +241,11 @@ write_file() {
         "inbox_dir: inbox" \
         "archive_dir: archive" \
         "automation:" \
-        "  claude_hooks: false" \
-        "  codex_background_hooks: false" \
-        "  codex_session_workflow: arscontexta-session" \
+        "  session_workflow: arscontexta-session" \
+        "  explicit_user_confirmation: true" \
         "processing:" \
-        "  mode: minimal" \
-        "  pipeline_skills: planned" \
+        "  mode: explicit" \
+        "  pipeline_skill: arscontexta-pipeline" \
         "maintenance:" \
         "  health_skill: arscontexta-health" \
         > "$path"
@@ -374,9 +372,9 @@ write_file() {
         "- \`arscontexta-help\` -- orient to the vault and choose the next action." \
         "- \`arscontexta-health\` -- run bounded read-only diagnostics." \
         "- \`arscontexta-setup\` -- create or complete minimal vault scaffolding." \
-        "- \`arscontexta-session\` -- replace Claude hooks with explicit orient, validate, and capture workflows." \
+        "- \`arscontexta-session\` -- run explicit orient, validate, and capture workflows." \
         "" \
-        "Planned migration work includes query, recommendation, processing, and evolution skills." \
+        "Use the installed Ars Contexta plugin for query, processing, maintenance, and evolution workflows." \
         > "$path"
       ;;
     ops/methodology/methodology.md)
@@ -407,7 +405,7 @@ write_file() {
         "" \
         "# derivation rationale for $domain" \
         "" \
-        "The vault starts with a minimal Codex-native configuration so it can be inspected and maintained immediately without relying on Claude Code hooks." \
+        "The vault starts with a minimal Codex-native configuration so it can be inspected and maintained immediately without background hooks." \
         "" \
         "Preset \`$preset\` supplies initial vocabulary and starter maps. Full derivation parity remains future migration work." \
         > "$path"

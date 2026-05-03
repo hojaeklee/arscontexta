@@ -43,4 +43,4 @@ When writing is approved:
 
 - Do not automatically mutate `ops/queue/*`, create Ralph handoff tasks, or perform pipeline handoff behavior.
 - Do not create `ops/observations/` or `ops/tensions/` side-effect files unless the user separately asks.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

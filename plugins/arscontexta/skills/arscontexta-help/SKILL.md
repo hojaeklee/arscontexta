@@ -5,7 +5,7 @@ description: Use when the user asks what Ars Contexta can do, how to use this va
 
 # Ars Contexta Help
 
-Give concise, context-aware guidance for Ars Contexta in Codex. Explain what is available now, what is still being ported, and the single most useful next action.
+Give concise, context-aware guidance for Ars Contexta in Codex. Explain what is available now and the single most useful next action.
 
 ## When Invoked
 
@@ -21,7 +21,7 @@ Give concise, context-aware guidance for Ars Contexta in Codex. Explain what is 
 
 ### Plugin Repo
 
-Explain that this is the Ars Contexta plugin source, with Claude support preserved and Codex support being ported incrementally.
+Explain that this is the Ars Contexta Codex plugin source. `plugins/arscontexta/` is the source of truth for installable skills and bundled helper scripts.
 
 Available now:
 
@@ -56,18 +56,11 @@ Available now:
 - `arscontexta-learn`: opt-in research capture with provenance and pipeline handoff.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
-Planned or in migration:
-
-- full setup and derivation parity
-- ask and recommendation workflows
-- processing pipeline skills
-- maintenance and evolution skills beyond health
-
 Recommend one next action:
 
 - Run `scripts/check-codex-plugin.sh` after plugin edits or Codex updates.
 - Run `scripts/check-vault.sh <vault-path>` before testing against a real vault.
-- Continue the next GitHub migration issue if the repo checks are clean.
+- Use `plugins/arscontexta/skills/` when editing installable skill behavior.
 
 ### Ars Contexta Vault
 
@@ -104,13 +97,6 @@ Available now in Codex:
 - Run `arscontexta-learn` to capture research with explicit provenance before queueing it.
 - Use the manual if `manual/` exists.
 
-Planned or in migration:
-
-- full setup parity
-- query and recommendation skills
-- reduce, reflect, reweave, verify, and pipeline skills
-- richer maintenance and evolution skills
-
 Recommend one next action:
 
 - If the user asks "what should I do next", suggest running `arscontexta-health`.
@@ -124,7 +110,7 @@ Explain that this looks like a markdown vault, but Ars Contexta configuration wa
 Recommend one next action:
 
 - If the user wants diagnostics anyway, run `arscontexta-health` as a generic Obsidian-vault check.
-- If the user wants Ars Contexta structure, recommend `arscontexta-setup` for minimal Codex scaffolding and note that full Claude setup parity is still being ported.
+- If the user wants Ars Contexta structure, recommend `arscontexta-setup` for minimal Codex scaffolding.
 
 ### Generic Directory
 
@@ -142,7 +128,6 @@ Recommend one next action:
 
 - Give one recommended next action, not a long menu.
 - Use Codex language: "ask Codex", "run the health skill", "open this vault".
-- Do not present Claude slash commands as Codex commands.
-- Mention Claude commands only when explaining that they exist in Claude Code, not Codex.
-- Keep the response shorter than the Claude help skill and avoid full command catalogs.
+- Use Codex file workflows, plugin skill names, and explicit user intent.
+- Keep the response focused and avoid full command catalogs.
 - Prefer concrete local paths when they are obvious.

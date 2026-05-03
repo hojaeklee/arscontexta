@@ -63,7 +63,7 @@ assert_contains "$SKILL" "destructive migrations"
 assert_contains "$SKILL" "arscontexta-architect"
 assert_contains "$SKILL" "report-only restructuring plan"
 assert_contains "$SKILL" "Codex file workflows"
-assert_contains "$SKILL" "Do not assume Claude slash-command invocation"
+assert_contains "$SKILL" "Use Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"
 assert_not_contains "$SKILL" "/refactor"
 

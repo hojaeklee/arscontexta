@@ -2,29 +2,18 @@
 
 **Agent-native knowledge-system architecture for local markdown vaults.**
 
-Ars Contexta helps an AI agent maintain a durable thinking system: plain
-markdown notes, wiki links, processing queues, operational memory, and
-Obsidian-friendly navigation. It began as a Claude Code plugin and is now being
-ported to Codex as a first-class local plugin.
+Ars Contexta helps Codex maintain a durable thinking system: plain markdown
+notes, wiki links, processing queues, operational memory, and
+Obsidian-friendly navigation.
 
-**v0.8.1** | Codex plugin in progress | Claude Code plugin available | MIT
+**v0.8.1** | Codex-only local plugin | MIT
 
-## Current Status
-
-| Platform | Status | Notes |
-|----------|--------|-------|
-| Codex | In progress | Local plugin package exists. Codex-native skills and bundled helpers are the active migration target. |
-| Claude Code | Retired packaging | Claude-oriented source and reference files remain only where they have not been migrated or are still useful as methodology references. |
-| MCP | Not implemented | Good future target for deterministic vault operations, not the main methodology. |
-
-The repo keeps Claude-oriented source and Codex support side by side during
-migration, but Codex is now the only packaged plugin distribution in this repo.
-Remove Claude-specific files after the equivalent Codex plugin skill, script, or
-workflow has been migrated and verified.
+Codex is the only supported Ars Contexta distribution in this repo.
+Claude Code support, hooks, slash commands, and legacy generated skill templates have been removed.
 
 ## What It Does
 
-Most agent sessions start blank. Ars Contexta gives the agent a local memory
+Most agent sessions start blank. Ars Contexta gives Codex a local memory
 architecture it can inspect and maintain across sessions.
 
 You get:
@@ -46,10 +35,8 @@ Codex support is installed through a local marketplace entry in this repo:
 ```text
 .agents/plugins/marketplace.json
 plugins/arscontexta/.codex-plugin/plugin.json
-plugins/arscontexta/skills/arscontexta-help/SKILL.md
-plugins/arscontexta/skills/arscontexta-health/SKILL.md
-plugins/arscontexta/skills/arscontexta-setup/SKILL.md
-plugins/arscontexta/skills/arscontexta-session/SKILL.md
+plugins/arscontexta/skills/
+plugins/arscontexta/scripts/
 ```
 
 Add this marketplace to `~/.codex/config.toml`:
@@ -67,77 +54,25 @@ Then open Codex, go to **Codex Plugins** in the left sidebar, open the
 **Agentic Note Taking** marketplace, and install or enable **Ars Contexta**.
 Start a fresh chat after installing.
 
-### Supported Codex Skills
+## Supported Skills
 
-The current Codex-native skills are:
+The installable Codex plugin includes skills for setup, help, health,
+validation, session workflows, queue processing, graph diagnostics, note
+extraction, reflection, evolution, recommendations, tutorial onboarding, and
+research capture.
 
-```text
-arscontexta-help
-arscontexta-health
-arscontexta-setup
-arscontexta-session
-```
-
-Use help when you want orientation in the plugin repo, a vault, or a generic directory:
+Typical prompts:
 
 ```text
 What can Ars Contexta do here?
-```
-
-Use health from an Ars Contexta or Obsidian vault:
-
-```text
 Run an Ars Contexta health check on this vault.
-```
-
-or explicitly:
-
-```text
-Use arscontexta-health to diagnose this Obsidian vault.
-```
-
-Use setup in an empty directory or existing markdown vault when you want Codex to
-create minimal Ars Contexta scaffolding:
-
-```text
 Set up Ars Contexta here for my research notes.
-```
-
-Minimal Codex setup creates `AGENTS.md`, `.arscontexta`, core folders, starter
-manual pages, templates, and operational config. Full Claude setup parity,
-runtime processing skills, and background hooks are still being ported.
-
-Use session workflows when you want Codex to do the work Claude hooks used to do
-automatically:
-
-```text
-Use arscontexta-session to orient in this vault.
-Use arscontexta-session to validate changed notes.
-Use arscontexta-session to capture a handoff for the next session.
+Use arscontexta-pipeline to plan this source.
+Use arscontexta-session to capture a handoff.
 ```
 
 Codex session workflows are explicit. They do not auto-commit or run in the
 background.
-
-### Codex Model Note
-
-If you use Codex with a ChatGPT account, avoid this config:
-
-```toml
-model = "gpt-5-codex"
-```
-
-Use a supported model instead, for example:
-
-```toml
-model = "gpt-5.5"
-```
-
-Otherwise Codex may fail with:
-
-```text
-The 'gpt-5-codex' model is not supported when using Codex with a ChatGPT account.
-```
 
 ## Repository Layout
 
@@ -146,29 +81,19 @@ arscontexta/
 |-- .agents/plugins/marketplace.json       # Codex local marketplace
 |-- plugins/arscontexta/                   # Installable Codex plugin package
 |   |-- .codex-plugin/plugin.json
+|   |-- scripts/
 |   +-- skills/
-|       |-- arscontexta-help/SKILL.md
-|       |-- arscontexta-health/SKILL.md
-|       +-- arscontexta-setup/SKILL.md
-|-- skills/                                # Legacy Claude-oriented skills and migration reference
-|   |-- setup/
-|   |-- help/
-|   |-- health/
-|   |-- ask/
-|   +-- tutorial/
-|-- skill-sources/                         # Generated vault skill templates
-|-- hooks/                                 # Legacy Claude hook configuration and scripts
-|-- generators/                            # CLAUDE.md and feature generation sources
 |-- methodology/                           # Research claims and methodology notes
 |-- reference/                             # Core references and templates
-|-- platforms/                             # Platform-specific adapters
+|-- generators/features/                   # Reusable methodology feature blocks
+|-- platforms/codex/                       # Codex workflow notes
 |-- presets/                               # Starter configurations
-|-- scripts/                               # Utility scripts
+|-- scripts/                               # Repo-level utility and test scripts
 +-- README.md
 ```
 
-The installable Codex package lives under `plugins/arscontexta/` because Codex
-local marketplaces expect the conventional `plugins/<name>` layout.
+plugins/arscontexta/ is the source of truth for the runtime plugin. Edit
+plugin metadata, Codex-native skills, and bundled scripts there.
 
 ## Maintainer Workflow
 
@@ -204,21 +129,9 @@ upstream DISABLED (push)
 
 This prevents accidental pushes to the original repository.
 
-### Updating From Upstream
-
-If the original repository ever changes:
-
-```bash
-git fetch upstream
-git log --oneline main..upstream/main
-```
-
-Then merge or cherry-pick deliberately. Do not assume upstream is maintained.
-
 ### Updating The Codex Plugin
 
-For Codex, treat the installable package as the source of truth. Edit plugin
-metadata and Codex-native skills under:
+For Codex, treat the installable package as the source of truth. Edit:
 
 ```text
 plugins/arscontexta/.codex-plugin/plugin.json
@@ -230,6 +143,7 @@ After editing:
 
 ```bash
 scripts/check-codex-plugin.sh
+scripts/tests/test-codex-smoke.sh
 git status --short
 ```
 
@@ -238,70 +152,27 @@ hot-reload plugin skills.
 
 ### When Codex Updates
 
-Treat Codex app/runtime updates as compatibility events. Ars Contexta previously
-broke across Claude Code versions because plugin schemas, hooks, model names, and
-runtime assumptions changed underneath it. Codex can do the same.
-
-After each Codex update, run the compatibility smoke tests:
+Treat Codex app/runtime updates as compatibility events. After each update, run:
 
 ```bash
 scripts/check-codex-plugin.sh
-scripts/check-vault.sh "/Users/hlee/Library/CloudStorage/GoogleDrive-hojae.k.lee@gmail.com/My Drive/knowledge-base"
+scripts/check-vault.sh "/path/to/vault"
 ```
-
-The scripts print `PASS`, `WARN`, and `FAIL` lines. Warnings are diagnostic; a
-nonzero exit means at least one failure needs attention before trusting the
-plugin in a new session.
 
 Then confirm the Codex UI state that scripts cannot inspect directly:
 
-1. Open the **Codex Plugins** sidebar and confirm **Agentic Note Taking** still
-   appears.
+1. Open the **Codex Plugins** sidebar and confirm **Agentic Note Taking** still appears.
 2. Confirm **Ars Contexta** is still installed or enabled.
-3. Start a fresh chat in this repo and verify `$` shows `arscontexta-help`,
-   `arscontexta-health`, and `arscontexta-setup`.
-4. Start a fresh chat in a real vault and run:
-
-   ```text
-   Use arscontexta-health to diagnose this vault.
-   ```
-
-5. If discovery breaks, first check marketplace shape, plugin manifest fields,
-   skill path conventions, `~/.codex/config.toml`, and whether Codex now requires
-   a cache refresh or reinstall from the sidebar.
+3. Start a fresh chat in this repo and verify Ars Contexta skills are available.
+4. Start a fresh chat in a real vault and run an Ars Contexta health check.
 
 Keep update fixes small and documented. If a Codex update requires a layout or
-schema change, update this README and create a compatibility issue explaining the
-observed failure, Codex version, config snippets, and the fix.
+schema change, update this README and create a compatibility issue explaining
+the observed failure, Codex version, config snippets, and fix.
 
-### Porting More Codex Skills
+## Setup
 
-Port Claude slash-command skills into Codex-native skills incrementally.
-Recommended order:
-
-1. `arscontexta-ask`
-2. `arscontexta-recommend`
-3. `arscontexta-reduce`
-4. `arscontexta-reflect`
-5. `arscontexta-reweave`
-6. `arscontexta-verify`
-7. `arscontexta-remember`
-8. maintenance and evolution skills beyond health
-
-Codex skills should be shorter than the Claude command bodies. Put only the core
-workflow in `SKILL.md`, move long methodology into `reference/`, and use scripts
-for deterministic checks.
-
-Once a Claude command or hook workflow has a verified Codex equivalent, remove
-the obsolete Claude-specific files in the same cleanup pass. Do not delete
-Claude assets that still provide behavior not yet available through
-`plugins/arscontexta/`.
-
-### Minimal Codex Setup
-
-Codex setup is available as a conservative first slice. It creates the smallest
-usable Ars Contexta vault without Claude hooks. Instead of installing background
-hooks, it points Codex at explicit session workflows:
+Codex setup creates a minimal usable Ars Contexta vault:
 
 ```bash
 scripts/setup-vault.sh /path/to/new-vault --preset research --domain "research notes"
@@ -321,36 +192,8 @@ After setup, open the vault in Codex and run:
 Run an Ars Contexta health check on this vault.
 ```
 
-The Codex setup path generates `AGENTS.md` only. It preserves any existing
-`CLAUDE.md` and does not install `.claude/` hooks or settings. Use
-`arscontexta-session orient`, `arscontexta-session validate`, and
-`arscontexta-session capture` when you want Codex to perform the session-rhythm
-work that Claude hooks automate.
-
-## Legacy Claude Commands
-
-Claude plugin packaging has been retired from this repo. The command list below
-is kept as migration reference until each workflow is available through
-`plugins/arscontexta/` or explicitly removed.
-
-Plugin-level Claude commands:
-
-| Command | What It Does |
-|---------|-------------|
-| `/arscontexta:setup` | Conversational onboarding and vault generation |
-| `/arscontexta:help` | Contextual command guidance |
-| `/arscontexta:tutorial` | Interactive walkthrough |
-| `/arscontexta:ask` | Query methodology and vault knowledge |
-| `/arscontexta:health` | Run vault diagnostics |
-| `/arscontexta:recommend` | Get architecture advice |
-| `/arscontexta:architect` | Research-backed evolution guidance |
-| `/arscontexta:add-domain` | Add a knowledge domain |
-| `/arscontexta:reseed` | Re-derive when drift accumulates |
-| `/arscontexta:upgrade` | Apply plugin knowledge-base updates |
-
-Generated vault commands include `reduce`, `reflect`, `reweave`, `verify`,
-`validate`, `seed`, `ralph`, `pipeline`, `tasks`, `stats`, `graph`, `next`,
-`learn`, `remember`, `rethink`, and `refactor`.
+The setup path generates `AGENTS.md`, `.arscontexta`, core folders, starter
+manual pages, templates, and operational config.
 
 ## Three-Space Architecture
 
@@ -386,60 +229,44 @@ If **Agentic Note Taking** is not visible in the Codex plugin sidebar:
 - Confirm `.agents/plugins/marketplace.json` exists in this repo.
 - Fully quit and reopen Codex.
 
-If **Agentic Note Taking** is visible but `arscontexta-help`,
-`arscontexta-health`, or `arscontexta-setup` is not:
+If **Agentic Note Taking** is visible but Ars Contexta skills are not:
 
 - Confirm **Ars Contexta** is installed or enabled from the sidebar.
 - Confirm `plugins/arscontexta/.codex-plugin/plugin.json` has `"skills": "./skills/"`.
-- Confirm `plugins/arscontexta/skills/arscontexta-help/SKILL.md` exists.
-- Confirm `plugins/arscontexta/skills/arscontexta-health/SKILL.md` exists.
-- Confirm `plugins/arscontexta/skills/arscontexta-setup/SKILL.md` exists.
+- Confirm `plugins/arscontexta/skills/` contains skill directories.
 - Start a fresh chat after installing.
 
-If the skill fails with a model error:
+If the skill fails with a model error, change `~/.codex/config.toml` to a
+supported model such as:
 
-- Change `~/.codex/config.toml` from `gpt-5-codex` to a supported model such as
-  `gpt-5.5`.
-
-## Semantic Search
-
-Semantic search is optional. The system should work with `rg` and wiki-link
-traversal alone.
-
-`qmd` may become useful later as an MCP-backed search bridge:
-
-```bash
-npm install -g @tobilu/qmd
-cd your-vault/
-qmd init
-qmd collection add . --name notes --mask "notes/**/*.md"
-qmd embed
+```toml
+model = "gpt-5.5"
 ```
 
-MCP integration is optional and future-facing. Issue #8 added a design and CLI
-prototype for deterministic operations, not a production MCP server:
+## Optional Search And Helper Scripts
+
+Semantic search is optional. The system should work with `rg`, wiki-link
+traversal, and bundled deterministic helper scripts.
+
+The current deterministic helpers are CLI scripts, not a registered server:
 
 ```bash
 scripts/mcp-vault-tools.sh links.check . --limit 25
 scripts/mcp-vault-tools.sh frontmatter.validate . --file notes/example.md --limit 25
 ```
 
-Use MCP or the prototype for graph analysis, YAML/frontmatter validation, link
-checks, queue operations, schema-aware note creation, and vault indexing. Skills
-must continue to fall back to bundled scripts, `rg`, and wiki-link traversal when
-MCP is unavailable.
+Skills must continue to fall back to bundled scripts, `rg`, and wiki-link
+traversal when optional search tooling is unavailable.
 
 ## Roadmap
 
 | Work | Status |
 |------|--------|
-| Retire Claude Code plugin packaging | Done |
-| Add Codex marketplace and plugin scaffold | Done |
-| Port `arscontexta-health` to Codex | Done |
-| Port `arscontexta-help` to Codex | Done |
-| Port minimal Codex setup flow | Done |
-| Port full setup parity | Planned |
-| Add deterministic MCP tools | Later |
+| Codex marketplace and plugin scaffold | Done |
+| Codex-native vault setup | Done |
+| Codex-native workflow skills | Done |
+| Deterministic helper scripts | In progress |
+| Optional indexed search tooling | Later |
 
 ## Philosophy
 

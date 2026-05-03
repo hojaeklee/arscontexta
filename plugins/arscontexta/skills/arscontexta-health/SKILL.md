@@ -85,4 +85,4 @@ For `full`, extend the quick check with:
 - MOC coherence and sparse topic maps
 - Stale notes or old inbox items
 
-Use the root Claude skill at `skills/health/SKILL.md` as a detailed compatibility reference when available, but do not copy its long command-style output unless the user asks for Claude parity.
+Keep full checks bounded and source-grounded. Prefer local configuration, methodology references, and deterministic helper output over broad generated inventories.

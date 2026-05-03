@@ -100,4 +100,4 @@ Use existing validation helpers when available, such as `scripts/check-vault.sh`
 - This skill composes a new domain into the current vault. It does not reseed, replace, or re-derive the entire architecture.
 - Keep writes explicit, previewed, and confirmed.
 - Do not mutate `ops/queue/*`, run pipeline tasks, or silently change existing content.
-- Do not assume Claude slash-command invocation, Claude-only tools, or generated slash-command behavior. Use Codex file workflows, local inspection, and explicit user approval.
+- Use Codex file workflows, local inspection, and explicit user approval.

@@ -64,8 +64,8 @@ for preset in research personal experimental; do
   assert_dir "$vault/ops/methodology"
 
   assert_contains "$vault/AGENTS.md" "Codex-oriented Ars Contexta vault"
-  assert_not_contains "$vault/AGENTS.md" "Claude hooks"
-  assert_not_contains "$vault/AGENTS.md" ".claude"
+  assert_contains "$vault/AGENTS.md" "explicit session workflows"
+  assert_contains "$vault/AGENTS.md" "no hidden background automation"
 
   "$CHECK_VAULT" "$vault" >/dev/null
   "$HEALTH_SCRIPT" "$vault" --mode quick --limit 5 --format json >/dev/null

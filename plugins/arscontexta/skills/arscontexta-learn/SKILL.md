@@ -121,7 +121,7 @@ If `self/goals.md` exists and the research reveals genuine new directions, previ
 ## Boundaries
 
 - Use Codex conversation and explicit user replies.
-- Do not assume Claude-only tools, generated command routing, or hidden background research.
+- Use explicit Codex research modes and do not hide background research.
 - Do not mutate `ops/queue/*`; hand off to `arscontexta-seed` or `arscontexta-pipeline`.
 - Do not write outside the configured inbox folder unless the user separately asks for a different destination.
 - Do not overwrite existing research captures, notes, goals, or queue files.

@@ -51,7 +51,7 @@ assert_contains "$SKILL" "diagnose"
 assert_contains "$SKILL" "configure"
 assert_contains "$SKILL" "evolve"
 assert_contains "$SKILL" "Never require them"
-assert_contains "$SKILL" "never present Claude slash-command tools as Codex requirements"
+assert_contains "$SKILL" "never present unavailable external tools as Codex requirements"
 assert_not_contains "$SKILL" "mcp__qmd__"
 assert_not_contains "$SKILL" "/ask"
 

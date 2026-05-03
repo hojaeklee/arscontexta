@@ -50,4 +50,4 @@ Review accumulated operational evidence and propose system changes. Rethink is e
 - Do not perform note, methodology, config, context, changelog, or status edits without explicit approval.
 - Do not automatically mutate `ops/queue/*`, emit Ralph handoff blocks, or alter pipeline state.
 - Do not treat low-evidence impressions as system changes; capture them as observations instead.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

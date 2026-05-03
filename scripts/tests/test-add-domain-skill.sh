@@ -89,7 +89,7 @@ assert_contains "$SKILL" "filename uniqueness"
 assert_contains "$SKILL" "schema conflicts"
 assert_contains "$SKILL" "vocabulary isolation"
 
-assert_contains "$SKILL" "Do not assume Claude slash-command invocation"
+assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"
 assert_not_contains "$SKILL" "/add-domain"

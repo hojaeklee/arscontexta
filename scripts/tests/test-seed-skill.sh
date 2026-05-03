@@ -50,7 +50,7 @@ assert_contains "$SKILL" "next_claim_start"
 assert_contains "$SKILL" "extract task"
 assert_contains "$SKILL" "arscontexta-ralph"
 assert_contains "$SKILL" "arscontexta-pipeline"
-assert_contains "$SKILL" "Do not assume Claude slash-command invocation"
+assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"
 

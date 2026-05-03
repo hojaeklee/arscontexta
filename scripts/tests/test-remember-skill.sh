@@ -54,7 +54,7 @@ assert_contains "$SKILL" 'Do not automatically mutate `ops/queue/*`'
 assert_contains "$SKILL" "Ralph handoff"
 assert_contains "$SKILL" "pipeline task updates"
 assert_contains "$SKILL" "defer broader adaptation to rethink, refactor, or later evolution workflows"
-assert_contains "$SKILL" "Do not assume Claude slash-command invocation"
+assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"
 assert_not_contains "$SKILL" "/remember"

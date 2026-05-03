@@ -70,4 +70,4 @@ For JSON output, include equivalent machine-readable fields for downstream check
 - Do not overwrite existing files in the archive folder.
 - Do not move source files or living documents.
 - Do not mutate `ops/queue/*` outside the selected completed batch.
-- Do not assume Claude command routing, Claude-only tools, or generated command behavior. Use Codex file workflows and deterministic helper output.
+- Use Codex file workflows and deterministic helper output.

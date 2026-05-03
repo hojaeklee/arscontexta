@@ -48,4 +48,4 @@ Plan restructuring from a chosen architecture or configuration shift. Refactor c
 - Do not auto-regenerate skills in this first Codex port; list affected skills and proposed updates instead.
 - Do not automatically mutate `ops/queue/*`, run destructive migrations, or apply broad restructuring from this skill.
 - Keep approved implementation steps small and inspectable, and validate after changes if the user separately approves implementation.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

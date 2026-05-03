@@ -46,7 +46,7 @@ classify_path() {
     ops/queue/*|ops/health/*|ops/sessions/*|ops/session*|ops/observations/*|ops/tensions/*|ops/logs/*|ops/archive/*)
       printf 'operational'
       ;;
-    AGENTS.md|CLAUDE.md|README.md|SKILL.md|templates/*|reference/*|platforms/*|generators/*|hooks/*|skills/*|skill-sources/*|plugins/*|presets/*|agents/*|mcp/*)
+    AGENTS.md|README.md|SKILL.md|templates/*|reference/*|platforms/*|generators/*|plugins/*|presets/*|agents/*)
       printf 'noise'
       ;;
     *)

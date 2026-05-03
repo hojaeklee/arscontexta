@@ -54,4 +54,4 @@ Review an existing vault architecture and recommend bounded evolution. Architect
 - Do not edit notes, templates, config, derivation files, context files, queues, methodology notes, or changelogs from this skill.
 - Do not recommend broad restructuring from a single weak signal; prefer a smaller follow-up or an observation.
 - Destructive, broad, or content-moving changes require explicit user approval in a separate implementation step.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

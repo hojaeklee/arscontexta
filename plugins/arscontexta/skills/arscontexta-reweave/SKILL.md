@@ -47,4 +47,4 @@ Revisit existing notes with newer vault context. Reweave is the backward pass: i
 
 - Do not automatically mutate `ops/queue/*`, emit Ralph handoff blocks, or perform pipeline task updates.
 - Do not create `ops/observations/` or `ops/tensions/` side-effect files unless the user separately asks.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

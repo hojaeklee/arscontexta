@@ -1,11 +1,11 @@
 ---
 name: arscontexta-setup
-description: Use when the user asks Codex to set up, initialize, scaffold, or adapt an Ars Contexta vault without relying on Claude Code.
+description: Use when the user asks Codex to set up, initialize, scaffold, or adapt an Ars Contexta vault.
 ---
 
 # Ars Contexta Setup
 
-Create or complete a minimal Codex-native Ars Contexta vault. This is the first Codex setup slice: it writes durable scaffolding and `AGENTS.md`, but it does not attempt full Claude setup parity.
+Create or complete a Codex-native Ars Contexta vault. It writes durable scaffolding, `AGENTS.md`, and explicit session workflow guidance.
 
 ## When Invoked
 
@@ -43,7 +43,7 @@ plugins/arscontexta/scripts/setup-vault.sh . --preset research --domain "my doma
 
 Use `--dry-run` first when the target is non-empty or already has markdown files.
 
-The helper creates missing files only. It must not overwrite `AGENTS.md`, `CLAUDE.md`, user notes, templates, or config files.
+The helper creates missing files only. It must not overwrite `AGENTS.md`, user notes, templates, or config files.
 
 ## Generated Scope
 
@@ -63,9 +63,8 @@ Minimal Codex setup creates:
 ## Platform Rules
 
 - Generate `AGENTS.md` for Codex.
-- Preserve existing `CLAUDE.md`; do not create or overwrite it.
-- Do not install Claude hooks, `.claude/settings.json`, generated Claude skills, or MCP config.
-- Mention that full setup parity and runtime processing skills are still being ported.
+- Do not install hidden background hooks, generated legacy templates, or MCP config.
+- Emphasize explicit Codex workflows, local file reads, and approved writes.
 - After setup, recommend `scripts/check-vault.sh <vault-path>` and `arscontexta-health`.
 
 ## Response Rules
@@ -73,4 +72,4 @@ Minimal Codex setup creates:
 - Before writing, summarize the target path, inferred preset, domain name, and files that will be created.
 - After writing, report created vs existing files at a high level and give one next action.
 - Do not run broad health diagnostics during setup; leave that to `arscontexta-health`.
-- Keep setup language Codex-native. Do not present Claude slash commands as Codex commands.
+- Keep setup language Codex-native. Use plugin skill names and explicit user intent.

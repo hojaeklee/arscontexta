@@ -47,4 +47,4 @@ Find meaningful connections between notes and, with approval, weave focused link
 
 - Do not automatically mutate `ops/queue/*`, emit Ralph handoff blocks, or perform pipeline task updates.
 - Do not create `ops/observations/` or `ops/tensions/` side-effect files unless the user separately asks.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

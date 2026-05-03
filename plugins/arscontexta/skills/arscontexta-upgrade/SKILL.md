@@ -47,4 +47,4 @@ Compare installed/generated vault practices against the current plugin methodolo
 - Never silently overwrite user-modified skills.
 - Archive current skill versions before any separately approved rewrite.
 - Direct broader architecture changes to `arscontexta-architect`, `arscontexta-refactor`, or `arscontexta-reseed`.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

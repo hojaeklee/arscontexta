@@ -67,4 +67,4 @@ For batch status, show queue file, counts, phase distribution, blocked tasks, re
 - Pipeline coordinates a small source end to end; it is not an unattended daemon.
 - Pipeline does not replace `arscontexta-ralph`.
 - Pipeline does not create notes directly or mutate queue state outside `ops/queue/`.
-- Do not assume Claude slash-command invocation, Claude-only tools, or generated slash-command behavior. Use Codex file workflows, explicit user intent, and visible phase reports.
+- Use Codex file workflows, explicit user intent, and visible phase reports.

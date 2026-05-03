@@ -37,4 +37,4 @@ Capture durable local learning without overreaching. Remember turns explicit use
 
 - Do not automatically mutate `ops/queue/*`, emit Ralph handoff blocks, or perform pipeline task updates.
 - Do not rewrite broad system behavior, context files, or plugin source; defer broader adaptation to rethink, refactor, or later evolution workflows.
-- Do not assume Claude slash-command invocation or Claude-only tools; use Codex file workflows.
+- Use Codex file workflows and explicit user intent.

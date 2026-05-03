@@ -53,4 +53,4 @@ File moves and archive writes must be clearly reported. Always avoid overwriting
 - Keep queue state under `ops/queue/`; do not write hidden state elsewhere.
 - Do not run `arscontexta-ralph`, `arscontexta-pipeline`, or downstream processing automatically.
 - Do not move living documents outside the configured inbox.
-- Do not assume Claude slash-command invocation, Claude-only tools, or generated slash-command behavior. Use Codex file workflows, local inspection, and deterministic helper output.
+- Use Codex file workflows, local inspection, and deterministic helper output.

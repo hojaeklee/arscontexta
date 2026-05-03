@@ -48,7 +48,7 @@ assert_contains "$SKILL" "scripts/pipeline-vault.sh"
 assert_contains "$SKILL" "plugins/arscontexta/scripts/pipeline-vault.sh"
 assert_contains "$SKILL" "orchestration skill"
 assert_contains "$SKILL" "not a new queue engine"
-assert_contains "$SKILL" "Do not assume Claude slash-command invocation"
+assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"
 

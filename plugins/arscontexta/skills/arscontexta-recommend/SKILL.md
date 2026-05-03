@@ -27,7 +27,7 @@ Use local `reference/` and `methodology/` files first. Start with the most relev
 - `reference/claim-map.md`
 - related methodology claims under `methodology/`
 
-Optional QMD, semantic search, or MCP knowledge tools may be used only when already available. Never require them and never present Claude slash-command tools as Codex requirements.
+Optional QMD, semantic search, or indexed knowledge tools may be used only when already available. Never require them and never present unavailable external tools as Codex requirements.
 
 ## Recommendation Shape
 
