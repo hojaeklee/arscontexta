@@ -36,3 +36,9 @@ qmd: "user_choice"
 personality: "derived_from_conversation"
 processing_depth: "full quality gates by default, user can opt down"
 starter_mocs: []  # user-chosen
+codex_setup:
+  note_type: note
+  topic_map: topic map
+  focus_term: custom knowledge
+  starter_notes:
+    - index

@@ -114,6 +114,12 @@ reference_methodology="$REPO_ROOT/plugins/arscontexta/reference/methodology.md"
 reference_claim_map="$REPO_ROOT/plugins/arscontexta/reference/claim-map.md"
 reference_base_template="$REPO_ROOT/plugins/arscontexta/reference/templates/base-note.md"
 reference_kernel_validator="$REPO_ROOT/plugins/arscontexta/reference/validate-kernel.sh"
+generator_agents="$REPO_ROOT/plugins/arscontexta/generators/agents-md.md"
+generator_feature="$REPO_ROOT/plugins/arscontexta/generators/features/atomic-notes.md"
+preset_research="$REPO_ROOT/plugins/arscontexta/presets/research/preset.yaml"
+preset_research_starter="$REPO_ROOT/plugins/arscontexta/presets/research/starter/index.md"
+preset_personal_vocabulary="$REPO_ROOT/plugins/arscontexta/presets/personal/vocabulary.yaml"
+preset_experimental_categories="$REPO_ROOT/plugins/arscontexta/presets/experimental/categories.yaml"
 
 if require_json_tools; then
   if [[ -f "$marketplace" ]]; then
@@ -231,7 +237,13 @@ for knowledge in \
   "$reference_methodology:methodology reference" \
   "$reference_claim_map:claim map reference" \
   "$reference_base_template:base note template" \
-  "$reference_kernel_validator:kernel validator reference"
+  "$reference_kernel_validator:kernel validator reference" \
+  "$generator_agents:Codex AGENTS.md generator" \
+  "$generator_feature:representative feature generator" \
+  "$preset_research:research preset" \
+  "$preset_research_starter:research starter note" \
+  "$preset_personal_vocabulary:personal vocabulary preset" \
+  "$preset_experimental_categories:experimental categories preset"
 do
   knowledge_path="${knowledge%%:*}"
   knowledge_label="${knowledge#*:}"
@@ -304,13 +316,19 @@ if [[ -n "${manifest_version:-}" ]]; then
       "reference/methodology.md:methodology reference" \
       "reference/claim-map.md:claim map reference" \
       "reference/templates/base-note.md:base note template" \
-      "reference/validate-kernel.sh:kernel validator reference"
+      "reference/validate-kernel.sh:kernel validator reference" \
+      "generators/agents-md.md:Codex AGENTS.md generator" \
+      "generators/features/atomic-notes.md:representative feature generator" \
+      "presets/research/preset.yaml:research preset" \
+      "presets/research/starter/index.md:research starter note" \
+      "presets/personal/vocabulary.yaml:personal vocabulary preset" \
+      "presets/experimental/categories.yaml:experimental categories preset"
     do
       knowledge_rel="${knowledge_name%%:*}"
       knowledge_label="${knowledge_name#*:}"
       [[ -f "$cache_dir/$knowledge_rel" ]] \
         && emit PASS "Cached $knowledge_label exists." \
-        || emit WARN "Cached $knowledge_label is missing; reinstall plugin after bundling methodology and reference."
+        || emit WARN "Cached $knowledge_label is missing; reinstall plugin after bundling plugin knowledge and preset sources."
     done
   else
     emit WARN "No Codex cache found for arscontexta $manifest_version at $cache_dir."

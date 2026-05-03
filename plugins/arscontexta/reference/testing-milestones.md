@@ -75,7 +75,7 @@ All 15 primitives validated successfully.
 
 | Failure | Cause | Fix |
 |---------|-------|-----|
-| FAIL on primitive 1 (YAML frontmatter) | Template generation skipped frontmatter | Check `generators/features/templates.md` — ensure all templates output YAML blocks |
+| FAIL on primitive 1 (YAML frontmatter) | Template generation skipped frontmatter | Check `plugins/arscontexta/generators/features/templates.md` — ensure all templates output YAML blocks |
 | FAIL on primitive 3 (MOC hierarchy) | Generated notes lack `type: moc` in frontmatter | Verify MOC template includes `type: moc` in YAML |
 | FAIL on primitive 9 (self space) | self/ directory not created when enabled | Check that /setup creates self/identity.md, self/methodology.md, self/goals.md when self space is enabled |
 | WARN on primitive 9 (self space) | self space disabled via configuration | Acceptable — self space is CONFIGURABLE, off by default for research presets, on for personal assistant |
@@ -182,7 +182,7 @@ echo "  (See Milestone 3 for full vocabulary validation)"
 
 | Failure | Cause | Fix |
 |---------|-------|-----|
-| Missing "Common Pitfalls" section | Feature block conditional logic skipped it | Check `generators/features/ethical-guardrails.md` — pitfalls are always-on |
+| Missing "Common Pitfalls" section | Feature block conditional logic skipped it | Check `plugins/arscontexta/generators/features/ethical-guardrails.md` — pitfalls are always-on |
 | Unresolved `{DOMAIN:rethink}` placeholder | Vocabulary transform missed skill names | Ensure skill name mapping from `vocabulary-transforms.md` is applied during generation |
 | Orphaned semantic-search references in a convention-only system | Feature block included unconditionally | Add conditional gating: only emit semantic-search section when `search >= 0.5` |
 | "Self-Extension Blueprints" section references unavailable features | Blueprint selection not filtered by configuration | Filter blueprints by current configuration — disabled features should not appear in blueprints |
@@ -307,7 +307,7 @@ done
 
 | Failure | Cause | Fix |
 |---------|-------|-----|
-| "MOC" appears in generated CLAUDE.md | Vocabulary transform missed a reference in a feature block | Search all feature block templates in `generators/features/` for hardcoded "MOC" |
+| "MOC" appears in generated CLAUDE.md | Vocabulary transform missed a reference in a feature block | Search all feature block templates in `plugins/arscontexta/generators/features/` for hardcoded "MOC" |
 | "reduce" appears in a skill's SKILL.md | Skill name was transformed but internal instructions were not | Apply vocabulary transform to skill body text, not just skill directory name |
 | Folder still named "notes/" instead of "reflections/" | Folder name mapping not applied during directory creation | Check /setup folder creation logic against `vocabulary-transforms.md` folder mapping |
 | Template still named "base-note.md" | Template name mapping not applied | Check /setup template file creation against `vocabulary-transforms.md` template mapping |
@@ -761,9 +761,9 @@ for PRESET in "${PRESETS[@]}"; do
     echo ""
     echo "--- Interaction Constraints ---"
     # Read dimensions from preset.yaml and check coherence
-    GRAN=$(grep 'granularity:' "presets/$PRESET/preset.yaml" | awk '{print $2}')
-    PROC=$(grep 'processing:' "presets/$PRESET/preset.yaml" | awk '{print $2}')
-    AUTO=$(grep 'automation:' "presets/$PRESET/preset.yaml" | awk '{print $2}')
+    GRAN=$(grep 'granularity:' "plugins/arscontexta/presets/$PRESET/preset.yaml" | awk '{print $2}')
+    PROC=$(grep 'processing:' "plugins/arscontexta/presets/$PRESET/preset.yaml" | awk '{print $2}')
+    AUTO=$(grep 'automation:' "plugins/arscontexta/presets/$PRESET/preset.yaml" | awk '{print $2}')
 
     # Hard constraint: atomic + light processing
     if (( $(echo "$GRAN > 0.7" | bc -l) )) && (( $(echo "$PROC < 0.3" | bc -l) )); then
@@ -782,7 +782,7 @@ for PRESET in "${PRESETS[@]}"; do
     # 4. Feature block alignment
     echo ""
     echo "--- Feature Block Alignment ---"
-    ACTIVE_BLOCKS=$(grep -A50 'active_blocks:' "presets/$PRESET/preset.yaml" | grep '^ *-' | sed 's/^ *- *//')
+    ACTIVE_BLOCKS=$(grep -A50 'active_blocks:' "plugins/arscontexta/presets/$PRESET/preset.yaml" | grep '^ *-' | sed 's/^ *- *//')
     for block in $ACTIVE_BLOCKS; do
         # Check that each active block produced output in the generated vault
         case "$block" in
@@ -810,7 +810,7 @@ for PRESET in "${PRESETS[@]}"; do
     echo ""
     echo "--- Personality Validation ---"
     if [ -f "$VAULT/self/identity.md" ]; then
-        WARMTH=$(grep 'warmth:' "presets/$PRESET/preset.yaml" | awk '{print $2}')
+        WARMTH=$(grep 'warmth:' "plugins/arscontexta/presets/$PRESET/preset.yaml" | awk '{print $2}')
         if (( $(echo "$WARMTH > 0.5" | bc -l) )); then
             # High warmth — identity should feel warm
             if grep -qi "care\|support\|here for you\|partner\|companion" "$VAULT/self/identity.md"; then

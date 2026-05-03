@@ -39,3 +39,11 @@ starter_mocs:
   - "{DOMAIN:domain}-overview"
   - "methods"
   - "open-questions"
+codex_setup:
+  note_type: claim
+  topic_map: topic map
+  focus_term: research
+  starter_notes:
+    - index
+    - methods
+    - open-questions

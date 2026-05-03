@@ -81,22 +81,24 @@ arscontexta/
 |-- .agents/plugins/marketplace.json       # Codex local marketplace
 |-- plugins/arscontexta/                   # Installable Codex plugin package
 |   |-- .codex-plugin/plugin.json
+|   |-- generators/                        # Bundled context and feature generators
 |   |-- methodology/                       # Bundled research claims and methodology notes
+|   |-- presets/                           # Bundled preset configs and starter notes
 |   |-- reference/                         # Bundled references, templates, and fixtures
 |   |-- scripts/
 |   +-- skills/
-|-- generators/features/                   # Reusable methodology feature blocks
 |-- platforms/codex/                       # Codex workflow notes
-|-- presets/                               # Starter configurations
 |-- scripts/                               # Repo-level utility and test scripts
 +-- README.md
 ```
 
 plugins/arscontexta/ is the source of truth for the runtime plugin. Edit
-plugin metadata, Codex-native skills, bundled scripts, and bundled knowledge
-there. The plugin-side `plugins/arscontexta/methodology/` and
-`plugins/arscontexta/reference/` directories are not copied into user vaults;
-setup creates only the vault-local `ops/methodology/` self-knowledge space.
+plugin metadata, Codex-native skills, bundled scripts, generators, presets,
+and bundled knowledge there. The plugin-side
+`plugins/arscontexta/generators/`, `plugins/arscontexta/presets/`,
+`plugins/arscontexta/methodology/`, and `plugins/arscontexta/reference/`
+directories are not copied into user vaults; setup creates only derived vault
+artifacts and the vault-local `ops/methodology/` self-knowledge space.
 
 ## Maintainer Workflow
 
@@ -195,8 +197,9 @@ After setup, open the vault in Codex and run:
 Run an Ars Contexta health check on this vault.
 ```
 
-The setup path generates `AGENTS.md`, `.arscontexta`, core folders, starter
-manual pages, templates, and operational config.
+The setup path reads bundled plugin presets and generator templates, then
+generates `AGENTS.md`, `.arscontexta`, core folders, starter manual pages,
+templates, starter notes, and operational config.
 
 ## Three-Space Architecture
 

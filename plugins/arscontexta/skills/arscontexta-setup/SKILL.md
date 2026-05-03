@@ -60,6 +60,11 @@ Minimal Codex setup creates:
 - starter MOCs for the selected preset
 - `manual/manual.md`, `manual/getting-started.md`, `manual/skills.md`
 
+The helper reads bundled plugin source assets from `plugins/arscontexta/presets/`
+and `plugins/arscontexta/generators/`, but generated vaults must not receive
+those source directories. Vaults receive only derived files and the local
+`ops/methodology/` self-knowledge space.
+
 ## Platform Rules
 
 - Generate `AGENTS.md` for Codex.

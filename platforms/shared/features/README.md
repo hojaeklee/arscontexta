@@ -1,14 +1,14 @@
 # shared/features/ -- Canonical Feature Blocks
 
-The legacy feature blocks live at `generators/features/`. They are composable
-context file fragments retained as migration reference for future Codex-native
-workflow design.
+The legacy feature blocks live at `plugins/arscontexta/generators/features/`.
+They are composable context file fragments retained as migration reference for
+future Codex-native workflow design.
 
 This directory does not duplicate those files. It exists to document the shared feature layer from a distribution perspective.
 
 ## Canonical Source
 
-All feature block files: `generators/features/`
+All feature block files: `plugins/arscontexta/generators/features/`
 
 ## The 16 Feature Blocks
 

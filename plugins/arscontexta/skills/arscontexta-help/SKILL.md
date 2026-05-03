@@ -21,7 +21,7 @@ Give concise, context-aware guidance for Ars Contexta in Codex. Explain what is 
 
 ### Plugin Repo
 
-Explain that this is the Ars Contexta Codex plugin source. `plugins/arscontexta/` is the source of truth for installable skills and bundled helper scripts.
+Explain that this is the Ars Contexta Codex plugin source. `plugins/arscontexta/` is the source of truth for installable skills, bundled helper scripts, generators, presets, and plugin-side knowledge.
 
 Available now:
 
@@ -30,6 +30,8 @@ Available now:
 - `arscontexta-setup`: minimal Codex-native vault scaffolding.
 - `plugins/arscontexta/scripts/vault-health.sh`: bounded link-health helper.
 - `plugins/arscontexta/scripts/setup-vault.sh`: deterministic minimal setup helper.
+- `plugins/arscontexta/generators/`: bundled context and feature generator sources.
+- `plugins/arscontexta/presets/`: bundled preset configs and starter notes.
 - `arscontexta-validate`: detailed read-only note/schema validation.
 - `arscontexta-tasks`: task stack and queue-state visibility for Codex.
 - `arscontexta-next`: one read-only recommendation for what to do next.
@@ -61,6 +63,7 @@ Recommend one next action:
 - Run `scripts/check-codex-plugin.sh` after plugin edits or Codex updates.
 - Run `scripts/check-vault.sh <vault-path>` before testing against a real vault.
 - Use `plugins/arscontexta/skills/` when editing installable skill behavior.
+- Use `plugins/arscontexta/generators/` and `plugins/arscontexta/presets/` when editing setup-derived vault outputs.
 
 ### Ars Contexta Vault
 

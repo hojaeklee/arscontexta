@@ -67,10 +67,14 @@ for preset in research personal experimental; do
   assert_dir "$vault/ops/methodology"
   assert_no_dir "$vault/methodology"
   assert_no_dir "$vault/reference"
+  assert_no_dir "$vault/generators"
+  assert_no_dir "$vault/presets"
 
   assert_contains "$vault/AGENTS.md" "Codex-oriented Ars Contexta vault"
   assert_contains "$vault/AGENTS.md" "explicit session workflows"
   assert_contains "$vault/AGENTS.md" "no hidden background automation"
+  assert_contains "$vault/ops/config.yaml" "vocabulary:"
+  assert_contains "$vault/ops/config.yaml" "extraction_categories:"
 
   "$CHECK_VAULT" "$vault" >/dev/null
   "$HEALTH_SCRIPT" "$vault" --mode quick --limit 5 --format json >/dev/null
@@ -81,6 +85,11 @@ assert_file "$tmp_dir/research-vault/notes/open-questions.md"
 assert_file "$tmp_dir/personal-vault/notes/life-areas.md"
 assert_file "$tmp_dir/personal-vault/notes/people.md"
 assert_file "$tmp_dir/personal-vault/notes/goals.md"
+assert_contains "$tmp_dir/research-vault/ops/config.yaml" "  note: claim"
+assert_contains "$tmp_dir/research-vault/ops/config.yaml" "  - claims"
+assert_contains "$tmp_dir/personal-vault/ops/config.yaml" "  note: reflection"
+assert_contains "$tmp_dir/personal-vault/ops/config.yaml" "  - reflections"
+assert_contains "$tmp_dir/experimental-vault/ops/config.yaml" "extraction_categories: []"
 
 dry_vault="$tmp_dir/dry-run-vault"
 "$SETUP_SCRIPT" "$dry_vault" --preset research --domain "dry run" --dry-run >/dev/null

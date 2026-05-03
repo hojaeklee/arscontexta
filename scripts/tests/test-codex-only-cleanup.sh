@@ -35,7 +35,8 @@ for legacy_path in \
   "platforms/shared/skill-blocks" \
   "skills" \
   "skill-sources" \
-  "generators/claude-md.md"
+  "generators" \
+  "presets"
 do
   assert_absent "$legacy_path"
 done
@@ -57,7 +58,7 @@ done
 
 if rg -n -g '!**/test-codex-only-cleanup.sh' \
   "skill-sources/|root skills/|CLAUDE_PLUGIN_ROOT|claude_hooks|full Claude setup parity" \
-  "$PROJECT_ROOT/plugins" "$PROJECT_ROOT/scripts" "$PROJECT_ROOT/platforms" "$PROJECT_ROOT/generators" >/tmp/arscontexta-cleanup-rg.$$ 2>/dev/null; then
+  "$PROJECT_ROOT/plugins" "$PROJECT_ROOT/scripts" "$PROJECT_ROOT/platforms" >/tmp/arscontexta-cleanup-rg.$$ 2>/dev/null; then
   cat /tmp/arscontexta-cleanup-rg.$$ >&2
   rm -f /tmp/arscontexta-cleanup-rg.$$
   fail "active Codex surfaces still reference legacy Claude/template sources"

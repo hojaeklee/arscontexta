@@ -9,6 +9,10 @@ vault=""
 preset=""
 domain=""
 dry_run=false
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+PLUGIN_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
+PRESETS_DIR="$PLUGIN_ROOT/presets"
+GENERATORS_DIR="$PLUGIN_ROOT/generators"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -53,13 +57,23 @@ if [[ -z "$vault" || -z "$preset" || -z "$domain" ]]; then
   exit 2
 fi
 
-case "$preset" in
-  research|personal|experimental) ;;
-  *)
-    printf 'Unsupported preset: %s\n' "$preset" >&2
+preset_dir="$PRESETS_DIR/$preset"
+preset_file="$preset_dir/preset.yaml"
+vocabulary_file="$preset_dir/vocabulary.yaml"
+categories_file="$preset_dir/categories.yaml"
+agents_template="$GENERATORS_DIR/agents-md.md"
+
+if [[ ! -d "$preset_dir" ]]; then
+  printf 'Unsupported preset: %s\n' "$preset" >&2
+  exit 2
+fi
+
+for required_file in "$preset_file" "$vocabulary_file" "$categories_file" "$agents_template"; do
+  if [[ ! -f "$required_file" ]]; then
+    printf 'Missing setup source: %s\n' "$required_file" >&2
     exit 2
-    ;;
-esac
+  fi
+done
 
 if [[ "$vault" == "." ]]; then
   vault_abs="$(pwd -P)"
@@ -82,30 +96,80 @@ fi
 
 today="$(date +%Y-%m-%d)"
 
-note_type="note"
-topic_map="topic map"
-focus_term="knowledge"
-starter_files="index"
-case "$preset" in
-  research)
-    note_type="claim"
-    topic_map="topic map"
-    focus_term="research"
-    starter_files="index methods open-questions"
-    ;;
-  personal)
-    note_type="reflection"
-    topic_map="life area"
-    focus_term="personal reflection"
-    starter_files="index life-areas people goals"
-    ;;
-  experimental)
-    note_type="note"
-    topic_map="topic map"
-    focus_term="custom knowledge"
-    starter_files="index"
-    ;;
-esac
+yaml_scalar() {
+  local file="$1"
+  local key="$2"
+  local default="${3:-}"
+  local value
+
+  value="$(awk -v key="$key" '
+    $0 ~ "^[[:space:]]*" key ":[[:space:]]*" {
+      line = $0
+      sub(/^[^:]+:[[:space:]]*/, "", line)
+      sub(/[[:space:]]+#.*/, "", line)
+      gsub(/^"|"$/, "", line)
+      if (line != "" && line != "null") {
+        print line
+        exit
+      }
+    }
+  ' "$file")"
+
+  if [[ -n "$value" ]]; then
+    printf '%s\n' "$value"
+  else
+    printf '%s\n' "$default"
+  fi
+}
+
+yaml_list_values() {
+  local file="$1"
+  local key="$2"
+
+  awk -v key="$key" '
+    $0 ~ "^[[:space:]]*" key ":[[:space:]]*\\[\\][[:space:]]*($|#)" { exit }
+    $0 ~ "^[[:space:]]*" key ":[[:space:]]*$" { in_list = 1; next }
+    in_list && /^[[:space:]]*-/ {
+      line = $0
+      sub(/^[[:space:]]*-[[:space:]]*/, "", line)
+      sub(/[[:space:]]+#.*/, "", line)
+      gsub(/^"|"$/, "", line)
+      if (line != "" && line != "null") print line
+      next
+    }
+    in_list && $0 !~ /^[[:space:]]*$/ { exit }
+  ' "$file"
+}
+
+render_template_file() {
+  local source="$1"
+  local path="$2"
+  local content
+
+  content="$(<"$source")"
+  content="${content//\{\{DOMAIN\}\}/$domain}"
+  content="${content//\{\{PRESET\}\}/$preset}"
+  content="${content//\{\{NOTE_TYPE\}\}/$note_type}"
+  content="${content//\{\{TOPIC_MAP\}\}/$topic_map}"
+  content="${content//\{\{FOCUS_TERM\}\}/$focus_term}"
+  printf '%s\n' "$content" > "$path"
+}
+
+note_type="$(yaml_scalar "$preset_file" "note_type" "note")"
+topic_map="$(yaml_scalar "$preset_file" "topic_map" "topic map")"
+focus_term="$(yaml_scalar "$preset_file" "focus_term" "knowledge")"
+starter_files="$(yaml_list_values "$preset_file" "starter_notes" | tr '\n' ' ')"
+if [[ -z "${starter_files// }" ]]; then
+  starter_files="index"
+fi
+
+category_items="$(yaml_list_values "$categories_file" "extraction_categories" | sed 's/^/  - /')"
+vocabulary_note="$(yaml_scalar "$vocabulary_file" "note" "$note_type")"
+vocabulary_moc="$(yaml_scalar "$vocabulary_file" "moc" "$topic_map")"
+vocabulary_reduce="$(yaml_scalar "$vocabulary_file" "reduce" "reduce")"
+vocabulary_reflect="$(yaml_scalar "$vocabulary_file" "reflect" "reflect")"
+vocabulary_verify="$(yaml_scalar "$vocabulary_file" "verify" "verify")"
+vocabulary_reweave="$(yaml_scalar "$vocabulary_file" "reweave" "reweave")"
 
 announce() {
   printf '%s %s\n' "$1" "$2"
@@ -120,6 +184,31 @@ ensure_dir() {
   else
     mkdir -p "$path"
     announce "CREATE" "${path#"$vault_abs"/}/"
+  fi
+}
+
+write_starter_note() {
+  local name="$1"
+  local path="$vault_abs/notes/$name.md"
+  local rel="${path#"$vault_abs"/}"
+  local source="$preset_dir/starter/$name.md"
+
+  if [[ -e "$path" ]]; then
+    announce "EXISTS" "$rel"
+    return
+  fi
+
+  if [[ "$dry_run" == true ]]; then
+    announce "CREATE" "$rel"
+    return
+  fi
+
+  mkdir -p "$(dirname "$path")"
+  if [[ -f "$source" ]]; then
+    render_template_file "$source" "$path"
+    announce "CREATE" "$rel"
+  else
+    write_file "$path"
   fi
 }
 
@@ -148,34 +237,7 @@ write_file() {
         > "$path"
       ;;
     AGENTS.md)
-      printf '%s\n' \
-        "# Ars Contexta Agent Context" \
-        "" \
-        "This is a Codex-oriented Ars Contexta vault for $domain." \
-        "" \
-        "## How To Work Here" \
-        "" \
-        "- Treat markdown files as a local knowledge graph." \
-        "- Use wiki links for meaningful connections between notes." \
-        "- Keep durable knowledge in \`notes/\`, raw capture in \`inbox/\`, and operational state in \`ops/\`." \
-        "- Use \`self/\` for persistent agent identity and operating memory." \
-        "- Prefer small, traceable edits and preserve existing user notes." \
-        "" \
-        "## Available Codex Skills" \
-        "" \
-        "- \`arscontexta-help\`: orient to this vault or the plugin." \
-        "- \`arscontexta-health\`: run a bounded, read-only health check." \
-        "- \`arscontexta-setup\`: create or complete minimal Codex vault scaffolding." \
-        "- \`arscontexta-session\`: orient, validate recent writes, and capture session handoffs explicitly." \
-        "" \
-        "## Operating Model" \
-        "" \
-        "This Codex setup creates a usable vault with explicit session workflows, deterministic helper scripts, and no hidden background automation." \
-        "" \
-        "## Next Action" \
-        "" \
-        "After setup, run \`arscontexta-session orient\`, then \`arscontexta-health\` to verify the vault." \
-        > "$path"
+      render_template_file "$agents_template" "$path"
       ;;
     ops/derivation.md)
       printf '%s\n' \
@@ -189,7 +251,7 @@ write_file() {
         "" \
         "## Summary" \
         "" \
-        "This vault was initialized by the minimal Codex setup flow." \
+        "This vault was initialized by the minimal Codex setup flow from bundled plugin preset and generator assets." \
         "" \
         "- Domain: $domain" \
         "- Preset: $preset" \
@@ -203,7 +265,7 @@ write_file() {
         "" \
         "## Operating Model" \
         "" \
-        "Codex works through explicit user intent, local file reads, and approved writes. Background automation is not required." \
+        "Codex works through explicit user intent, local file reads, and approved writes. Background automation is not required. The plugin-side generators and presets remain bundled source assets; this vault receives only their derived outputs." \
         > "$path"
       ;;
     ops/derivation-manifest.md)
@@ -221,34 +283,48 @@ write_file() {
         "  notes: notes" \
         "  inbox: inbox" \
         "  archive: archive" \
-        "  note: $note_type" \
-        "  topic_map: $topic_map" \
-        "  reduce: reduce" \
-        "  reflect: reflect" \
-        "  reweave: reweave" \
-        "  verify: verify" \
+        "  note: $vocabulary_note" \
+        "  topic_map: $vocabulary_moc" \
+        "  reduce: $vocabulary_reduce" \
+        "  reflect: $vocabulary_reflect" \
+        "  reweave: $vocabulary_reweave" \
+        "  verify: $vocabulary_verify" \
         "---" \
         > "$path"
       ;;
     ops/config.yaml)
-      printf '%s\n' \
-        "# ops/config.yaml -- Minimal Codex setup configuration" \
-        "domain: \"$domain\"" \
-        "preset: \"$preset\"" \
-        "platform: codex" \
-        "context_file: AGENTS.md" \
-        "notes_dir: notes" \
-        "inbox_dir: inbox" \
-        "archive_dir: archive" \
-        "automation:" \
-        "  session_workflow: arscontexta-session" \
-        "  explicit_user_confirmation: true" \
-        "processing:" \
-        "  mode: explicit" \
-        "  pipeline_skill: arscontexta-pipeline" \
-        "maintenance:" \
-        "  health_skill: arscontexta-health" \
-        > "$path"
+      {
+        printf '%s\n' \
+          "# ops/config.yaml -- Minimal Codex setup configuration" \
+          "domain: \"$domain\"" \
+          "preset: \"$preset\"" \
+          "platform: codex" \
+          "context_file: AGENTS.md" \
+          "notes_dir: notes" \
+          "inbox_dir: inbox" \
+          "archive_dir: archive" \
+          "vocabulary:" \
+          "  note: $vocabulary_note" \
+          "  topic_map: $vocabulary_moc" \
+          "  reduce: $vocabulary_reduce" \
+          "  reflect: $vocabulary_reflect" \
+          "  reweave: $vocabulary_reweave" \
+          "  verify: $vocabulary_verify"
+        if [[ -n "$category_items" ]]; then
+          printf 'extraction_categories:\n%s\n' "$category_items"
+        else
+          printf 'extraction_categories: []\n'
+        fi
+        printf '%s\n' \
+          "automation:" \
+          "  session_workflow: arscontexta-session" \
+          "  explicit_user_confirmation: true" \
+          "processing:" \
+          "  mode: explicit" \
+          "  pipeline_skill: arscontexta-pipeline" \
+          "maintenance:" \
+          "  health_skill: arscontexta-health"
+      } > "$path"
       ;;
     templates/base-note.md)
       printf '%s\n' \
@@ -572,7 +648,7 @@ do
 done
 
 for starter in $starter_files; do
-  write_file "$vault_abs/notes/$starter.md"
+  write_starter_note "$starter"
 done
 
 printf '\n'

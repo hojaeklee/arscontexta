@@ -39,3 +39,12 @@ starter_mocs:
   - "life-areas"
   - "people"
   - "goals"
+codex_setup:
+  note_type: reflection
+  topic_map: life area
+  focus_term: personal reflection
+  starter_notes:
+    - index
+    - life-areas
+    - people
+    - goals
