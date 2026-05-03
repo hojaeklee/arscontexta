@@ -47,6 +47,7 @@ Available now:
 - `arscontexta-refactor`: report-only restructuring plans for chosen config or derivation shifts.
 - `arscontexta-reseed`: content-preserving re-derivation analysis for structural drift.
 - `arscontexta-upgrade`: advisory generated-skill upgrade analysis against current methodology.
+- `arscontexta-add-domain`: previewed composition of a new domain into an existing vault.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -88,6 +89,7 @@ Available now in Codex:
 - Run `arscontexta-refactor` to plan approved config, schema, navigation, or structure changes.
 - Run `arscontexta-reseed` when drift suggests re-derivation rather than incremental fixes.
 - Run `arscontexta-upgrade` to compare generated vault skills against current methodology.
+- Run `arscontexta-add-domain` to derive and preview a new domain addition.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
