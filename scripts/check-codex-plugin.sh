@@ -108,6 +108,8 @@ seed_helper="$REPO_ROOT/plugins/arscontexta/scripts/seed-vault.sh"
 ralph_helper="$REPO_ROOT/plugins/arscontexta/scripts/ralph-vault.sh"
 pipeline_helper="$REPO_ROOT/plugins/arscontexta/scripts/pipeline-vault.sh"
 archive_batch_helper="$REPO_ROOT/plugins/arscontexta/scripts/archive-batch-vault.sh"
+vault_index_shell_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault-index.sh"
+vault_index_python_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault_index.py"
 agent_knowledge_guide="$REPO_ROOT/plugins/arscontexta/agents/knowledge-guide.md"
 methodology_index="$REPO_ROOT/plugins/arscontexta/methodology/index.md"
 methodology_claim="$REPO_ROOT/plugins/arscontexta/methodology/claims must be specific enough to be wrong.md"
@@ -219,7 +221,9 @@ for helper in \
   "$seed_helper:vault seed" \
   "$ralph_helper:vault ralph" \
   "$pipeline_helper:vault pipeline" \
-  "$archive_batch_helper:vault archive-batch"
+  "$archive_batch_helper:vault archive-batch" \
+  "$vault_index_shell_helper:vault index shell" \
+  "$vault_index_python_helper:vault index Python"
 do
   helper_path="${helper%%:*}"
   helper_label="${helper#*:}"
@@ -307,7 +311,7 @@ if [[ -n "${manifest_version:-}" ]]; then
     [[ -f "$cache_dir/scripts/setup-vault.sh" ]] \
       && emit PASS "Cached vault setup helper exists." \
       || emit WARN "Cached vault setup helper is missing; reinstall plugin after adding setup."
-    for helper_name in session-orient.sh session-validate.sh session-capture.sh mcp-vault-tools.sh validate-vault.sh tasks-vault.sh next-vault.sh stats-vault.sh graph-vault.sh seed-vault.sh ralph-vault.sh pipeline-vault.sh archive-batch-vault.sh; do
+    for helper_name in session-orient.sh session-validate.sh session-capture.sh mcp-vault-tools.sh validate-vault.sh tasks-vault.sh next-vault.sh stats-vault.sh graph-vault.sh seed-vault.sh ralph-vault.sh pipeline-vault.sh archive-batch-vault.sh vault-index.sh vault_index.py; do
       [[ -f "$cache_dir/scripts/$helper_name" ]] \
         && emit PASS "Cached $helper_name helper exists." \
         || emit WARN "Cached $helper_name helper is missing; reinstall plugin after adding session or MCP workflows."
