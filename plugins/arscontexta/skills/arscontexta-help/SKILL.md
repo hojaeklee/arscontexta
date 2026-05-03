@@ -35,6 +35,7 @@ Available now:
 - `arscontexta-validate`: detailed read-only note/schema validation.
 - `arscontexta-tasks`: task stack and queue-state visibility for Codex.
 - `arscontexta-next`: one read-only recommendation for what to do next.
+- `arscontexta-index`: natural-language access to build, inspect, or export the persisted VaultIndex.
 - `arscontexta-stats`: concise vault metrics and shareable graph snapshots.
 - `arscontexta-graph`: bounded graph diagnostics for orphans, hubs, sparse areas, and synthesis opportunities.
 - `arscontexta-ask`: source-grounded methodology Q&A for Codex.
@@ -77,6 +78,7 @@ Available now in Codex:
 - Run `arscontexta-validate` to check note frontmatter, schema fields, descriptions, enums, and wiki links.
 - Run `arscontexta-tasks` to inspect or explicitly update `ops/tasks.md`.
 - Run `arscontexta-next` to get one bounded, rationale-backed next action.
+- Run `arscontexta-index` to build, inspect, or export the persisted VaultIndex without remembering helper paths.
 - Run `arscontexta-stats` to summarize graph size, health, growth, and pipeline state.
 - Run `arscontexta-graph` to inspect graph structure and connection opportunities.
 - Run `arscontexta-ask` for source-grounded answers about Ars Contexta methodology.

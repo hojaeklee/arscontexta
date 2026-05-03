@@ -46,6 +46,7 @@ assert_contains "$plugin_output" "PASS arscontexta-session skill exists in insta
 assert_contains "$plugin_output" "PASS arscontexta-validate skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-tasks skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-next skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS arscontexta-index skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-stats skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-graph skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-ask skill exists in installable plugin."
