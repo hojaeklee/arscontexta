@@ -17,8 +17,9 @@ ported to Codex as a first-class local plugin.
 | Claude Code | Available | Original plugin remains intact under `.claude-plugin/` and `skills/`. |
 | MCP | Not implemented | Good future target for deterministic vault operations, not the main methodology. |
 
-The repo intentionally keeps Claude and Codex support side by side. Do not remove
-the Claude plugin while porting Codex skills.
+The repo keeps Claude and Codex support side by side during migration. Remove
+Claude-specific files only after the equivalent Codex plugin skill, script, or
+workflow has been migrated and verified.
 
 ## What It Does
 
@@ -321,6 +322,11 @@ Recommended order:
 Codex skills should be shorter than the Claude command bodies. Put only the core
 workflow in `SKILL.md`, move long methodology into `reference/`, and use scripts
 for deterministic checks.
+
+Once a Claude command or hook workflow has a verified Codex equivalent, remove
+the obsolete Claude-specific files in the same cleanup pass. Do not delete
+Claude assets that still provide behavior not yet available through
+`plugins/arscontexta/`.
 
 ### Minimal Codex Setup
 
