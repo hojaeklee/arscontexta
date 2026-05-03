@@ -37,7 +37,7 @@ Review an existing vault architecture and recommend bounded evolution. Architect
   - `tradition-presets.md`
   - `three-spaces.md`
   - `evolution-lifecycle.md`
-- Use QMD or semantic search only when already available; never require it.
+- Use QMD or semantic search only when already available for your own evidence gathering. When reviewing architecture, treat missing semantic search as a degraded configuration for large, cross-domain, research, or heavy-processing vaults unless the user has explicitly chosen that trade-off.
 - cite local vault evidence and cite local reference paths for each recommendation.
 
 ## Output

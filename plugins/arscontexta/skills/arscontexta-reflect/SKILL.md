@@ -22,10 +22,10 @@ Find meaningful connections between notes and, with approval, weave focused link
 
 ## Discovery Workflow
 
-- Use local search before optional semantic tooling.
+- Use local search before semantic tooling.
 - Start with frontmatter topics, existing wiki links, backlinks, relevant MOCs/topic maps, and `rg` across the configured notes folder.
 - Follow wiki-link traversal from promising candidates to understand the neighborhood.
-- Optional QMD or semantic search may be used only when already available; never require it.
+- Use QMD or equivalent semantic search when it is available. For large, cross-domain, research, or heavy-processing vaults, missing semantic search means reflect is running in degraded mode; continue with `rg` and MOC/topic-map traversal, but report that cross-vocabulary connection discovery is incomplete.
 - Keep a concise discovery trace: which notes, MOCs/topic maps, backlinks, and searches informed the report.
 
 ## Connection Standard

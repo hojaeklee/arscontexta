@@ -82,7 +82,7 @@ Run index updates after batch processing or whenever search results feel stale.
 
 ### Fallback When Search Is Unavailable
 
-Semantic search is valuable but not required. The system works without it. When semantic search is unavailable:
+For small, narrow, low-processing vaults, semantic search is optional. For large, cross-domain, research, or heavy-processing vaults, QMD or equivalent semantic search is required for full-quality duplicate detection, description findability, and cross-vocabulary connection discovery. When semantic search is unavailable in a large vault, continue in degraded mode and report the missing search layer as a system health issue.
 
 1. **Keyword search (rg)** — Always available. Precise for known vocabulary.
 2. **{DOMAIN:Topic map} traversal** — Browse the relevant {DOMAIN:topic map} to see what exists in a topic area.
@@ -93,7 +93,7 @@ Never let a search failure block work. The multi-layer discovery approach means 
 ```
 
 ## Dependencies
-None — works standalone, but benefits from notes having good descriptions.
+QMD or an equivalent local semantic search tool for large, cross-domain, research, or heavy-processing vaults. Small or narrow vaults can run without semantic search but lose cross-vocabulary discovery.
 
 ## Conditional
-Only include when semantic search (qmd or equivalent) is opted in during onboarding. When excluded, the system relies on keyword search, MOC traversal, and progressive disclosure.
+Include when semantic search (qmd or equivalent) is opted in during onboarding or required by expected scale, domain breadth, research use, or heavy processing. When excluded, the system relies on keyword search, MOC traversal, and progressive disclosure and should document the resulting degraded discovery capability.

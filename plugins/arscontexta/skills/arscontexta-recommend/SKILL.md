@@ -27,7 +27,7 @@ Use local `plugins/arscontexta/reference/` and `plugins/arscontexta/methodology/
 - `plugins/arscontexta/reference/claim-map.md`
 - related methodology claims under `plugins/arscontexta/methodology/`
 
-Optional QMD, semantic search, or indexed knowledge tools may be used only when already available. Never require them and never present unavailable external tools as Codex requirements.
+Use QMD, semantic search, or indexed knowledge tools only when they are already available for your own search process. In architecture recommendations, require QMD or equivalent semantic search for large, cross-domain, research, or heavy-processing vaults unless the user explicitly accepts degraded discovery. Small or narrow low-volume vaults may start with `rg` plus MOC/topic-map traversal and add semantic search when scale or friction demands it.
 
 ## Recommendation Shape
 

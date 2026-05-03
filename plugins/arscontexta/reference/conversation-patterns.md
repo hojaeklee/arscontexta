@@ -525,7 +525,7 @@ Whether to enable qmd for meaning-based discovery across vocabularies.
 
 Example phrasing: "Semantic search lets the system find connections even when different terms describe the same concept — like matching 'strict scrutiny' with 'heightened review.' It is especially valuable for cross-disciplinary work. Would you like to enable it?"
 
-For Pattern 3 (Climate Research), qmd should be strongly recommended due to cross-disciplinary vocabulary. For Pattern 1 (Books) and Pattern 2 (Family), qmd is unnecessary at expected volume. For Pattern 4 (Therapy), qmd is optional — low volume initially but could help with pattern matching across vocabulary.
+For Pattern 3 (Climate Research), qmd is required for full-quality discovery due to cross-disciplinary vocabulary. For Pattern 1 (Books) and Pattern 2 (Family), qmd is unnecessary at expected volume. For Pattern 4 (Therapy), qmd is optional at low volume but becomes required for full-quality discovery if the vault grows large, cross-domain, or heavy-processing.
 
 These decisions appear in the conversation AFTER dimension derivation but BEFORE generation. The user always makes the final call.
 

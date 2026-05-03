@@ -13,7 +13,7 @@ Seven validation milestones for the Ars Contexta v1.6 plugin. Each milestone tes
 - The vault must have at least 3 notes created (to exercise link and MOC checks)
 - `validate-kernel.sh` accessible at `plugins/arscontexta/reference/validate-kernel.sh`
 
-**Pass criteria:** 15/15 checks pass (PASS status). WARN is acceptable for semantic search (primitive 8) if the platform does not support qmd and for self space (primitive 9) if disabled via configuration, but all other primitives must be PASS.
+**Pass criteria:** 15/15 checks pass (PASS status). WARN is acceptable for semantic search (primitive 8) only when the platform does not support qmd/equivalent tooling or the generated vault is intentionally small, narrow, and low-processing. WARN is acceptable for self space (primitive 9) if disabled via configuration, but all other primitives must be PASS.
 
 **Verification steps:**
 
@@ -22,7 +22,7 @@ Seven validation milestones for the Ars Contexta v1.6 plugin. Each milestone tes
 plugins/arscontexta/reference/validate-kernel.sh /path/to/generated-vault
 
 # Expected: 15 PASS lines, 0 FAIL lines
-# Acceptable: 14 PASS + 1 WARN (semantic search when qmd not configured, or self space when disabled)
+# Acceptable: 14 PASS + 1 WARN (semantic search only in supported degraded cases, or self space when disabled)
 ```
 
 **Expected output on success:**
@@ -696,7 +696,7 @@ fi
 - validate-kernel.sh accessible
 
 **Pass criteria:** For each preset:
-1. Kernel validation passes (15/15, or 14/15 with WARN for semantic search if qmd not configured, or self space if disabled)
+1. Kernel validation passes (15/15, or 14/15 with WARN for semantic search only in supported degraded cases, or self space if disabled)
 2. Vocabulary is domain-native (zero cross-domain term leakage)
 3. Interaction constraints are satisfied (no hard constraint violations)
 4. Active feature blocks match the preset's `active_blocks` list (17 blocks available)
@@ -837,7 +837,7 @@ done
 **Expected output on success:**
 
 Each preset should produce:
-- Kernel: 15/15 PASS, or 14/15 PASS + 1 WARN (semantic search if qmd not configured, or self space if disabled)
+- Kernel: 15/15 PASS, or 14/15 PASS + 1 WARN (semantic search only in supported degraded cases, or self space if disabled)
 - Vocabulary: domain-native terms present, zero cross-domain leakage
 - Constraints: all coherence checks PASS
 - Features: all active blocks (from 16 available) produce output in context file

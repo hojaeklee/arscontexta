@@ -37,7 +37,7 @@ In an Ars Contexta vault, search these first when present:
 - `self/`
 - relevant markdown notes under the configured notes directory
 
-Optional QMD, semantic search, or indexed knowledge tools may be used only when already available. Never require them and never present unavailable external tools as Codex requirements.
+Use QMD, semantic search, or indexed knowledge tools only when they are already available in the current runtime. When answering methodology questions, state the scale policy clearly: small or narrow vaults can operate with `rg` plus MOC/topic-map traversal, while large, cross-domain, research, or heavy-processing vaults require QMD or equivalent semantic search for full-quality duplicate detection and cross-vocabulary discovery. If the tool is unavailable, describe that as degraded mode rather than blocking the answer.
 
 ## Answer Shape
 

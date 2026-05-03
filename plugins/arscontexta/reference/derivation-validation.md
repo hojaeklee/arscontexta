@@ -468,7 +468,7 @@ When a user disables a feature via /architect, the rest of the system must conti
 
 | Disabled Feature | Expected Behavior | Degradation |
 |-----------------|-------------------|-------------|
-| Semantic search (qmd) | Keyword search only. Skills fall back to grep. | Cross-vocabulary discovery reduced |
+| Semantic search (qmd) | Keyword search only. Skills fall back to grep. | Cross-vocabulary discovery reduced; degraded mode for large, cross-domain, research, or heavy-processing vaults |
 | Self space | Goals route to ops/goals.md, methodology to ops/methodology/. No self/ directory. | Identity persistence reduced but operational |
 | Session capture | No stop hook saves transcripts. /remember still works manually. | Automatic friction detection lost |
 | Processing pipeline | Manual processing only. Skills available but no orchestration. | Quality gates still in skills, no batch processing |

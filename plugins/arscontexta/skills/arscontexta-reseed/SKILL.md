@@ -35,7 +35,7 @@ Analyze whether an existing vault needs principled re-derivation rather than inc
   - `evolution-lifecycle.md`
   - `self-space.md`
   - `kernel.yaml`
-- Use optional semantic tooling only when already available; never require it.
+- Use semantic tooling only when already available for your own evidence gathering. When evaluating a reseed, treat missing semantic search as a degraded configuration for large, cross-domain, research, or heavy-processing vaults unless the user has explicitly chosen that trade-off.
 - Ground every proposed dimension change in vault evidence and local reference paths.
 
 ## Output

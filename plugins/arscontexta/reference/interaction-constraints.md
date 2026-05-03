@@ -164,7 +164,7 @@ These constraints apply to the 15 kernel primitives and their INVARIANT/CONFIGUR
    → WARN: "Self space is ON by default for Personal Assistant presets. Agent identity and persistent memory are central to the experience. Disable only if the agent's sense of self is not needed."
 
 7. `semantic_search == false + linking == "explicit+implicit"`
-   → WARN: "Semantic search is configured as opt-in. Without qmd, implicit linking falls back to keyword overlap and MOC traversal."
+   → WARN: "Explicit+implicit linking without qmd or equivalent semantic search is degraded. Small, narrow vaults can accept this temporarily; large, cross-domain, research, or heavy-processing vaults need semantic search for full-quality duplicate detection and connection discovery."
 
 **Condition-based maintenance constraints:**
 

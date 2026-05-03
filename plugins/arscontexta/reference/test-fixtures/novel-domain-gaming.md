@@ -59,7 +59,7 @@ The agent should:
 - Note this is a domain-specific temporal tracking need not present in any preset
 - Recognize "stuff comes back" means archival is wrong — outdated strategies need to stay in the active graph with a status marker
 - Set platform to Claude Code (full automation available)
-- Present the two opt-in/opt-out decisions: self space (recommend ON — the agent's role as "strategy analyst and training partner" benefits from persistent identity) and qmd semantic search (recommend ON — cross-game vocabulary differences benefit from semantic matching)
+- Present the two opt-in/opt-out decisions: self space (recommend ON — the agent's role as "strategy analyst and training partner" benefits from persistent identity) and qmd semantic search (require for full-quality discovery — cross-game vocabulary differences need semantic matching)
 - Begin presenting the derived configuration in gaming vocabulary:
   - "strategy notes" not "claims"
   - "matchup guides" not "MOCs"
@@ -135,4 +135,4 @@ The agent should:
   - "When a patch drops: run through your matchup guides and mark strategies that may be affected as `meta_state: speculative` until you can test them"
   - "After a tournament: create a session breakdown in lab/, then promote strategic insights to strategies/"
   - Temporal staleness warning in Common Pitfalls
-- Run validate-kernel.sh: 15/15 PASS (or 14/15 + WARN on semantic search if qmd not enabled)
+- Run validate-kernel.sh: 15/15 PASS; missing qmd is a degraded configuration warning because cross-game vocabulary differences need semantic matching

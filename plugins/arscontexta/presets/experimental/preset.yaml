@@ -32,7 +32,7 @@ blocks:
   optional: []
   disabled: []
 self_space: "user_choice"
-qmd: "user_choice"
+qmd: "user_choice"  # require for large, cross-domain, research, or heavy-processing configurations
 personality: "derived_from_conversation"
 processing_depth: "full quality gates by default, user can opt down"
 starter_mocs: []  # user-chosen

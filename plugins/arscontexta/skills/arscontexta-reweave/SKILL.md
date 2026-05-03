@@ -22,10 +22,10 @@ Revisit existing notes with newer vault context. Reweave is the backward pass: i
 
 ## Discovery Workflow
 
-- Use local search before optional semantic tooling.
+- Use local search before semantic tooling.
 - Start with file age, frontmatter topics, existing wiki links, backlinks, relevant MOCs/topic maps, and `rg` across the configured notes folder.
 - Follow wiki-link and MOC/topic-map traversal to compare the target against newer related notes.
-- Optional QMD or semantic search may be used only when already available; never require it.
+- Use QMD or equivalent semantic search when it is available. For large, cross-domain, research, or heavy-processing vaults, missing semantic search means reweave is running in degraded mode; continue with `rg` and MOC/topic-map traversal, but report that cross-vocabulary newer-context discovery is incomplete.
 - Keep a concise discovery trace: which notes, MOCs/topic maps, backlinks, ages, and searches informed the proposal.
 
 ## Reweave Evaluation

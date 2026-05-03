@@ -71,7 +71,7 @@ I am using Claude Code.
 
 The agent should:
 - Set platform to Claude Code (full automation available)
-- Present the two opt-in/opt-out decisions: self space (ON by default for Personal Assistant — especially relevant for therapy as the agent's reflection partner identity is central) and qmd semantic search (optional — low volume initially, can be enabled later)
+- Present the two opt-in/opt-out decisions: self space (ON by default for Personal Assistant — especially relevant for therapy as the agent's reflection partner identity is central) and qmd semantic search (optional at low volume, but required for full-quality discovery if the vault becomes large, cross-domain, or heavy-processing)
 - Present derived configuration using THERAPY vocabulary throughout:
   - "reflections" not "claims"
   - "themes" not "MOCs"
@@ -125,7 +125,7 @@ The agent should:
   - templates/ with reflection-note.md (mood, trigger, pattern, growth_area fields)
   - ops/ with derivation.md, methodology/, observations/, tensions/, sessions/
   - .claude/hooks/ with session-orient.sh (references self/ in warm language) and session-stop.sh (session capture)
-- Run validate-kernel.sh: 15/15 PASS (or 14/15 + WARN on semantic search if qmd not enabled)
+- Run validate-kernel.sh: 15/15 PASS (or 14/15 + WARN on semantic search only while the therapy vault remains low-volume or the platform cannot support qmd)
 - Orient the user warmly: "Your reflection space is ready. Start with journal/ for quick thoughts during the week, and reflections/ for longer post-session processing."
 
 ### User Turn 8

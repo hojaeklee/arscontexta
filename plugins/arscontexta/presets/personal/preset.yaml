@@ -27,12 +27,12 @@ blocks:
     - personality
     - self-space
   conditional:
-    - semantic-search  # if qmd opted in
+    - semantic-search  # scale-triggered; recommend when volume, domain breadth, or processing intensity grows
     - multi-domain     # if needed
   optional: []
   disabled: []
 self_space: true
-qmd: "user_choice"  # choice during onboarding
+qmd: "user_choice"  # ask during onboarding; treat as degraded if disabled after the vault becomes large or cross-domain
 personality: "warm-supportive"
 processing_depth: "full quality gates"
 starter_mocs:

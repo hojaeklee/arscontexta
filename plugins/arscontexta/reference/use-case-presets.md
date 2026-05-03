@@ -32,13 +32,13 @@ Named points in the configuration space derived from methodology traditions and 
 | Category | Blocks |
 |----------|--------|
 | Always | atomic-notes, wiki-links, mocs, processing-pipeline, schema, maintenance, self-evolution, session-rhythm, templates, ethical-guardrails, helper-functions, graph-analysis |
-| Conditional | semantic-search (if qmd opted in), multi-domain (if needed) |
+| Conditional | semantic-search (required for full-quality research discovery), multi-domain (if needed) |
 | Optional | personality |
 | Disabled | self-space (goals route to ops/) |
 
 **Key settings:**
 - `self_space: false`
-- `qmd: true` (opted in during onboarding)
+- `qmd: true` (required for full-quality research discovery)
 - `personality: "neutral-analytical"`
 - `processing_depth: "full quality gates from day one"`
 
@@ -97,13 +97,13 @@ Named points in the configuration space derived from methodology traditions and 
 | Category | Blocks |
 |----------|--------|
 | Always | atomic-notes, wiki-links, mocs, processing-pipeline, schema, maintenance, self-evolution, session-rhythm, templates, ethical-guardrails, helper-functions, graph-analysis, personality, self-space |
-| Conditional | semantic-search (if qmd opted in), multi-domain (if needed) |
+| Conditional | semantic-search (scale-triggered by volume, domain breadth, or processing intensity), multi-domain (if needed) |
 | Optional | (none) |
 | Disabled | (none) |
 
 **Key settings:**
 - `self_space: true`
-- `qmd: "user_choice"` (choice during onboarding)
+- `qmd: "user_choice"` (ask during onboarding; degraded if disabled after the vault becomes large or cross-domain)
 - `personality: "warm-supportive"`
 - `processing_depth: "full quality gates"`
 
@@ -167,7 +167,7 @@ Named points in the configuration space derived from methodology traditions and 
 
 **Key settings:**
 - `self_space: "user_choice"`
-- `qmd: "user_choice"`
+- `qmd: "user_choice"` (require for large, cross-domain, research, or heavy-processing configurations)
 - `personality: "derived_from_conversation"`
 - `processing_depth: "full quality gates by default, user can opt down"`
 

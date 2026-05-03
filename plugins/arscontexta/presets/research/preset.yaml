@@ -25,14 +25,14 @@ blocks:
     - helper-functions
     - graph-analysis
   conditional:
-    - semantic-search  # if qmd opted in
+    - semantic-search  # required for large/research vaults when QMD or equivalent is available
     - multi-domain     # if needed
   optional:
     - personality
   disabled:
     - self-space  # OFF for research (goals route to ops/)
 self_space: false
-qmd: true  # opted in during onboarding
+qmd: true  # required for full-quality research discovery
 personality: "neutral-analytical"
 processing_depth: "full quality gates from day one"
 starter_mocs:

@@ -53,7 +53,7 @@ The agent should:
 - Set platform to Claude Code (full automation available)
 - Present derived configuration summary with all 8 dimensions
 - Explain the key derivation decisions (why atomic, why semantic search is essential for cross-subfield vocabulary differences)
-- Present the two opt-in/opt-out decisions: self space (OFF by default for Research) and qmd semantic search (strongly recommended for cross-subfield vocabulary)
+- Present the two opt-in/opt-out decisions: self space (OFF by default for Research) and qmd semantic search (required for full-quality cross-subfield discovery)
 - Ask for confirmation before generating
 
 ### User Turn 4

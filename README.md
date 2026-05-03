@@ -6,7 +6,7 @@ Ars Contexta helps Codex maintain a durable thinking system: plain markdown
 notes, wiki links, processing queues, operational memory, and
 Obsidian-friendly navigation.
 
-**v0.8.4** | Codex-only local plugin | MIT
+**v0.8.5** | Codex-only local plugin | MIT
 
 Codex is the only supported Ars Contexta distribution in this repo.
 Claude Code support, hooks, slash commands, and legacy generated skill templates have been removed.
@@ -251,10 +251,23 @@ supported model such as:
 model = "gpt-5.5"
 ```
 
-## Optional Search And Helper Scripts
+## Search Requirements And Helper Scripts
 
-Semantic search is optional. The system should work with `rg`, wiki-link
-traversal, and bundled deterministic helper scripts.
+Small, narrow, or low-processing vaults can run on `rg`, wiki-link traversal,
+MOC/topic-map navigation, and bundled deterministic helper scripts. Large,
+cross-domain, research, or heavy-processing vaults should use QMD-backed
+semantic search, or an equivalent local semantic search tool, as part of the
+working system. Without it, duplicate detection, description findability, and
+cross-vocabulary connection discovery run in degraded mode.
+
+QMD setup follows the upstream CLI shape:
+
+```bash
+npm install -g @tobilu/qmd
+qmd collection add ~/path/to/markdown --name myknowledge
+qmd embed
+qmd status
+```
 
 The current deterministic helpers are CLI scripts, not a registered server:
 
@@ -264,7 +277,9 @@ plugins/arscontexta/scripts/mcp-vault-tools.sh frontmatter.validate . --file not
 ```
 
 Skills must continue to fall back to bundled scripts, `rg`, and wiki-link
-traversal when optional search tooling is unavailable.
+traversal when semantic search tooling is unavailable, but large-vault
+recommendations and quality gates should report the missing search layer as a
+degraded configuration rather than treating it as equivalent.
 
 ## Roadmap
 
