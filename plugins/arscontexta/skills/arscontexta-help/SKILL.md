@@ -51,6 +51,7 @@ Available now:
 - `arscontexta-seed`: deterministic queue seeding for inbox or local source files.
 - `arscontexta-ralph`: dry-run and run explicit queue phases with Codex subagent boundaries.
 - `arscontexta-pipeline`: visible end-to-end source processing orchestration.
+- `arscontexta-tutorial`: safe conversational onboarding with preview-first tutorial notes.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -96,6 +97,7 @@ Available now in Codex:
 - Run `arscontexta-seed` to add an inbox or local source file to the processing queue.
 - Run `arscontexta-ralph` to dry-run or process pending queue phases explicitly.
 - Run `arscontexta-pipeline` to plan and orchestrate one source through the processing workflow.
+- Run `arscontexta-tutorial` for a preview-first guided walkthrough before writing sample notes.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
