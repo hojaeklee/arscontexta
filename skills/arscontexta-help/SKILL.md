@@ -46,6 +46,7 @@ Available now:
 - `arscontexta-architect`: advisory architecture review for existing vault evolution.
 - `arscontexta-refactor`: report-only restructuring plans for chosen config or derivation shifts.
 - `arscontexta-reseed`: content-preserving re-derivation analysis for structural drift.
+- `arscontexta-upgrade`: advisory generated-skill upgrade analysis against current methodology.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -86,6 +87,7 @@ Available now in Codex:
 - Run `arscontexta-architect` for evidence-backed architecture evolution advice.
 - Run `arscontexta-refactor` to plan approved config, schema, navigation, or structure changes.
 - Run `arscontexta-reseed` when drift suggests re-derivation rather than incremental fixes.
+- Run `arscontexta-upgrade` to compare generated vault skills against current methodology.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
