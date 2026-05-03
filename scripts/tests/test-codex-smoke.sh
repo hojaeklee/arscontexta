@@ -58,6 +58,7 @@ assert_contains "$plugin_output" "PASS arscontexta-remember skill exists in inst
 assert_contains "$plugin_output" "PASS arscontexta-rethink skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-architect skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS arscontexta-refactor skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS arscontexta-reseed skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS Bundled session orientation helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled session validation helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled session capture helper exists and is executable."

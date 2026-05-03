@@ -45,6 +45,7 @@ Available now:
 - `arscontexta-rethink`: evidence-backed review of observations, tensions, drift, and proposals.
 - `arscontexta-architect`: advisory architecture review for existing vault evolution.
 - `arscontexta-refactor`: report-only restructuring plans for chosen config or derivation shifts.
+- `arscontexta-reseed`: content-preserving re-derivation analysis for structural drift.
 - `scripts/check-codex-plugin.sh` and `scripts/check-vault.sh`: Codex compatibility smoke tests.
 
 Planned or in migration:
@@ -84,6 +85,7 @@ Available now in Codex:
 - Run `arscontexta-rethink` to review accumulated observations, tensions, or methodology drift.
 - Run `arscontexta-architect` for evidence-backed architecture evolution advice.
 - Run `arscontexta-refactor` to plan approved config, schema, navigation, or structure changes.
+- Run `arscontexta-reseed` when drift suggests re-derivation rather than incremental fixes.
 - Use the manual if `manual/` exists.
 
 Planned or in migration:
