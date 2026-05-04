@@ -71,8 +71,21 @@ EOF
 cat > "$vault/inbox/source.md" <<'EOF'
 # Source
 EOF
-cat > "$vault/ops/queue/task.md" <<'EOF'
-# Task
+cat > "$vault/ops/queue/alpha.md" <<'EOF'
+# Alpha
+EOF
+cat > "$vault/ops/queue/alpha-001.md" <<'EOF'
+# Alpha 001
+EOF
+cat > "$vault/ops/queue/gamma-001.md" <<'EOF'
+# Gamma 001
+EOF
+cat > "$vault/ops/queue/queue.json" <<'EOF'
+{"tasks":[
+  {"id":"alpha","status":"done","batch":"alpha","file":"alpha.md"},
+  {"id":"alpha-001","status":"completed","batch":"alpha","file":"alpha-001.md"},
+  {"id":"gamma-001","status":"active","batch":"gamma","file":"gamma-001.md","claimed_at":"2020-01-01T00:00:00Z"}
+]}
 EOF
 cat > "$vault/ops/observations/one.md" <<'EOF'
 # Observation
@@ -111,12 +124,17 @@ EOF
 orient_output="$("$ORIENT" "$vault" --limit 5)"
 assert_contains "$orient_output" "HippocampusMD session orientation"
 assert_contains "$orient_output" "Marker: present"
-assert_contains "$orient_output" "ops/queue/: 1"
-assert_contains "$orient_output" "Recommended next action: Review inbox pressure"
+assert_contains "$orient_output" "ops/queue/: 3"
+assert_contains "$orient_output" "Queue hygiene:"
+assert_contains "$orient_output" "Archivable batches: alpha"
+assert_contains "$orient_output" "Stale active tasks: gamma-001"
+assert_contains "$orient_output" "Recommended next action: Archive completed queue batch alpha"
 
 orient_json="$("$ORIENT" "$vault" --format json)"
 assert_contains "$orient_json" '"hippocampusmd_marker": "present"'
 assert_contains "$orient_json" '"inbox": 1'
+assert_contains "$orient_json" '"archivable_batches":'
+assert_contains "$orient_json" '"alpha"'
 
 valid_output="$("$VALIDATE" "$vault" --file notes/valid.md)"
 assert_contains "$valid_output" "Overall: PASS"

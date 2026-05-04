@@ -13,6 +13,8 @@ require "json"
 require "yaml"
 require "set"
 
+require_relative "lib/queue_hygiene"
+
 def usage
   warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] [--limit N] [--format text|json]"
 end
@@ -251,15 +253,16 @@ notes = markdown_files(vault_abs, vocab["notes"])
 inbox = markdown_files(vault_abs, vocab["inbox"], depth: 1)
 oldest_inbox = inbox.min_by { |path| File.mtime(path) }
 stack = parse_tasks(File.join(vault_abs, "ops/tasks.md"))
-queue = parse_queue(vault_abs)
+queue_hygiene = QueueHygiene.status(vault_abs)
 observations = count_pending_frontmatter(vault_abs, "ops/observations", ["pending"])
 tensions = count_pending_frontmatter(vault_abs, "ops/tensions", ["pending", "open"])
 goals = first_goal_line(vault_abs)
 health = latest_health(vault_abs)
 recent_recs = previous_recommendations(vault_abs)
 
-blocked_task = queue[:tasks].find { |task| task["status"] == "blocked" }
-pending_task = queue[:tasks].find { |task| task["status"] == "pending" }
+archivable_batches = queue_hygiene.fetch(:archivable_batches)
+stale_active_tasks = queue_hygiene.fetch(:stale_active_tasks)
+blocked_task = queue_hygiene.fetch(:tasks).find { |task| task[:status] == "blocked" }
 top_task = stack[:current].first
 recommended_inbox = oldest_inbox
 
@@ -268,8 +271,10 @@ signals << "Task stack: #{stack[:current].length} current" if stack[:current].le
 signals << "Goals: #{goals[:excerpt]}" if goals
 signals << "Notes: #{notes.length}" if notes.length < 5
 signals << "Inbox: #{inbox.length} item#{inbox.length == 1 ? "" : "s"}" if inbox.any?
-signals << "Queue: #{queue[:counts]["pending"]} pending" if queue[:counts]["pending"] > 0
-signals << "Blocked: #{queue[:counts]["blocked"]} queue task#{queue[:counts]["blocked"] == 1 ? "" : "s"}" if queue[:counts]["blocked"] > 0
+signals << "Queue hygiene: archivable #{archivable_batches.join(", ")}" if archivable_batches.any?
+signals << "Queue hygiene: stale active #{stale_active_tasks.map { |task| task[:id] }.join(", ")}" if stale_active_tasks.any?
+signals << "Queue: #{queue_hygiene[:counts][:pending]} pending" if queue_hygiene[:counts][:pending] > 0
+signals << "Blocked: #{queue_hygiene[:counts][:blocked]} queue task#{queue_hygiene[:counts][:blocked] == 1 ? "" : "s"}" if queue_hygiene[:counts][:blocked] > 0
 signals << "Observations: #{observations} pending" if observations > 0
 signals << "Tensions: #{tensions} pending/open" if tensions > 0
 signals << "Health: #{health[:file]}" if health
@@ -287,6 +292,15 @@ elsif goals.nil?
   recommendation = "Create ops/goals.md"
   priority = "session"
   rationale = "Without goals, recommendations can only follow mechanical vault signals. Goals let future next-action choices align with what actually matters."
+elsif archivable_batches.any?
+  recommendation = "hippocampusmd-archive-batch --batch #{archivable_batches.first}"
+  priority = "session"
+  rationale = "A completed queue batch is ready to archive. Archiving it clears finished work from active surfaces before generic pending backlog grows around it."
+elsif stale_active_tasks.any?
+  stale_task = stale_active_tasks.first
+  recommendation = "Review stale active queue task #{stale_task[:id]}"
+  priority = "session"
+  rationale = "A stale active queue task needs a human decision to continue, requeue, block, or reconcile before more queue work is selected."
 elsif notes.length < 5
   if recommended_inbox
     recommendation = "#{vocab["reduce"]} #{relpath(recommended_inbox, vault_abs)}"
@@ -305,17 +319,17 @@ elsif inbox.length > 5
   priority = "session"
   rationale = "The inbox has #{inbox.length} items; processing the oldest one prevents captured material from decaying before it enters the graph."
 elsif blocked_task
-  recommendation = "Resolve blocked queue task #{blocked_task["id"]}"
+  recommendation = "Resolve blocked queue task #{blocked_task[:id]}"
   priority = "session"
   rationale = "A blocked queue task stops downstream processing. Clearing it restores flow before adding more backlog."
 elsif health&.fetch(:severe, nil)
   recommendation = "Review #{health[:file]}"
   priority = "session"
   rationale = "The latest health report contains a severe finding. Structural issues degrade traversal and future recommendations if left unresolved."
-elsif queue[:counts]["pending"] > 10
+elsif queue_hygiene[:counts][:pending] > 10
   recommendation = "#{vocab["ralph"]} 5"
   priority = "multi-session"
-  rationale = "#{queue[:counts]["pending"]} queue tasks are pending. Processing a bounded batch lets newer #{vocab["note"]}s move toward connection and verification."
+  rationale = "#{queue_hygiene[:counts][:pending]} queue tasks are pending. Processing a bounded batch lets newer #{vocab["note"]}s move toward connection and verification."
 elsif oldest_inbox && file_age_days(oldest_inbox) > 7
   recommendation = "#{vocab["reduce"]} #{relpath(oldest_inbox, vault_abs)}"
   priority = "multi-session"
@@ -337,8 +351,10 @@ end
 state = {
   "notes" => notes.length,
   "inbox" => inbox.length,
-  "queue_pending" => queue[:counts]["pending"],
-  "queue_blocked" => queue[:counts]["blocked"],
+  "queue_pending" => queue_hygiene[:counts][:pending],
+  "queue_blocked" => queue_hygiene[:counts][:blocked],
+  "archivable_batches" => archivable_batches,
+  "stale_active" => stale_active_tasks.map { |task| task[:id] },
   "observations" => observations,
   "tensions" => tensions,
   "goals_file" => goals&.fetch(:file, nil),

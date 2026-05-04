@@ -30,6 +30,8 @@ plugins/hippocampusmd/scripts/next-vault.sh . --limit 25 --format text
 - Read `ops/tasks.md`, queue files, inbox state, goals, observations, tensions, and recent health reports when present.
 - Task stack items outrank automated signals.
 - If no goals file exists and no task stack item is active, recommend creating goals before deeper automation.
+- Treat queue hygiene as a first-class signal: completed batches ready to archive and stale active work outrank observations, inbox pressure, blocked tasks, and generic pending queue backlog.
+- Recommend archive or stale-active review only; do not execute archive, reconciliation, or queue repair.
 - Early vaults need capture or processing more than maintenance.
 - For noisy vaults, show only the 2-4 signals that explain the recommendation.
 - Do not reconcile maintenance queues or write `ops/next-log.md` in this first Codex port.

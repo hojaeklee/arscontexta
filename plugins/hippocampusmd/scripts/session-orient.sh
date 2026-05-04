@@ -1,176 +1,212 @@
 #!/usr/bin/env bash
-set -euo pipefail
+if command -v ruby >/dev/null 2>&1; then
+  exec ruby -x "$0" "$@"
+fi
+printf 'Ruby is required for structured session orientation.\n' >&2
+exit 1
 
-usage() {
-  printf 'Usage: %s [vault-path] [--limit N] [--format text|json]\n' "$(basename "$0")" >&2
-}
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-vault="."
-limit="25"
-format="text"
+require "json"
+require "pathname"
 
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --limit)
-      [[ $# -ge 2 ]] || { usage; exit 2; }
-      limit="$2"
-      shift 2
-      ;;
-    --format)
-      [[ $# -ge 2 ]] || { usage; exit 2; }
-      format="$2"
-      shift 2
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    --*)
-      printf 'Unknown option: %s\n' "$1" >&2
+require_relative "lib/queue_hygiene"
+
+def usage
+  warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] [--limit N] [--format text|json]"
+end
+
+vault = "."
+limit = 25
+format = "text"
+
+args = ARGV.dup
+until args.empty?
+  arg = args.shift
+  case arg
+  when "--limit"
+    limit_arg = args.shift
+    unless limit_arg&.match?(/\A\d+\z/)
+      warn "Limit must be a non-negative integer."
+      exit 2
+    end
+    limit = limit_arg.to_i
+  when "--format"
+    format = args.shift
+  when "-h", "--help"
+    usage
+    exit 0
+  when /^--/
+    warn "Unknown option: #{arg}"
+    usage
+    exit 2
+  else
+    if vault == "."
+      vault = arg
+    else
+      warn "Unexpected argument: #{arg}"
       usage
       exit 2
-      ;;
-    *)
-      if [[ "$vault" == "." ]]; then
-        vault="$1"
-      else
-        printf 'Unexpected argument: %s\n' "$1" >&2
-        usage
-        exit 2
-      fi
-      shift
-      ;;
-  esac
-done
+    end
+  end
+end
 
-case "$limit" in
-  ''|*[!0-9]*)
-    printf 'Limit must be a non-negative integer.\n' >&2
-    exit 2
-    ;;
-esac
-
-if [[ "$format" != "text" && "$format" != "json" ]]; then
-  printf 'Unsupported format: %s\n' "$format" >&2
+unless %w[text json].include?(format)
+  warn "Unsupported format: #{format}"
   exit 2
-fi
+end
 
-if [[ ! -d "$vault" ]]; then
-  printf 'Vault path is not a directory: %s\n' "$vault" >&2
+unless limit >= 0
+  warn "Limit must be a non-negative integer."
   exit 2
-fi
+end
 
-vault_abs="$(cd "$vault" && pwd -P)"
+unless Dir.exist?(vault)
+  warn "Vault path is not a directory: #{vault}"
+  exit 2
+end
 
-count_files() {
-  local path="$1"
-  local pattern="${2:-*}"
-  if [[ -d "$path" ]]; then
-    find "$path" -maxdepth 1 -type f -name "$pattern" | wc -l | tr -d ' '
-  else
-    printf '0'
-  fi
-}
+vault_abs = File.realpath(vault)
 
-json_escape() {
-  sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'
-}
+def count_files(path, pattern = "*")
+  return 0 unless Dir.exist?(path)
 
-excerpt_file() {
-  local rel="$1"
-  local path="$vault_abs/$rel"
-  if [[ -f "$path" ]]; then
-    sed -n "1,${limit}p" "$path"
-  fi
-}
+  Dir.glob(File.join(path, pattern)).count { |candidate| File.file?(candidate) }
+end
 
-latest_file() {
-  local dir="$1"
-  local pattern="${2:-*}"
-  if [[ -d "$vault_abs/$dir" ]]; then
-    find "$vault_abs/$dir" -maxdepth 1 -type f -name "$pattern" -print | sort | tail -1
-  fi
-}
+def markdown_count(root)
+  Dir.glob(File.join(root, "**", "*.md"), File::FNM_DOTMATCH).count do |path|
+    next false unless File.file?(path)
 
-marker="absent"
-[[ -f "$vault_abs/.hippocampusmd" ]] && marker="present"
+    parts = Pathname.new(path).relative_path_from(Pathname.new(root)).each_filename.to_a
+    !parts.include?(".git") && !parts.include?("node_modules")
+  end
+end
 
-md_count="$(find "$vault_abs" -name .git -prune -o -name node_modules -prune -o -type f -name '*.md' -print | wc -l | tr -d ' ')"
-notes_count="$(count_files "$vault_abs/notes" '*.md')"
-inbox_count="$(count_files "$vault_abs/inbox" '*.md')"
-queue_count="$(count_files "$vault_abs/ops/queue" '*.md')"
-observations_count="$(count_files "$vault_abs/ops/observations" '*.md')"
-tensions_count="$(count_files "$vault_abs/ops/tensions" '*.md')"
-session_count="$(count_files "$vault_abs/ops/sessions" '*.md')"
-json_session_count="$(count_files "$vault_abs/ops/sessions" '*.json')"
-health_count="$(count_files "$vault_abs/ops/health" '*.md')"
+def excerpt_file(root, rel, limit)
+  path = File.join(root, rel)
+  return nil unless File.file?(path)
 
-next_action="Run hippocampusmd-health to establish a current baseline."
-if [[ "$marker" == "absent" ]]; then
-  next_action="Run hippocampusmd-setup if this directory should become a HippocampusMD vault."
-elif [[ "$inbox_count" -gt 0 ]]; then
-  next_action="Review inbox pressure and decide whether to seed or process captured material."
-elif [[ "$queue_count" -gt 0 ]]; then
-  next_action="Review ops/queue and continue the next queued task."
-elif [[ "$observations_count" -ge 10 || "$tensions_count" -ge 5 ]]; then
-  next_action="Run a rethink pass on accumulated observations and tensions."
-elif [[ "$health_count" -gt 0 ]]; then
-  next_action="Review the latest health report and address its highest-severity finding."
-fi
+  File.readlines(path, chomp: true).first(limit)
+end
 
-latest_health="$(latest_file "ops/health" "*.md")"
-latest_session="$vault_abs/ops/sessions/current.md"
-[[ -f "$latest_session" ]] || latest_session="$vault_abs/ops/sessions/current.json"
+def latest_file(root, rel_dir, pattern = "*")
+  dir = File.join(root, rel_dir)
+  return nil unless Dir.exist?(dir)
 
-if [[ "$format" == "json" ]]; then
-  printf '{\n'
-  printf '  "vault": "%s",\n' "$(printf '%s' "$vault_abs" | json_escape)"
-  printf '  "hippocampusmd_marker": "%s",\n' "$marker"
-  printf '  "markdown_files": %s,\n' "$md_count"
-  printf '  "notes": %s,\n' "$notes_count"
-  printf '  "inbox": %s,\n' "$inbox_count"
-  printf '  "queue": %s,\n' "$queue_count"
-  printf '  "observations": %s,\n' "$observations_count"
-  printf '  "tensions": %s,\n' "$tensions_count"
-  printf '  "sessions": %s,\n' "$((session_count + json_session_count))"
-  printf '  "health_reports": %s,\n' "$health_count"
-  printf '  "next_action": "%s"\n' "$(printf '%s' "$next_action" | json_escape)"
-  printf '}\n'
+  Dir.glob(File.join(dir, pattern)).select { |path| File.file?(path) }.sort.last
+end
+
+def relpath(path, root)
+  path.start_with?("#{root}/") ? path.delete_prefix("#{root}/") : path
+end
+
+marker = File.file?(File.join(vault_abs, ".hippocampusmd")) ? "present" : "absent"
+
+md_count = markdown_count(vault_abs)
+notes_count = count_files(File.join(vault_abs, "notes"), "*.md")
+inbox_count = count_files(File.join(vault_abs, "inbox"), "*.md")
+queue_count = count_files(File.join(vault_abs, "ops/queue"), "*.md")
+observations_count = count_files(File.join(vault_abs, "ops/observations"), "*.md")
+tensions_count = count_files(File.join(vault_abs, "ops/tensions"), "*.md")
+session_count = count_files(File.join(vault_abs, "ops/sessions"), "*.md")
+json_session_count = count_files(File.join(vault_abs, "ops/sessions"), "*.json")
+health_count = count_files(File.join(vault_abs, "ops/health"), "*.md")
+
+queue_hygiene = QueueHygiene.status(vault_abs)
+archivable_batches = queue_hygiene.fetch(:archivable_batches)
+stale_active_tasks = queue_hygiene.fetch(:stale_active_tasks)
+
+next_action = "Run hippocampusmd-health to establish a current baseline."
+if marker == "absent"
+  next_action = "Run hippocampusmd-setup if this directory should become a HippocampusMD vault."
+elsif archivable_batches.any?
+  next_action = "Archive completed queue batch #{archivable_batches.first}."
+elsif stale_active_tasks.any?
+  next_action = "Review stale active queue task #{stale_active_tasks.first[:id]}."
+elsif inbox_count.positive?
+  next_action = "Review inbox pressure and decide whether to seed or process captured material."
+elsif queue_hygiene.dig(:counts, :pending).to_i.positive? || queue_count.positive?
+  next_action = "Review ops/queue and continue the next queued task."
+elsif observations_count >= 10 || tensions_count >= 5
+  next_action = "Run a rethink pass on accumulated observations and tensions."
+elsif health_count.positive?
+  next_action = "Review the latest health report and address its highest-severity finding."
+end
+
+latest_health = latest_file(vault_abs, "ops/health", "*.md")
+latest_session = File.join(vault_abs, "ops/sessions/current.md")
+latest_session = File.join(vault_abs, "ops/sessions/current.json") unless File.file?(latest_session)
+
+if format == "json"
+  puts JSON.pretty_generate(
+    vault: vault_abs,
+    hippocampusmd_marker: marker,
+    markdown_files: md_count,
+    notes: notes_count,
+    inbox: inbox_count,
+    queue: queue_count,
+    observations: observations_count,
+    tensions: tensions_count,
+    sessions: session_count + json_session_count,
+    health_reports: health_count,
+    queue_hygiene: {
+      queue_file: queue_hygiene[:queue_file_rel],
+      counts: queue_hygiene[:counts],
+      archivable_batches: archivable_batches,
+      stale_active_tasks: stale_active_tasks.map { |task| task[:id] },
+      orphan_task_files: queue_hygiene[:orphan_task_files],
+      missing_task_files: queue_hygiene[:missing_task_files].map { |missing| missing[:file] },
+      stale_task_stack_items: queue_hygiene[:stale_task_stack_items],
+      proposals: queue_hygiene[:proposals]
+    },
+    archivable_batches: archivable_batches,
+    stale_active_tasks: stale_active_tasks.map { |task| task[:id] },
+    next_action: next_action
+  )
   exit 0
-fi
+end
 
-printf 'HippocampusMD session orientation\n'
-printf 'Vault: %s\n' "$vault_abs"
-printf 'Marker: %s\n' "$marker"
-printf '\n'
-printf 'Inventory:\n'
-printf '  Markdown files: %s\n' "$md_count"
-printf '  notes/: %s\n' "$notes_count"
-printf '  inbox/: %s\n' "$inbox_count"
-printf '  ops/queue/: %s\n' "$queue_count"
-printf '  ops/observations/: %s\n' "$observations_count"
-printf '  ops/tensions/: %s\n' "$tensions_count"
-printf '  ops/sessions/: %s\n' "$((session_count + json_session_count))"
-printf '  ops/health/: %s\n' "$health_count"
-printf '\n'
+puts "HippocampusMD session orientation"
+puts "Vault: #{vault_abs}"
+puts "Marker: #{marker}"
+puts
+puts "Inventory:"
+puts "  Markdown files: #{md_count}"
+puts "  notes/: #{notes_count}"
+puts "  inbox/: #{inbox_count}"
+puts "  ops/queue/: #{queue_count}"
+puts "  ops/observations/: #{observations_count}"
+puts "  ops/tensions/: #{tensions_count}"
+puts "  ops/sessions/: #{session_count + json_session_count}"
+puts "  ops/health/: #{health_count}"
+puts
 
-for rel in self/goals.md ops/goals.md; do
-  if [[ -f "$vault_abs/$rel" ]]; then
-    printf '%s excerpt:\n' "$rel"
-    excerpt_file "$rel"
-    printf '\n'
-    break
-  fi
-done
+puts "Queue hygiene:"
+counts = queue_hygiene.fetch(:counts)
+puts "  Queue file: #{queue_hygiene[:queue_file_rel] || "not found"}"
+puts "  Counts: #{counts[:pending]} pending, #{counts[:active]} active, #{counts[:completed]} completed, #{counts[:blocked]} blocked, #{counts[:stale_active]} stale active"
+puts "  Archivable batches: #{archivable_batches.any? ? archivable_batches.join(", ") : "none"}"
+puts "  Stale active tasks: #{stale_active_tasks.any? ? stale_active_tasks.map { |task| task[:id] }.join(", ") : "none"}"
+puts "  Orphan task files: #{queue_hygiene[:orphan_task_files].any? ? queue_hygiene[:orphan_task_files].join(", ") : "none"}"
+puts
 
-if [[ -f "$latest_session" ]]; then
-  printf 'Current session handoff:\n'
-  sed -n "1,${limit}p" "$latest_session"
-  printf '\n'
-fi
+["self/goals.md", "ops/goals.md"].each do |rel|
+  lines = excerpt_file(vault_abs, rel, limit)
+  next unless lines
 
-if [[ -n "$latest_health" ]]; then
-  printf 'Latest health report: %s\n' "${latest_health#"$vault_abs"/}"
-fi
+  puts "#{rel} excerpt:"
+  puts lines
+  puts
+  break
+end
 
-printf 'Recommended next action: %s\n' "$next_action"
+if File.file?(latest_session)
+  puts "Current session handoff:"
+  puts File.readlines(latest_session, chomp: true).first(limit)
+  puts
+end
+
+puts "Latest health report: #{relpath(latest_health, vault_abs)}" if latest_health
+puts "Recommended next action: #{next_action}"

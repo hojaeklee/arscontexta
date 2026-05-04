@@ -37,7 +37,13 @@ Report:
 - current vault marker state
 - current goals or session handoff excerpts
 - inbox, queue, observation, tension, session, and health report counts
+- queue hygiene: completed batches ready to archive, stale active claims, orphan task files, and task-stack drift
 - one recommended next action
+
+At session start, consult `session-orient.sh` first. If a deeper queue-only read is
+needed, use `plugins/hippocampusmd/scripts/queue-status-vault.sh . --format text`.
+Completed batches and stale active claims should be surfaced before generic
+pending backlog.
 
 Orientation is read-only. Do not run full health scans unless the user asks.
 
@@ -75,6 +81,11 @@ section. Use `--dry-run` when the user wants a preview.
 Codex cannot automatically save a complete transcript unless the user provides
 one or Codex exposes a stable transcript API. Capture writes a markdown handoff
 to `ops/sessions/YYYYMMDD-HHMMSS.md` and updates `ops/sessions/current.md`.
+
+Before closing, check for queue hygiene drift when it is relevant to the handoff:
+completed batches that should be archived, stale active claims that need a
+continue/requeue/block/reconcile decision, orphan task files, and task-stack
+items that still point at completed or missing queue work.
 
 ## Git
 

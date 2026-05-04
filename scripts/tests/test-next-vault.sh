@@ -112,6 +112,46 @@ inbox_output="$("$NEXT" "$inbox_vault")"
 assert_contains "$inbox_output" "Recommended: reduce inbox/item-1.md"
 assert_contains "$inbox_output" "The inbox has 6 items"
 
+archivable_vault="$tmp_dir/archivable-vault"
+make_vault "$archivable_vault"
+add_notes "$archivable_vault" 8
+cat > "$archivable_vault/self/goals.md" <<'EOF'
+# Goals
+- Keep the queue clean
+EOF
+cat > "$archivable_vault/ops/queue/alpha.md" <<'EOF'
+# Alpha
+EOF
+cat > "$archivable_vault/ops/queue/alpha-001.md" <<'EOF'
+# Alpha 001
+EOF
+cat > "$archivable_vault/ops/queue/queue.json" <<'EOF'
+{"tasks":[
+  {"id":"alpha","status":"done","batch":"alpha","file":"alpha.md"},
+  {"id":"alpha-001","status":"completed","batch":"alpha","file":"alpha-001.md"}
+]}
+EOF
+archivable_output="$("$NEXT" "$archivable_vault")"
+assert_contains "$archivable_output" "Recommended: hippocampusmd-archive-batch --batch alpha"
+assert_contains "$archivable_output" "completed queue batch is ready to archive"
+
+stale_vault="$tmp_dir/stale-vault"
+make_vault "$stale_vault"
+add_notes "$stale_vault" 8
+cat > "$stale_vault/self/goals.md" <<'EOF'
+# Goals
+- Keep pipeline claims honest
+EOF
+cat > "$stale_vault/ops/queue/gamma-001.md" <<'EOF'
+# Gamma 001
+EOF
+cat > "$stale_vault/ops/queue/queue.json" <<'EOF'
+{"tasks":[{"id":"gamma-001","status":"active","batch":"gamma","file":"gamma-001.md","claimed_at":"2020-01-01T00:00:00Z"}]}
+EOF
+stale_output="$("$NEXT" "$stale_vault")"
+assert_contains "$stale_output" "Recommended: Review stale active queue task gamma-001"
+assert_contains "$stale_output" "continue, requeue, block, or reconcile"
+
 rethink_vault="$tmp_dir/rethink-vault"
 make_vault "$rethink_vault"
 add_notes "$rethink_vault" 8
@@ -179,6 +219,11 @@ json_output="$("$NEXT" "$inbox_vault" --format json)"
 assert_contains "$json_output" '"priority": "session"'
 assert_contains "$json_output" '"recommendation": "reduce inbox/item-1.md"'
 assert_contains "$json_output" '"inbox": 6'
+
+json_hygiene_output="$("$NEXT" "$archivable_vault" --format json)"
+assert_contains "$json_hygiene_output" '"archivable_batches":'
+assert_contains "$json_hygiene_output" '"alpha"'
+assert_contains "$json_hygiene_output" '"stale_active":'
 
 readonly_vault="$tmp_dir/readonly-vault"
 make_vault "$readonly_vault"
