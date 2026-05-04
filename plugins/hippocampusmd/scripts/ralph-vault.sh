@@ -16,7 +16,7 @@ require "yaml"
 require_relative "lib/queue_hygiene"
 
 def usage
-  warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] --dry-run|--claim TASK_ID|--release TASK_ID|--advance TASK_ID|--fail TASK_ID --reason TEXT [--limit N] [--batch ID] [--type PHASE] [--format text|json]"
+  warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] --dry-run|--claim TASK_ID|--release TASK_ID --reason TEXT|--advance TASK_ID|--fail TASK_ID --reason TEXT [--limit N] [--batch ID] [--type PHASE] [--format text|json]"
 end
 
 def rel_path(path, root)
@@ -227,6 +227,11 @@ if mode == :fail && (reason.nil? || reason.empty?)
   exit 2
 end
 
+if mode == :release && (reason.nil? || reason.empty?)
+  warn "--release requires --reason TEXT"
+  exit 2
+end
+
 vault = File.expand_path(vault)
 queue_path = find_queue(vault)
 
@@ -362,7 +367,11 @@ when :release
     warn e.message
     exit 1
   end
-  release_reason = reason || "Released for recovery"
+  unless normalized_status_for(task) == "active"
+    warn "Task #{task_id} is #{status_for(task)}; only active tasks can be released."
+    exit 1
+  end
+  release_reason = reason
   task["status"] = "pending"
   task["released_at"] = Time.now.utc.iso8601
   task["release_reason"] = release_reason

@@ -121,10 +121,28 @@ assert_contains "$claim_output" '"claim_token"'
 assert_contains "$(cat "$yaml_vault/ops/queue/queue.yaml")" "claimed_at:"
 assert_contains "$(cat "$yaml_vault/ops/queue/queue.yaml")" "claim_token:"
 
+before="$(cat "$yaml_vault/ops/queue/queue.yaml")"
+release_without_reason_output="$(assert_exit 2 "$RALPH" "$yaml_vault" --release claim-002)"
+assert_contains "$release_without_reason_output" "--release requires --reason TEXT"
+after="$(cat "$yaml_vault/ops/queue/queue.yaml")"
+[[ "$before" == "$after" ]] || fail "release without reason should not rewrite queue"
+
 release_output="$("$RALPH" "$yaml_vault" --release claim-002 --reason "Session interrupted before review")"
 assert_contains "$release_output" "Released: claim-002"
 assert_contains "$(cat "$yaml_vault/ops/queue/queue.yaml")" "status: pending"
 assert_contains "$(cat "$yaml_vault/ops/queue/queue.yaml")" "release_reason: Session interrupted before review"
+
+before="$(cat "$yaml_vault/ops/queue/queue.yaml")"
+release_pending_output="$(assert_exit 1 "$RALPH" "$yaml_vault" --release claim-002 --reason "Should not release pending")"
+assert_contains "$release_pending_output" "only active tasks can be released"
+after="$(cat "$yaml_vault/ops/queue/queue.yaml")"
+[[ "$before" == "$after" ]] || fail "release on pending task should not rewrite queue"
+
+before="$(cat "$yaml_vault/ops/queue/queue.yaml")"
+release_done_output="$(assert_exit 1 "$RALPH" "$yaml_vault" --release claim-004 --reason "Should not release done")"
+assert_contains "$release_done_output" "only active tasks can be released"
+after="$(cat "$yaml_vault/ops/queue/queue.yaml")"
+[[ "$before" == "$after" ]] || fail "release on done task should not rewrite queue"
 
 advance_output="$("$RALPH" "$yaml_vault" --advance claim-001)"
 assert_contains "$advance_output" "Advanced: claim-001"

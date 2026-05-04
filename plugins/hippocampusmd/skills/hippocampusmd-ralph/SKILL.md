@@ -25,7 +25,7 @@ Use the helper for deterministic queue inspection and queue-state mutation only.
 - summarize pending, active, blocked, and done tasks
 - select pending tasks by limit, batch, and current phase
 - claim a pending task before handing it to a worker
-- release interrupted active work back to pending with a reason
+- release interrupted active work back to pending with an explicit reason
 - advance a task after a successful worker phase
 - block a task with a reason after a failed worker phase
 
