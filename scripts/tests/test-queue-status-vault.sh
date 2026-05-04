@@ -12,6 +12,15 @@ assert_contains() {
   printf '%s' "$haystack" | grep -Fq -- "$needle" || fail "expected output to contain: $needle"
 }
 assert_not_exists() { [[ ! -e "$1" ]] || fail "expected file not to exist: $1"; }
+assert_exit_code() {
+  local expected="$1"
+  shift
+  set +e
+  "$@" >/dev/null 2>&1
+  local actual="$?"
+  set -e
+  [[ "$actual" -eq "$expected" ]] || fail "expected exit $expected from: $*; got $actual"
+}
 
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-queue-status-test.XXXXXX")"
 cleanup() { rm -rf "$tmp_dir"; }
@@ -71,5 +80,14 @@ assert_contains "$json_output" '"archivable_batches"'
 assert_contains "$json_output" '"alpha"'
 assert_contains "$json_output" '"stale_active_tasks"'
 assert_not_exists "$vault/ops/queue/archive/alpha.md"
+
+assert_exit_code 2 "$STATUS" "$vault" --format xml
+assert_exit_code 2 "$STATUS" "$tmp_dir/missing-vault"
+assert_exit_code 2 "$STATUS" "$vault" --stale-active-minutes -1
+
+malformed_vault="$tmp_dir/malformed-vault"
+mkdir -p "$malformed_vault/ops/queue"
+printf '{"tasks": [' > "$malformed_vault/ops/queue/queue.json"
+assert_exit_code 1 "$STATUS" "$malformed_vault"
 
 printf 'PASS: queue-status-vault checks\n'
