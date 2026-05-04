@@ -1,5 +1,5 @@
 ---
-description: Learning-domain concept note template; topic-titled notes are valid only when type is concept
+description: One sentence explaining the concept's scope, mechanism, or learning value
 type: concept
 domain: subject area
 mastery: new | developing | solid | expert
@@ -13,11 +13,11 @@ created: YYYY-MM-DD
 
 # topic-title naming the concept
 
-One-paragraph definition in the learner's own words. Explain what this concept is, why it matters, and how it connects.
+One-paragraph definition in the user's own words. Explain what this concept is, why it matters, and how it connects to nearby claims.
 
 ## Key Facts
 
-- Fact worth remembering.
+- Fact worth remembering, preferably linked to supporting claim notes when available.
 
 ## Prerequisites
 
@@ -33,5 +33,8 @@ One-paragraph definition in the learner's own words. Explain what this concept i
 
 ---
 
+Relevant Notes:
+- [[related claim note]] -- relationship context
+
 Topics:
-- [[study-area]]
+- [[topic-map]]
