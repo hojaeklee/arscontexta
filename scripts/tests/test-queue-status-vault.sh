@@ -36,7 +36,8 @@ cat > "$vault/ops/queue/queue.json" <<'JSON'
     {"id":"beta-001","type":"claim","status":"pending","batch":"beta","file":"beta-001.md"},
     {"id":"gamma-001","type":"claim","status":"active","batch":"gamma","file":"gamma-001.md","claimed_at":"2020-01-01T00:00:00Z"},
     {"id":"delta-001","type":"claim","status":"blocked","batch":"delta","file":"delta-001.md","blocked_reason":"Missing source"},
-    {"id":"epsilon-001","type":"claim","status":"pending","batch":"epsilon","file":"missing.md"}
+    {"id":"epsilon-001","type":"claim","status":"pending","batch":"epsilon","file":"missing.md"},
+    {"id":"zeta-001","type":"claim","status":"paused","batch":"zeta","file":"zeta-001.md"}
   ]
 }
 JSON
@@ -45,6 +46,7 @@ printf '# Alpha 001\n' > "$vault/ops/queue/alpha-001.md"
 printf '# Beta 001\n' > "$vault/ops/queue/beta-001.md"
 printf '# Gamma 001\n' > "$vault/ops/queue/gamma-001.md"
 printf '# Delta 001\n' > "$vault/ops/queue/delta-001.md"
+printf '# Zeta 001\n' > "$vault/ops/queue/zeta-001.md"
 printf '# Orphan\n' > "$vault/ops/queue/orphan.md"
 cat > "$vault/ops/tasks.md" <<'EOF'
 # Task Stack
@@ -68,7 +70,7 @@ end
 
 output="$("$STATUS" "$vault")"
 assert_contains "$output" "Queue hygiene status"
-assert_contains "$output" "Pending: 2 | Active: 1 | Stale active: 1 | Blocked: 1 | Completed: 2"
+assert_contains "$output" "Total: 7 | Pending: 2 | Active: 1 | Stale active: 1 | Blocked: 1 | Completed: 2 | Unknown: 1"
 assert_contains "$output" "Archivable batches: alpha"
 assert_contains "$output" "Stale active tasks: gamma-001"
 assert_contains "$output" "Orphan task files: ops/queue/orphan.md"
@@ -79,6 +81,13 @@ json_output="$("$STATUS" "$vault" --format json)"
 assert_contains "$json_output" '"archivable_batches"'
 assert_contains "$json_output" '"alpha"'
 assert_contains "$json_output" '"stale_active_tasks"'
+ruby -rjson -e '
+data = JSON.parse(ARGF.read)
+unless data.key?("counts") && data.fetch("counts").fetch("unknown") == 1
+  warn "FAIL: expected JSON counts.unknown to be 1"
+  exit 1
+end
+' <<< "$json_output"
 assert_not_exists "$vault/ops/queue/archive/alpha.md"
 
 assert_exit_code 2 "$STATUS" "$vault" --format xml

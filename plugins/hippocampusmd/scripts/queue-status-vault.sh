@@ -117,7 +117,7 @@ else
   puts "Vault: #{report.fetch(:root)}"
   puts "Queue file: #{report[:queue_file_rel] || "missing"}"
   report.fetch(:queue_errors).each { |error| puts "Queue error: #{error}" }
-  puts "Pending: #{counts.fetch(:pending)} | Active: #{counts.fetch(:active)} | Stale active: #{counts.fetch(:stale_active)} | Blocked: #{counts.fetch(:blocked)} | Completed: #{counts.fetch(:completed)}"
+  puts "Total: #{counts.fetch(:total)} | Pending: #{counts.fetch(:pending)} | Active: #{counts.fetch(:active)} | Stale active: #{counts.fetch(:stale_active)} | Blocked: #{counts.fetch(:blocked)} | Completed: #{counts.fetch(:completed)} | Unknown: #{counts.fetch(:unknown)}"
   puts "Archivable batches: #{list_value(report.fetch(:archivable_batches))}"
   puts "Stale active tasks: #{list_value(report.fetch(:stale_active_tasks)) { |task| task_label(task) }}"
   puts "Orphan task files: #{list_value(report.fetch(:orphan_task_files))}"
