@@ -33,7 +33,7 @@ created: YYYY-MM-DD
 
 **`type` is optional for standard {DOMAIN:notes}.** Most {DOMAIN:notes} are insights or claims — that is the default. Add `type` explicitly when:
 - You want to query {DOMAIN:notes} by category (all patterns, all decisions)
-- The {DOMAIN:note} is a special type (tension, methodology, problem)
+- The {DOMAIN:note} is a special type (tension, methodology)
 - Domain-specific types exist that matter for retrieval
 
 ### Enum Values
@@ -73,8 +73,8 @@ rg -L '^description:' {DOMAIN:notes}/*.md
 # Find {DOMAIN:notes} by {DOMAIN:topic map}
 rg '^topics:.*\[\[methodology\]\]' {DOMAIN:notes}/
 
-# Cross-field queries — find pending tensions
-rg -l '^type: tension' {DOMAIN:notes}/ | xargs rg '^status: pending'
+# Cross-field queries — find open tensions
+rg -l '^type: tension' {DOMAIN:notes}/ | xargs rg '^status: open'
 
 # Count {DOMAIN:notes} by type
 rg '^type:' {DOMAIN:notes}/ --no-filename | sort | uniq -c | sort -rn
