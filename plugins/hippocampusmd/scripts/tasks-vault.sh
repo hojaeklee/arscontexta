@@ -11,9 +11,10 @@ exit 1
 require "date"
 require "json"
 require "yaml"
+require_relative "lib/queue_hygiene"
 
 def usage
-  warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] --status|--discoveries|--add TEXT|--done N|--drop N|--reorder N POSITION [--limit N] [--format text|json]"
+  warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] --status|--discoveries|--add TEXT|--done N|--drop N|--reorder N POSITION|--refresh-queue [--limit N] [--format text|json]"
 end
 
 vault = "."
@@ -44,6 +45,8 @@ until args.empty?
     mode = :reorder
     mode_arg = args.shift
     reorder_to = args.shift
+  when "--refresh-queue"
+    mode = :refresh_queue
   when "--limit"
     limit = Integer(args.shift || "")
   when "--format"
@@ -175,67 +178,41 @@ rescue ArgumentError
   raise ArgumentError, "#{label} must be between 1 and #{max}."
 end
 
-def queue_file(root)
-  ["ops/queue/queue.json", "ops/queue/queue.yaml", "ops/queue.yaml"].find do |rel|
-    File.file?(File.join(root, rel))
+def parse_queue(root)
+  report = QueueHygiene.status(root)
+  counts = Hash.new(0)
+  report.fetch(:counts).each { |key, value| counts[key.to_s] = value }
+  tasks = report.fetch(:tasks).map do |task|
+    {
+      "id" => task[:id],
+      "status" => task[:status],
+      "raw_status" => task[:raw_status],
+      "phase" => task[:phase],
+      "target" => task[:target].to_s.empty? ? task[:file] : task[:target],
+      "batch" => task[:batch]
+    }
   end
-end
-
-def normalize_status(status)
-  case status.to_s.downcase
-  when "pending", "todo", "queued" then "pending"
-  when "active", "in_progress", "in-progress", "running", "current" then "active"
-  when "done", "completed", "complete" then "completed"
-  when "blocked", "waiting" then "blocked"
-  else
-    status.to_s.empty? ? "unknown" : status.to_s.downcase
-  end
-end
-
-def queue_tasks_from_data(data)
-  raw =
-    if data.is_a?(Hash) && data["tasks"].is_a?(Array)
-      data["tasks"]
-    elsif data.is_a?(Array)
-      data
-    elsif data.is_a?(Hash)
-      data.values.find { |value| value.is_a?(Array) } || []
+  errors = report.fetch(:queue_errors)
+  stale_items =
+    if report[:queue_file_rel]
+      QueueHygiene.stale_generated_task_stack_items(stack_current_items(root), report.fetch(:tasks), report.fetch(:archivable_batches))
     else
       []
     end
-
-  raw.select { |entry| entry.is_a?(Hash) }.map do |entry|
-    status = normalize_status(entry["status"])
-    {
-      "id" => entry["id"] || entry["task_id"] || entry["queue_id"] || "(no id)",
-      "status" => status,
-      "raw_status" => entry["status"],
-      "phase" => entry["current_phase"] || entry["phase"] || entry["next_phase"],
-      "target" => entry["target"] || entry["file"] || entry["note"] || entry["source"],
-      "batch" => entry["batch"] || entry["batch_id"] || entry["source_batch"]
-    }
-  end
+  {
+    exists: !report[:queue_file_rel].nil?,
+    file: report[:queue_file_rel],
+    tasks: tasks,
+    counts: counts,
+    archivable_batches: report.fetch(:archivable_batches),
+    stale_task_stack_items: stale_items,
+    suggested_task_stack_items: QueueHygiene.suggested_task_stack_items(report.fetch(:tasks)),
+    error: errors.empty? || report[:queue_file_rel].nil? ? nil : errors.join("; ")
+  }
 end
 
-def parse_queue(root)
-  rel = queue_file(root)
-  return { exists: false, file: nil, tasks: [], counts: Hash.new(0), archivable_batches: [] } unless rel
-
-  path = File.join(root, rel)
-  data =
-    if rel.end_with?(".json")
-      JSON.parse(File.read(path))
-    else
-      YAML.safe_load(File.read(path), aliases: true) || {}
-    end
-  tasks = queue_tasks_from_data(data)
-  counts = Hash.new(0)
-  tasks.each { |task| counts[task["status"]] += 1 }
-  batches = tasks.group_by { |task| task["batch"].to_s }.reject { |batch, _| batch.empty? }
-  archivable = batches.select { |_, items| items.all? { |task| task["status"] == "completed" } }.keys.sort
-  { exists: true, file: rel, tasks: tasks, counts: counts, archivable_batches: archivable }
-rescue JSON::ParserError, Psych::Exception => e
-  { exists: true, file: rel, tasks: [], counts: Hash.new(0), archivable_batches: [], error: e.message }
+def stack_current_items(root)
+  QueueHygiene.current_task_stack_items(root)
 end
 
 stack = parse_tasks(tasks_path)
@@ -297,6 +274,16 @@ when :reorder
   write_tasks(tasks_path, stack)
   stack[:exists] = true
   message = "Moved: #{item}"
+when :refresh_queue
+  removed = queue[:stale_task_stack_items]
+  stack[:current] = stack[:current].reject { |item| removed.include?(item) }
+  added = queue[:suggested_task_stack_items].reject { |item| stack[:current].include?(item) }
+  stack[:current].concat(added)
+  write_tasks(tasks_path, stack)
+  stack[:exists] = true
+  message = (removed.map { |item| "Removed stale generated task: #{item}" } +
+             added.map { |item| "Added queue task: #{item}" }).join("\n")
+  message = "Task stack already matches queue state." if message.empty?
 end
 
 if format == "json"
@@ -316,6 +303,8 @@ if format == "json"
         unknown: queue[:counts]["unknown"]
       },
       archivable_batches: queue[:archivable_batches],
+      stale_task_stack_items: queue[:stale_task_stack_items],
+      suggested_task_stack_items: queue[:suggested_task_stack_items],
       tasks: queue[:tasks]
     }
   )
@@ -392,6 +381,18 @@ else
     puts "Archivable batches: none"
   else
     puts "Archivable batches: #{queue[:archivable_batches].join(", ")}"
+  end
+  unless queue[:stale_task_stack_items].empty?
+    puts "Stale task stack entries:"
+    queue[:stale_task_stack_items].first(limit).each { |item| puts "  - #{item}" }
+    puts "  ... #{queue[:stale_task_stack_items].length - limit} more omitted by --limit #{limit}" if queue[:stale_task_stack_items].length > limit
+  end
+  puts "Suggested queue task entries:"
+  if queue[:suggested_task_stack_items].empty?
+    puts "  (empty)"
+  else
+    queue[:suggested_task_stack_items].first(limit).each { |item| puts "  - #{item}" }
+    puts "  ... #{queue[:suggested_task_stack_items].length - limit} more omitted by --limit #{limit}" if queue[:suggested_task_stack_items].length > limit
   end
 end
 puts

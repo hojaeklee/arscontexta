@@ -156,4 +156,37 @@ assert_contains "$yaml_output" "Pending: 1"
 assert_contains "$yaml_output" "yaml-001: pending / create -- YAML Claim"
 assert_contains "$yaml_output" "Archivable batches: yaml-done"
 
+drift_vault="$tmp_dir/drift-vault"
+mkdir -p "$drift_vault/ops/queue"
+cat > "$drift_vault/ops/tasks.md" <<'EOF'
+# Task Stack
+
+## Current
+- [ ] Process queue batch alpha
+- [ ] Preserve human priority
+
+## Completed
+
+## Discoveries
+EOF
+cat > "$drift_vault/ops/queue/queue.json" <<'EOF'
+{"tasks":[
+  {"id":"alpha","status":"done","batch":"alpha","file":"alpha.md"},
+  {"id":"alpha-001","status":"completed","batch":"alpha","file":"alpha-001.md"},
+  {"id":"beta-001","status":"pending","batch":"beta","target":"Beta Claim","current_phase":"reflect"}
+]}
+EOF
+drift_output="$("$TASKS" "$drift_vault" --status)"
+assert_contains "$drift_output" "Stale task stack entries:"
+assert_contains "$drift_output" "Process queue batch alpha"
+assert_contains "$drift_output" "Suggested queue task entries:"
+assert_contains "$drift_output" "Continue queue task beta-001"
+
+refresh_output="$("$TASKS" "$drift_vault" --refresh-queue)"
+assert_contains "$refresh_output" "Removed stale generated task: Process queue batch alpha"
+assert_contains "$refresh_output" "Added queue task: Continue queue task beta-001"
+assert_contains "$(cat "$drift_vault/ops/tasks.md")" "Preserve human priority"
+assert_contains "$(cat "$drift_vault/ops/tasks.md")" "Continue queue task beta-001"
+assert_not_contains "$(cat "$drift_vault/ops/tasks.md")" "Process queue batch alpha"
+
 printf 'PASS: tasks-vault checks\n'

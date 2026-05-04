@@ -190,6 +190,8 @@ module QueueHygiene
         status: status,
         raw_status: task["status"] || task[:status],
         batch: string_value(task, "batch", "batch_id", "source_batch"),
+        phase: string_value(task, "current_phase", "phase", "next_phase"),
+        target: string_value(task, "target", "note", "source"),
         file: file,
         file_path: file_path,
         file_rel_path: file_path && rel_path(file_path, root),
@@ -344,6 +346,25 @@ module QueueHygiene
   def text_mentions_token?(text, token)
     escaped = Regexp.escape(token)
     text.match?(/(?:\A|[^[:alnum:]_-])#{escaped}(?:\z|[^[:alnum:]_-])/)
+  end
+
+  def generated_task_stack_item?(item)
+    item.match?(/\A(Process queue batch|Continue queue task)\s+/)
+  end
+
+  def suggested_task_stack_items(tasks)
+    tasks.select { |task| %w[pending blocked active].include?(task[:status]) }
+         .map { |task| "Continue queue task #{task[:id]}" }
+  end
+
+  def stale_generated_task_stack_items(current_items, tasks, archivable_batches)
+    stale_items = stale_task_stack_items(current_items, tasks, archivable_batches)
+    suggested = suggested_task_stack_items(tasks)
+
+    current_items.select do |item|
+      generated_task_stack_item?(item) &&
+        (stale_items.include?(item) || !suggested.include?(item))
+    end
   end
 
   def proposals_for(
