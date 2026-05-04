@@ -270,10 +270,14 @@ module QueueHygiene
   end
 
   def archivable_batches(tasks)
-    grouped = tasks.reject { |task| task[:batch].empty? }.group_by { |task| task[:batch] }
-    grouped.select { |_batch, batch_tasks| batch_tasks.all? { |task| task[:status] == "completed" } }
-           .keys
-           .sort
+    tasks.map { |task| task[:batch] }
+         .reject(&:empty?)
+         .uniq
+         .select do |batch|
+           batch_tasks = tasks.select { |task| task[:id] == batch || task[:batch] == batch }
+           batch_tasks.any? && batch_tasks.all? { |task| task[:status] == "completed" }
+         end
+         .sort
   end
 
   def orphan_task_files(root, tasks)

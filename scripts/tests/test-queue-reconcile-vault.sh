@@ -113,6 +113,31 @@ assert_contains "$collision_output" "Skipped completed task file ops/queue/foo.m
 [[ -f "$collision_vault/ops/queue/foo.md" ]] || fail "collision source must remain active"
 assert_contains "$(cat "$collision_vault/ops/queue/archive/foo/foo.md")" "Archived Foo"
 
+incomplete_parent_vault="$tmp_dir/incomplete-parent-vault"
+mkdir -p "$incomplete_parent_vault/ops/queue"
+cat > "$incomplete_parent_vault/ops/queue/queue.yaml" <<'EOF'
+tasks:
+  - id: alpha
+    status: pending
+    file: alpha.md
+  - id: alpha-001
+    status: completed
+    batch: alpha
+    file: alpha-001.md
+EOF
+printf '# Alpha parent\n' > "$incomplete_parent_vault/ops/queue/alpha.md"
+printf '# Alpha child\n' > "$incomplete_parent_vault/ops/queue/alpha-001.md"
+incomplete_parent_output="$("$RECONCILE" "$incomplete_parent_vault")"
+assert_not_contains "$incomplete_parent_output" "Archive recommendation: hippocampusmd-archive-batch --batch alpha"
+incomplete_parent_json="$("$RECONCILE" "$incomplete_parent_vault" --format json)"
+ruby -rjson -e '
+data = JSON.parse(ARGF.read)
+if data.fetch("archive_recommendations").any? { |line| line.include?("--batch alpha") }
+  warn "FAIL: incomplete parent batch should not be recommended for archive"
+  exit 1
+end
+' <<< "$incomplete_parent_json"
+
 json_output="$("$RECONCILE" "$collision_vault" --format json)"
 ruby -rjson -e '
 data = JSON.parse(ARGF.read)
