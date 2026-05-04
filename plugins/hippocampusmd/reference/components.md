@@ -18,6 +18,8 @@ How to build each component of a knowledge system. Each blueprint explains WHAT 
 
 **Quality gate:** The composability test — can you complete "This note argues that [title]"? If yes, it's a proper note. If not, it's a topic label.
 
+**Concept notes:** Concept notes are typed knowledge units for learnable entities. They use `type: concept`, may use topic titles, and carry prerequisites/retrieval questions. They live in the same graph as claims unless a domain-specific vault maps the notes folder to `concepts/`.
+
 **Template:** See `templates/base-note.md`
 
 ---

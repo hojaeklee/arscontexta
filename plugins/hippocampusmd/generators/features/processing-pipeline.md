@@ -43,6 +43,16 @@ Read the source material through the mission lens: "Does this serve {DOMAIN:the 
 - Claim is specific enough to disagree with
 - Reasoning is visible — shows the path to the conclusion
 
+**Concept extraction:** When a source introduces durable vocabulary, anatomy, mechanisms, methods, theories, or prerequisite concepts, propose `type: concept` notes separately from claim notes. A concept note should define the learnable object and link prerequisites/downstream concepts. A claim note should assert something specific about that object.
+
+Use this distinction:
+
+| Source material | Note shape |
+|----------------|------------|
+| "The hippocampus is part of the medial temporal lobe..." | `hippocampus` concept note |
+| "Hippocampal lesions impair new episodic memory formation..." | prose-titled claim note |
+| "Open question: whether adult hippocampal neurogenesis affects human memory..." | question/tension note |
+
 #### Phase 3: {DOMAIN:Connect}
 
 After {DOMAIN:processing} creates new {DOMAIN:notes}, connection finding integrates them into the existing knowledge graph.

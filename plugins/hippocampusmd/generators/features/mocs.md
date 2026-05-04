@@ -57,6 +57,13 @@ Unresolved conflicts — intellectual work, not bugs. What questions remain open
 What is unexplored. Research directions, gaps in understanding, areas that need attention.
 ```
 
+Concept notes and claim notes can appear in the same {DOMAIN:topic map}:
+
+    - [[hippocampus]] -- concept: start here for definition, prerequisites, and retrieval questions
+    - [[hippocampal lesions impair new episodic memory formation more than remote semantic recall]] -- claim: evidence about memory function
+
+Concept notes orient learning. Claim notes carry arguments. {DOMAIN:Topic maps} should not duplicate either; they should point to each with enough context to choose the right entry point.
+
 **The critical rule:** Core Ideas entries MUST have context phrases. A bare link list (`- [[{DOMAIN:note}]]` without explanation) is an address book, not a map. The context phrase explains WHY this {DOMAIN:note} belongs here and what it contributes to the topic. This is what makes {DOMAIN:topic maps} navigable — you can scan the context phrases to find the entry point you need without reading every linked {DOMAIN:note}.
 
 ### Lifecycle

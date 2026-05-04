@@ -22,6 +22,21 @@ Bad titles (topic labels, not claims):
 - "Anxiety" (too vague to link meaningfully)
 - "Venue details" (a filing label, not an idea)
 
+### Explicit Exception: Concept Notes
+
+Concept notes are the only built-in exception to prose-as-title. Use a topic title when all of these are true:
+
+- The note declares `type: concept`.
+- The title names a learnable entity, mechanism, theory, method, anatomical structure, term of art, or prerequisite concept.
+- The body defines the concept and includes learning scaffolding such as prerequisites, downstream concepts, or retrieval questions.
+
+Examples:
+- `hippocampus` with `type: concept` is valid when the note defines the structure and links prerequisites and downstream memory claims.
+- `basal ganglia` with `type: concept` is valid when the note models the learnable system.
+- `hippocampus supports episodic memory formation` should be a claim note, not a concept note.
+
+Do not use this exception for vague topic buckets. If the note is a map of other notes, use `type: moc`. If the note argues something, use prose-as-title.
+
 **The claim test:** Can you complete this sentence?
 
 > This {DOMAIN:note} argues that [title]

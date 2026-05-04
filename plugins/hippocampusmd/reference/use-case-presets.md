@@ -39,6 +39,7 @@ Named points in the configuration space derived from methodology traditions and 
 **Key settings:**
 - `self_space: false`
 - `qmd: true` (required for full-quality research discovery)
+- `concept_notes: true` (research sources often introduce durable vocabulary and methods that claims depend on)
 - `personality: "neutral-analytical"`
 - `processing_depth: "full quality gates from day one"`
 
