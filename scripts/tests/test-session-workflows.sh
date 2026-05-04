@@ -32,8 +32,13 @@ assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/session-life
 assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/session-lifecycle.md" "Persist Queue Hygiene"
 assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/session-lifecycle.md" "Repair Boundary"
 assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/components.md" "queue-status"
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/components.md" "archive-batch"
 assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/components.md" "queue-reconcile"
-assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/generators/features/processing-pipeline.md" "interrupted or stale-active work"
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/components.md" "task-refresh"
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/methodology.md" "Queue lifecycle hygiene externalizes prospective memory."
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/generators/features/session-rhythm.md" "Session start runs a queue briefing before choosing work. Session close runs queue hygiene before writing the handoff."
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/generators/features/processing-pipeline.md" "Pipeline work must leave recoverable state. Interrupted or stale-active work is surfaced by queue hygiene as a decision, while completed batches are surfaced for archive."
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/generators/features/maintenance.md" "Maintenance includes queue hygiene: read-only detection first, deterministic repair second, judgment repairs as proposals."
 
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-session-test.XXXXXX")"
 cleanup() {

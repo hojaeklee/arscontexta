@@ -9,7 +9,7 @@
 
 Every piece of content follows the same path: capture, then {DOMAIN:process}, then {DOMAIN:connect}, then {DOMAIN:verify}. Each phase has a distinct purpose. Mixing them degrades both.
 
-Pipeline work must leave recoverable state. Any interrupted or stale-active work is surfaced by queue hygiene as a decision, while completed batches are surfaced for archive.
+Pipeline work must leave recoverable state. Interrupted or stale-active work is surfaced by queue hygiene as a decision, while completed batches are surfaced for archive.
 
 ### The Four-Phase Skeleton
 
