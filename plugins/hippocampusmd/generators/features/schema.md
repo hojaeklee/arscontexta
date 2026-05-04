@@ -16,7 +16,7 @@ Schema enforcement is an INVARIANT. Every vault validates structured metadata be
 ```yaml
 ---
 description: One sentence adding context beyond the title (~150 chars, no period)
-type: insight | pattern | preference | fact | decision | question | concept
+type: insight | pattern | preference | fact | decision | question | tension | methodology | concept
 created: YYYY-MM-DD
 ---
 ```
@@ -136,7 +136,7 @@ _schema:
   required: [description]
   optional: [type, status, created, modified]
   enums:
-    type: [insight, pattern, preference, fact, decision, question, concept]
+    type: [insight, pattern, preference, fact, decision, question, tension, methodology, concept]
     status: [preliminary, open, active, archived]
   constraints:
     description: "max 200 chars, no trailing period, must add info beyond title"

@@ -105,7 +105,7 @@ The good description tells you: the scope (workdays vs weekends), the mechanism 
 
 Optional fields may be added when relevant:
 ```yaml
-type: insight | pattern | preference | fact | decision | question | concept
+type: insight | pattern | preference | fact | decision | question | tension | methodology | concept
 status: preliminary | active | archived
 created: YYYY-MM-DD
 ```
