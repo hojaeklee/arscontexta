@@ -266,6 +266,15 @@ Check MOC coverage:
 
 **Quality gate:** Can the agent answer "what should I work on next?" by reading the task stack? If yes, lifecycle visibility is achieved.
 
+### Queue Lifecycle Components
+
+| Component | Boundary | Repairs? | Purpose |
+| --- | --- | --- | --- |
+| `queue-status` | Read-only | No | Summarize queue counts, archivable batches, stale active work, orphan task files, missing task files, and task-stack drift. |
+| `archive-batch` | Completed batches only | Yes | Move completed batch task files into `ops/queue/archive/`, write a summary, and remove archived entries from active queue state. |
+| `queue-reconcile` | Deterministic inconsistencies | Dry-run by default | Repair mechanical drift without dropping pending work or judging task outcomes. |
+| `task-refresh` | `ops/tasks.md` generated lines | Yes with explicit command | Refresh task-stack entries from queue and goals state while preserving human-authored priorities. |
+
 ---
 
 ## Methodology Folder — Vault Self-Knowledge

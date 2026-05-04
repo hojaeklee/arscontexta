@@ -7,6 +7,8 @@
 
 A knowledge graph degrades without maintenance. Notes written last month don't know about notes written today. Links break when titles change. {DOMAIN:topic maps} grow stale as topics evolve. Maintenance is not optional — it's what keeps the system useful.
 
+Maintenance includes queue hygiene: read-only detection first, deterministic repair second, judgment repairs as proposals.
+
 ### Health Check Categories
 
 Run these checks when conditions warrant — orphans detected, links broken, schema violations accumulated:

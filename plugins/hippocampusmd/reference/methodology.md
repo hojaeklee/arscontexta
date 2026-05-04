@@ -186,6 +186,8 @@ Do the actual task. Surface connections as you go. If you discover something wor
 ### Persist
 Write insights before session ends. Update MOCs with new notes. Capture observations. Push changes. Nothing persists without explicit externalization.
 
+Queue lifecycle hygiene externalizes prospective memory. The queue is operational memory, so the system must make completed work, interrupted work, and stale coordination traces visible at session boundaries instead of relying on an agent or human to remember cleanup.
+
 ---
 
 ## Domain-Specific Schema Extensions

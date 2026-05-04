@@ -215,6 +215,22 @@ Questions the engine must answer when generating session configuration:
 
 ---
 
+## Queue Lifecycle Hygiene
+
+### Session Start Queue Briefing
+
+Every session orientation reports queue state from structured queue files, not only file counts. The briefing includes pending, active, stale-active, blocked, completed, unknown, archivable batches, orphan queue files, queue entries with missing task files, and stale `ops/tasks.md` entries.
+
+### Persist Queue Hygiene
+
+Every processing persist or session close checks for completed-but-unarchived batches, interrupted Ralph or pipeline work, stale active claims, orphan queue files, and task-stack drift. The close path records judgment-requiring work as proposals rather than silently mutating pending state.
+
+### Repair Boundary
+
+Health and status helpers detect. Deterministic cleaners repair only reversible mechanical issues: missing directories, completed task files left in the active queue folder, generated task-stack drift, and idempotent archive retries. Pending stale tasks and stale active claims require a continue, requeue, block, or reconcile decision.
+
+---
+
 ### Session Handoff Mechanisms
 
 #### Goals.md is the primary handoff vehicle between sessions

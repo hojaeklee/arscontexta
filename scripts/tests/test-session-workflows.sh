@@ -22,6 +22,19 @@ assert_file() {
   [[ -f "$1" ]] || fail "expected file to exist: $1"
 }
 
+assert_file_contains() {
+  local file="$1"
+  local needle="$2"
+  grep -Fq "$needle" "$file" || fail "expected $file to contain: $needle"
+}
+
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/session-lifecycle.md" "Session Start Queue Briefing"
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/session-lifecycle.md" "Persist Queue Hygiene"
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/session-lifecycle.md" "Repair Boundary"
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/components.md" "queue-status"
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/reference/components.md" "queue-reconcile"
+assert_file_contains "$PROJECT_ROOT/plugins/hippocampusmd/generators/features/processing-pipeline.md" "interrupted or stale-active work"
+
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-session-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"

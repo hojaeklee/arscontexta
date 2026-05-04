@@ -7,6 +7,8 @@
 
 Every session follows three phases. This rhythm prevents context loss across sessions and keeps the system's memory current.
 
+Session start runs a queue briefing before choosing work. Session close runs queue hygiene before writing the handoff.
+
 ### Phase 1: Orient
 
 Before doing anything, understand where you are:
