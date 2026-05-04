@@ -245,6 +245,8 @@ end
 
 def refresh_tasks_file(path, stale_items, suggested_items)
   if !File.file?(path)
+    return { removed: [], added: [] } if suggested_items.empty?
+
     stack = {
       title: "# Task Stack",
       preface: [],

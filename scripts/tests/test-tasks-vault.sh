@@ -270,4 +270,15 @@ assert_contains "$no_suggestions_refresh" "Task stack already matches queue stat
 assert_not_contains "$(cat "$no_suggestions_vault/ops/tasks.md")" "## Current"
 [[ "$(cat "$no_suggestions_vault/ops/tasks.md")" == "$no_suggestions_before" ]] || fail "refresh without suggestions should not change tasks.md"
 
+missing_no_suggestions_vault="$tmp_dir/missing-no-suggestions-vault"
+mkdir -p "$missing_no_suggestions_vault/ops/queue"
+cat > "$missing_no_suggestions_vault/ops/queue/queue.json" <<'EOF'
+{"tasks":[
+  {"id":"done-002","status":"completed","batch":"done"}
+]}
+EOF
+missing_no_suggestions_refresh="$("$TASKS" "$missing_no_suggestions_vault" --refresh-queue)"
+assert_contains "$missing_no_suggestions_refresh" "Task stack already matches queue state."
+[[ ! -f "$missing_no_suggestions_vault/ops/tasks.md" ]] || fail "missing tasks.md should not be created when there are no suggestions"
+
 printf 'PASS: tasks-vault checks\n'
