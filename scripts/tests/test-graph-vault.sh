@@ -206,4 +206,93 @@ assert_contains "$json_output" '"triangles"'
 assert_not_exists "$vault/ops/graph-cache.json"
 assert_not_exists "$vault/ops/graph-history.yaml"
 
+if has_ruby_sqlite3; then
+  indexed_vault="$tmp_dir/indexed-vault"
+  mkdir -p "$indexed_vault/notes/team-a" "$indexed_vault/notes/team-b" "$indexed_vault/ops"
+
+  cat > "$indexed_vault/ops/derivation-manifest.md" <<'EOF'
+---
+vocabulary:
+  notes: notes
+  note: claim
+  note_plural: claims
+  topic_map: topic map
+  topic_map_plural: topic maps
+  cmd_reflect: reflect
+  cmd_reweave: reweave
+---
+EOF
+
+  cat > "$indexed_vault/notes/index.md" <<'EOF'
+---
+description: Indexed topic map
+type: moc
+topics: ["[[index]]"]
+---
+
+# index
+
+Connects [[Alpha Note]], [[team-a/shared]], and [[team-b/shared]].
+EOF
+
+  cat > "$indexed_vault/notes/alpha.md" <<'EOF'
+---
+description: Alpha note links by path and by ambiguous basename
+type: claim
+aliases: ["Alpha Note"]
+topics: ["[[index]]"]
+---
+
+# Alpha Note
+
+Alpha links to [[team-a/shared]], [[shared]], and [[missing target]].
+EOF
+
+  cat > "$indexed_vault/notes/team-a/shared.md" <<'EOF'
+---
+description: Team A shared note
+type: claim
+aliases: ["Team A Shared"]
+topics: ["[[index]]"]
+---
+
+# Shared
+
+Team A links back to [[Alpha Note]].
+EOF
+
+  cat > "$indexed_vault/notes/team-b/shared.md" <<'EOF'
+---
+description: Team B shared note
+type: claim
+aliases: ["Team B Shared"]
+topics: ["[[index]]"]
+---
+
+# Shared
+
+Team B has only topic-map coverage.
+EOF
+
+  "$INDEX" build "$indexed_vault" >/dev/null
+  indexed_health="$("$GRAPH" "$indexed_vault" --mode health)"
+  assert_contains "$indexed_health" "Index: using fresh VaultIndex"
+  assert_contains "$indexed_health" "claims: 3 (plus 1 topic maps)"
+  assert_contains "$indexed_health" "topic map coverage: 100%"
+  assert_contains "$indexed_health" "Orphans (0):"
+  assert_contains "$indexed_health" "Dangling Links (2):"
+  assert_contains "$indexed_health" "[[shared]] from [[alpha]] -- ambiguous target"
+  assert_contains "$indexed_health" "[[missing target]] from [[alpha]]"
+
+  indexed_json="$("$GRAPH" "$indexed_vault" --mode health --format json)"
+  assert_contains "$indexed_json" '"mode": "indexed"'
+  assert_contains "$indexed_json" '"status": "fresh"'
+  assert_contains "$indexed_json" '"id": "notes/team-a/shared.md"'
+  assert_contains "$indexed_json" '"id": "notes/team-b/shared.md"'
+  assert_contains "$indexed_json" '"target": "shared"'
+  assert_contains "$indexed_json" '"reason": "ambiguous"'
+else
+  printf 'SKIP: indexed graph health duplicate-basename checks require ruby sqlite3\n'
+fi
+
 printf 'PASS: graph-vault checks\n'
