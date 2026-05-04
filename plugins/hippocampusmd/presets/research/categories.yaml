@@ -1,5 +1,6 @@
 extraction_categories:
   - claims
+  - concepts
   - evidence
   - methodology-comparisons
   - contradictions
