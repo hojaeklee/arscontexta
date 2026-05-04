@@ -35,7 +35,7 @@ Examples:
 - `basal ganglia` with `type: concept` is valid when the note models the learnable system.
 - `hippocampus supports episodic memory formation` should be a claim note, not a concept note.
 
-Do not use this exception for vague topic buckets. If the note is a map of other notes, use `type: moc`. If the note argues something, use prose-as-title.
+Do not use this exception for vague topic buckets. If the note is a map of other notes, create or update a {DOMAIN:topic map}. If the note argues something, use prose-as-title.
 
 **The claim test:** Can you complete this sentence?
 
