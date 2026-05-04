@@ -4,6 +4,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
 GRAPH="$PROJECT_ROOT/plugins/arscontexta/scripts/graph-vault.sh"
+INDEX="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh"
+
+has_ruby_sqlite3() {
+  ruby -e 'require "sqlite3"' >/dev/null 2>&1
+}
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -149,6 +154,8 @@ EOF
 
 health_output="$("$GRAPH" "$vault" --mode health)"
 assert_contains "$health_output" "--=={ graph health }==--"
+assert_contains "$health_output" "Index: full scan fallback"
+assert_contains "$health_output" "missing index"
 assert_contains "$health_output" "claims: 8 (plus 1 topic maps)"
 assert_contains "$health_output" "topic map coverage: 38%"
 assert_contains "$health_output" "Orphans (2):"
@@ -187,6 +194,8 @@ assert_not_contains "$triangles_output" "via [[index]]"
 
 json_output="$("$GRAPH" "$vault" --mode health --format json)"
 assert_contains "$json_output" '"mode": "health"'
+assert_contains "$json_output" '"mode": "scan"'
+assert_contains "$json_output" '"status": "missing"'
 assert_contains "$json_output" '"notes": 8'
 assert_contains "$json_output" '"mocs": 1'
 assert_contains "$json_output" '"dangling": 1'
