@@ -98,6 +98,8 @@ module QueueHygiene
     {
       path: queue.fetch(:path),
       rel_path: queue.fetch(:rel_path),
+      data: writable_queue_data(data),
+      shape: queue_data_shape(data),
       tasks: queue_tasks_from_data(data),
       errors: []
     }
@@ -105,9 +107,33 @@ module QueueHygiene
     {
       path: queue && queue[:path],
       rel_path: queue && queue[:rel_path],
+      data: nil,
+      shape: nil,
       tasks: [],
       errors: ["Unable to load queue file: #{e.message}"]
     }
+  end
+
+  def queue_data_shape(data)
+    data.is_a?(Array) ? "array" : "mapping"
+  end
+
+  def writable_queue_data(data)
+    data.is_a?(Array) ? { "tasks" => data } : data
+  end
+
+  def archive_dir_for_completed_task(root, task)
+    batch = task[:batch].to_s.empty? ? task[:id] : task[:batch].to_s
+    File.join(root, "ops", "queue", "archive", batch)
+  end
+
+  def write_queue(path, data, shape)
+    serializable = shape == "array" ? data.fetch("tasks") : data
+    if File.extname(path) == ".json"
+      File.write(path, "#{JSON.pretty_generate(serializable)}\n")
+    else
+      File.write(path, serializable.to_yaml)
+    end
   end
 
   def queue_tasks_from_data(data)
