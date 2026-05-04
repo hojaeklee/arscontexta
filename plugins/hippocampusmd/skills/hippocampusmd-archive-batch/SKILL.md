@@ -7,6 +7,8 @@ description: Use when the user asks Codex to archive a completed HippocampusMD p
 
 Archive Batch is deterministic queue cleanup for completed processing batches. It moves completed task files into the batch archive folder, writes a concise summary, and removes archived batch entries from active queue state.
 
+Archive is part of queue lifecycle hygiene. If a previous archive run was interrupted, rerun `archive-batch-vault.sh --batch ID`; already moved files are treated as idempotent progress, missing files are reported for repair, and pending work is never removed.
+
 ## When Invoked
 
 1. Treat the current directory as the vault unless the user gives another path.

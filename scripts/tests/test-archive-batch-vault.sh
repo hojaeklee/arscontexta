@@ -171,6 +171,63 @@ assert_contains "$json_queue_after" '"tasks"'
 assert_contains "$json_queue_after" '"delta-001"'
 assert_not_contains "$json_queue_after" '"gamma-001"'
 
+partial_vault="$tmp_dir/partial"
+mkdir -p "$partial_vault/ops/queue/archive/2026-05-03-theta"
+cat > "$partial_vault/ops/queue/queue.yaml" <<'EOF'
+tasks:
+  - id: theta
+    type: extract
+    status: done
+    file: theta.md
+    archive_folder: ops/queue/archive/2026-05-03-theta
+  - id: theta-001
+    type: claim
+    status: completed
+    batch: theta
+    file: theta-001.md
+    archive_folder: ops/queue/archive/2026-05-03-theta
+EOF
+cat > "$partial_vault/ops/queue/archive/2026-05-03-theta/theta.md" <<'EOF'
+# Already moved theta
+EOF
+cat > "$partial_vault/ops/queue/theta-001.md" <<'EOF'
+# Theta claim
+EOF
+partial_output="$("$ARCHIVE" "$partial_vault" --batch theta)"
+assert_contains "$partial_output" "Already archived task file: ops/queue/archive/2026-05-03-theta/theta.md"
+assert_contains "$partial_output" "Task files moved: 1"
+assert_not_contains "$(cat "$partial_vault/ops/queue/queue.yaml")" "theta-001"
+[[ -f "$partial_vault/ops/queue/archive/2026-05-03-theta/theta.md" ]] || fail "already archived task should remain archived"
+[[ -f "$partial_vault/ops/queue/archive/2026-05-03-theta/theta-001.md" ]] || fail "remaining task should move to archive"
+[[ ! -f "$partial_vault/ops/queue/theta-001.md" ]] || fail "remaining task should leave active queue folder"
+
+missing_task_vault="$tmp_dir/missing-task"
+mkdir -p "$missing_task_vault/ops/queue/archive/2026-05-03-eta"
+cat > "$missing_task_vault/ops/queue/queue.yaml" <<'EOF'
+tasks:
+  - id: eta
+    type: extract
+    status: done
+    file: eta.md
+    archive_folder: ops/queue/archive/2026-05-03-eta
+  - id: eta-001
+    type: claim
+    status: completed
+    batch: eta
+    file: eta-001.md
+    archive_folder: ops/queue/archive/2026-05-03-eta
+EOF
+cat > "$missing_task_vault/ops/queue/eta-001.md" <<'EOF'
+# Eta claim
+EOF
+missing_task_before="$(cat "$missing_task_vault/ops/queue/queue.yaml")"
+missing_task_output="$(assert_exit 1 "$ARCHIVE" "$missing_task_vault" --batch eta)"
+assert_contains "$missing_task_output" "ERROR: Task file missing from active queue and archive"
+assert_contains "$missing_task_output" "- eta: ops/queue/eta.md or ops/queue/archive/2026-05-03-eta/eta.md"
+[[ "$missing_task_before" == "$(cat "$missing_task_vault/ops/queue/queue.yaml")" ]] || fail "missing task queue should not change"
+[[ -f "$missing_task_vault/ops/queue/eta-001.md" ]] || fail "missing task failure should preserve active files"
+[[ ! -f "$missing_task_vault/ops/queue/archive/2026-05-03-eta/eta-001.md" ]] || fail "missing task failure should not move remaining files"
+
 collision_vault="$tmp_dir/collision"
 mkdir -p "$collision_vault/ops/queue/archive/2026-05-03-zeta"
 cat > "$collision_vault/ops/queue/queue.yaml" <<'EOF'

@@ -209,24 +209,37 @@ if incomplete.any?
 end
 
 archive_dir = archive_folder_for(batch_tasks, batch, vault)
-FileUtils.mkdir_p(archive_dir)
 
 moves = []
+already_archived = []
+missing = []
 batch_tasks.each do |task|
   file = task_file_for(task)
   next if file.to_s.empty?
 
   source = Pathname.new(file).absolute? ? file : File.join(vault, "ops", "queue", file)
-  next unless File.file?(source)
-
   destination = File.join(archive_dir, File.basename(file))
-  if File.exist?(destination)
-    warn "ERROR: Archive destination already exists: #{rel_path(destination, vault)}"
-    exit 1
+
+  if File.file?(source)
+    if File.exist?(destination)
+      warn "ERROR: Archive destination already exists: #{rel_path(destination, vault)}"
+      exit 1
+    end
+    moves << [source, destination]
+  elsif File.file?(destination)
+    already_archived << destination
+  else
+    missing << [id_for(task), source, destination]
   end
-  moves << [source, destination]
 end
 
+if missing.any?
+  warn "ERROR: Task file missing from active queue and archive"
+  missing.each { |id, source, destination| warn "- #{id}: #{rel_path(source, vault)} or #{rel_path(destination, vault)}" }
+  exit 1
+end
+
+FileUtils.mkdir_p(archive_dir)
 summary_path = unique_summary_path(archive_dir, batch)
 moves.each { |source, destination| FileUtils.mv(source, destination) }
 File.write(summary_path, summary_body(batch, batch_tasks, archive_dir, vault))
@@ -238,6 +251,7 @@ result = {
   "batch" => batch,
   "tasks_archived" => batch_tasks.length,
   "files_moved" => moves.length,
+  "already_archived_files" => already_archived.map { |path| rel_path(path, vault) },
   "archive_folder" => rel_path(archive_dir, vault),
   "summary" => rel_path(summary_path, vault),
   "queue_file" => rel_path(queue_path, vault)
@@ -248,6 +262,7 @@ if format == "json"
 else
   puts "--=={ archive-batch }==--"
   puts
+  already_archived.each { |path| puts "Already archived task file: #{rel_path(path, vault)}" }
   puts "Archived batch: #{batch}"
   puts "Tasks archived: #{batch_tasks.length}"
   puts "Task files moved: #{moves.length}"

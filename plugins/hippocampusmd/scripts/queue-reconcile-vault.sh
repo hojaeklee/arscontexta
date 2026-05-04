@@ -111,6 +111,12 @@ def proposal_lines(report)
   end
 end
 
+def archive_recommendation_lines(report)
+  report.fetch(:archivable_batches).map do |batch|
+    "Archive recommendation: hippocampusmd-archive-batch --batch #{batch}"
+  end
+end
+
 def serializable_actions(actions, applied:)
   actions.map do |action|
     action.merge(applied: applied && action.fetch(:applied, false))
@@ -185,6 +191,7 @@ actions = deterministic_actions(report)
 apply_actions(actions) if apply
 mode = apply ? "apply" : "dry run"
 proposals = proposal_lines(report)
+archive_recommendations = archive_recommendation_lines(report)
 
 if format == "json"
   puts JSON.pretty_generate(
@@ -192,6 +199,7 @@ if format == "json"
       vault: root,
       mode: mode,
       actions: serializable_actions(actions, applied: apply),
+      archive_recommendations: archive_recommendations,
       proposals: report.fetch(:proposals)
     }
   )
@@ -199,6 +207,8 @@ else
   puts "Queue reconciliation"
   puts "Vault: #{root}"
   puts "Mode: #{mode}"
+
+  archive_recommendations.each { |line| puts line }
 
   if actions.empty?
     puts "No deterministic repairs needed"
