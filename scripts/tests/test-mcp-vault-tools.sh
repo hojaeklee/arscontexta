@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-TOOL="$PROJECT_ROOT/plugins/arscontexta/scripts/mcp-vault-tools.sh"
+TOOL="$PROJECT_ROOT/plugins/hippocampusmd/scripts/mcp-vault-tools.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -20,16 +20,16 @@ assert_exit() {
   local expected="$1"
   shift
   set +e
-  "$@" >/tmp/arscontexta-mcp-test-out.$$ 2>&1
+  "$@" >/tmp/hippocampusmd-mcp-test-out.$$ 2>&1
   local actual=$?
-  output="$(cat /tmp/arscontexta-mcp-test-out.$$)"
-  rm -f /tmp/arscontexta-mcp-test-out.$$
+  output="$(cat /tmp/hippocampusmd-mcp-test-out.$$)"
+  rm -f /tmp/hippocampusmd-mcp-test-out.$$
   set -e
   [[ "$actual" -eq "$expected" ]] || fail "expected exit $expected but got $actual from $*; output: $output"
   printf '%s' "$output"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-mcp-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-mcp-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -37,7 +37,7 @@ trap cleanup EXIT
 
 vault="$tmp_dir/vault"
 mkdir -p "$vault/notes" "$vault/ops/queue"
-touch "$vault/.arscontexta"
+touch "$vault/.hippocampusmd"
 cat > "$vault/notes/index.md" <<'EOF'
 ---
 description: Entry point
@@ -64,13 +64,13 @@ Links to [[missing target]].
 EOF
 
 links_output="$("$TOOL" links.check "$vault" --limit 5)"
-assert_contains "$links_output" '"tool": "arscontexta.links.check"'
+assert_contains "$links_output" '"tool": "hippocampusmd.links.check"'
 assert_contains "$links_output" '"overall": "FAIL"'
 assert_contains "$links_output" '"broken_total": 2'
 assert_contains "$links_output" '"target":"missing target"'
 
 valid_output="$("$TOOL" frontmatter.validate "$vault" --file notes/index.md --limit 5)"
-assert_contains "$valid_output" '"tool": "arscontexta.frontmatter.validate"'
+assert_contains "$valid_output" '"tool": "hippocampusmd.frontmatter.validate"'
 assert_contains "$valid_output" '"overall": "PASS"'
 assert_contains "$valid_output" '"warnings": 0'
 
@@ -85,7 +85,7 @@ git_vault="$tmp_dir/git-vault"
 cp -R "$vault" "$git_vault"
 git -C "$git_vault" init --quiet
 git -C "$git_vault" config user.email "test@example.com"
-git -C "$git_vault" config user.name "Ars Contexta Test"
+git -C "$git_vault" config user.name "HippocampusMD Test"
 git -C "$git_vault" add .
 git -C "$git_vault" commit --quiet -m "test: seed vault"
 cat > "$git_vault/notes/changed.md" <<'EOF'

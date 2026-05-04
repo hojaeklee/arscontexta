@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-remember/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-remember/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,8 +29,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-remember"
-assert_contains "$SKILL" "Use when the user asks Codex to capture Ars Contexta learnings"
+assert_contains "$SKILL" "name: hippocampusmd-remember"
+assert_contains "$SKILL" "Use when the user asks Codex to capture HippocampusMD learnings"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/config.yaml"
 assert_contains "$SKILL" 'ops/methodology/'

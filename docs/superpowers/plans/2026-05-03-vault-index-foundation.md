@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the first shared VaultIndex foundation so Ars Contexta can incrementally scan large markdown vaults and persist note/link metadata for future commands.
+**Goal:** Build the first shared VaultIndex foundation so HippocampusMD can incrementally scan large markdown vaults and persist note/link metadata for future commands.
 
 **Architecture:** Add a stdlib-only Python indexer with a small importable API and a shell wrapper in the plugin script layer. The indexer stores canonical vault-relative markdown paths in `ops/cache/index.sqlite`, skips unchanged files by `mtime_ns` plus size, records content hashes for changed files, and keeps parse warnings in the database instead of aborting scans.
 
@@ -17,7 +17,7 @@ Issue #36: "Add VaultIndex foundation for incremental large-vault scans"
 Parent: #34
 
 In scope:
-- Add a Python helper or CLI wrapper under `plugins/arscontexta/scripts/`.
+- Add a Python helper or CLI wrapper under `plugins/hippocampusmd/scripts/`.
 - Persist the durable machine index at `ops/cache/index.sqlite`.
 - Use vault-relative markdown paths as canonical IDs.
 - Store basename, title/heading, aliases, mtime, size, content hash, selected frontmatter, outgoing wiki links, note type, MOC/topic-map status, and scan warnings.
@@ -31,16 +31,16 @@ Out of scope:
 
 ## File Structure
 
-- Create `plugins/arscontexta/scripts/vault_index.py`
+- Create `plugins/hippocampusmd/scripts/vault_index.py`
   - Importable Python API and CLI implementation.
   - Owns scanning, parsing, SQLite schema, incremental bookkeeping, deletion handling, status, and export.
-- Create `plugins/arscontexta/scripts/vault-index.sh`
+- Create `plugins/hippocampusmd/scripts/vault-index.sh`
   - Thin executable shell wrapper that delegates to `vault_index.py`.
 - Create `scripts/tests/test-vault-index.sh`
   - End-to-end fixture tests for build/status/export, incremental skip behavior, deletions, duplicate basenames, and warnings.
 - Modify `scripts/check-codex-plugin.sh`
   - Add bundled and cached checks for `vault-index.sh` and `vault_index.py`.
-- Modify `plugins/arscontexta/.codex-plugin/plugin.json`
+- Modify `plugins/hippocampusmd/.codex-plugin/plugin.json`
   - Bump version from `0.8.5` to `0.9.0` because this adds a backwards-compatible helper/API.
 
 ## Public API Contract
@@ -59,9 +59,9 @@ payload = index.export()
 CLI callers should be able to use:
 
 ```bash
-plugins/arscontexta/scripts/vault-index.sh build /path/to/vault
-plugins/arscontexta/scripts/vault-index.sh status /path/to/vault --format json
-plugins/arscontexta/scripts/vault-index.sh export /path/to/vault --format json
+plugins/hippocampusmd/scripts/vault-index.sh build /path/to/vault
+plugins/hippocampusmd/scripts/vault-index.sh status /path/to/vault --format json
+plugins/hippocampusmd/scripts/vault-index.sh export /path/to/vault --format json
 ```
 
 Text output for `build` must include the words `scanned:`, `skipped:`, `deleted:`, and `warnings:` so shell tests can assert incremental behavior without parsing JSON.
@@ -128,7 +128,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-INDEX="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh"
+INDEX="$PROJECT_ROOT/plugins/hippocampusmd/scripts/vault-index.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -153,7 +153,7 @@ assert_file() {
   [[ -f "$1" ]] || fail "expected file to exist: $1"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-vault-index-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-vault-index-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -252,7 +252,7 @@ Run:
 scripts/tests/test-vault-index.sh
 ```
 
-Expected: FAIL because `plugins/arscontexta/scripts/vault-index.sh` does not exist yet.
+Expected: FAIL because `plugins/hippocampusmd/scripts/vault-index.sh` does not exist yet.
 
 - [ ] **Step 4: Commit the failing test**
 
@@ -264,7 +264,7 @@ git commit -m "test: add vault index foundation coverage"
 ## Task 2: Add the VaultIndex Python Implementation
 
 **Files:**
-- Create: `plugins/arscontexta/scripts/vault_index.py`
+- Create: `plugins/hippocampusmd/scripts/vault_index.py`
 
 - [ ] **Step 1: Add the module shell**
 
@@ -272,7 +272,7 @@ Start the file with these imports, constants, and data class:
 
 ```python
 #!/usr/bin/env python3
-"""Incremental SQLite index for Ars Contexta markdown vaults."""
+"""Incremental SQLite index for HippocampusMD markdown vaults."""
 
 from __future__ import annotations
 
@@ -316,7 +316,7 @@ class ParsedNote:
 
 - [ ] **Step 2: Add path, hashing, and parsing helpers**
 
-Use simple stdlib parsing for the frontmatter subset Ars Contexta currently needs. Unterminated frontmatter must return a warning and still parse body links/headings.
+Use simple stdlib parsing for the frontmatter subset HippocampusMD currently needs. Unterminated frontmatter must return a warning and still parse body links/headings.
 
 ```python
 def utc_now() -> str:
@@ -678,14 +678,14 @@ Expected: FAIL because the shell wrapper does not exist yet.
 - [ ] **Step 9: Commit the Python implementation**
 
 ```bash
-git add plugins/arscontexta/scripts/vault_index.py
+git add plugins/hippocampusmd/scripts/vault_index.py
 git commit -m "feat: add vault index sqlite foundation"
 ```
 
 ## Task 3: Add the Shell Wrapper
 
 **Files:**
-- Create: `plugins/arscontexta/scripts/vault-index.sh`
+- Create: `plugins/hippocampusmd/scripts/vault-index.sh`
 
 - [ ] **Step 1: Create the wrapper**
 
@@ -702,7 +702,7 @@ exec python3 "$SCRIPT_DIR/vault_index.py" "$@"
 Run:
 
 ```bash
-chmod +x plugins/arscontexta/scripts/vault-index.sh plugins/arscontexta/scripts/vault_index.py
+chmod +x plugins/hippocampusmd/scripts/vault-index.sh plugins/hippocampusmd/scripts/vault_index.py
 ```
 
 - [ ] **Step 3: Run the VaultIndex test**
@@ -718,7 +718,7 @@ Expected: PASS with `PASS: vault-index checks`.
 - [ ] **Step 4: Commit the wrapper**
 
 ```bash
-git add plugins/arscontexta/scripts/vault-index.sh plugins/arscontexta/scripts/vault_index.py
+git add plugins/hippocampusmd/scripts/vault-index.sh plugins/hippocampusmd/scripts/vault_index.py
 git commit -m "feat: expose vault index cli"
 ```
 
@@ -726,15 +726,15 @@ git commit -m "feat: expose vault index cli"
 
 **Files:**
 - Modify: `scripts/check-codex-plugin.sh`
-- Modify: `plugins/arscontexta/.codex-plugin/plugin.json`
+- Modify: `plugins/hippocampusmd/.codex-plugin/plugin.json`
 
 - [ ] **Step 1: Add helper variables to `scripts/check-codex-plugin.sh`**
 
 Near the existing helper variable block, add:
 
 ```bash
-vault_index_shell_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault-index.sh"
-vault_index_python_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault_index.py"
+vault_index_shell_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/vault-index.sh"
+vault_index_python_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/vault_index.py"
 ```
 
 - [ ] **Step 2: Add bundled helper checks**
@@ -758,7 +758,7 @@ The loop should continue to emit warnings when the local Codex plugin cache has 
 
 - [ ] **Step 4: Bump plugin version**
 
-Change `plugins/arscontexta/.codex-plugin/plugin.json`:
+Change `plugins/hippocampusmd/.codex-plugin/plugin.json`:
 
 ```json
 "version": "0.9.0",
@@ -779,8 +779,8 @@ Expected: PASS overall or WARN for missing cached 0.9.0 plugin if the cache has 
 Run:
 
 ```bash
-mkdir -p "$HOME/.codex/plugins/cache/agenticnotetaking/arscontexta/0.9.0"
-/bin/cp -R plugins/arscontexta/. "$HOME/.codex/plugins/cache/agenticnotetaking/arscontexta/0.9.0/"
+mkdir -p "$HOME/.codex/plugins/cache/hippocampusmd/hippocampusmd/0.9.0"
+/bin/cp -R plugins/hippocampusmd/. "$HOME/.codex/plugins/cache/hippocampusmd/hippocampusmd/0.9.0/"
 ```
 
 - [ ] **Step 7: Run plugin check after cache refresh**
@@ -796,7 +796,7 @@ Expected: PASS overall with cached `vault-index.sh` and `vault_index.py` present
 - [ ] **Step 8: Commit bundle metadata**
 
 ```bash
-git add scripts/check-codex-plugin.sh plugins/arscontexta/.codex-plugin/plugin.json
+git add scripts/check-codex-plugin.sh plugins/hippocampusmd/.codex-plugin/plugin.json
 git commit -m "chore: bundle vault index helper"
 ```
 
@@ -838,16 +838,16 @@ git status --short
 ```
 
 Expected only intentional files are changed:
-- `plugins/arscontexta/scripts/vault_index.py`
-- `plugins/arscontexta/scripts/vault-index.sh`
+- `plugins/hippocampusmd/scripts/vault_index.py`
+- `plugins/hippocampusmd/scripts/vault-index.sh`
 - `scripts/tests/test-vault-index.sh`
 - `scripts/check-codex-plugin.sh`
-- `plugins/arscontexta/.codex-plugin/plugin.json`
+- `plugins/hippocampusmd/.codex-plugin/plugin.json`
 
 - [ ] **Step 4: Final commit if any verification-only edits were needed**
 
 ```bash
-git add plugins/arscontexta/scripts/vault_index.py plugins/arscontexta/scripts/vault-index.sh scripts/tests/test-vault-index.sh scripts/check-codex-plugin.sh plugins/arscontexta/.codex-plugin/plugin.json
+git add plugins/hippocampusmd/scripts/vault_index.py plugins/hippocampusmd/scripts/vault-index.sh scripts/tests/test-vault-index.sh scripts/check-codex-plugin.sh plugins/hippocampusmd/.codex-plugin/plugin.json
 git commit -m "fix: stabilize vault index foundation"
 ```
 

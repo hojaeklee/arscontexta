@@ -42,12 +42,12 @@ do
   assert_absent "$legacy_path"
 done
 
-assert_contains "README.md" "Codex is the only supported Ars Contexta distribution in this repo."
-assert_contains "README.md" 'plugins/arscontexta/ is the source of truth'
+assert_contains "README.md" "Codex is the only supported HippocampusMD distribution in this repo."
+assert_contains "README.md" 'plugins/hippocampusmd/ is the source of truth'
 assert_contains "README.md" "Claude Code support, hooks, slash commands, and legacy generated skill templates have been removed."
 
 for stale in \
-  "Claude Code plugin available" \
+  "legacy Claude plugin available" \
   "Legacy Claude Commands" \
   "Port Claude" \
   "full Claude setup parity" \
@@ -59,11 +59,11 @@ done
 
 if rg -n -g '!**/test-codex-only-cleanup.sh' \
   "skill-sources/|root skills/|CLAUDE_PLUGIN_ROOT|claude_hooks|full Claude setup parity" \
-  "$PROJECT_ROOT/plugins" "$PROJECT_ROOT/scripts" "$PROJECT_ROOT/platforms" >/tmp/arscontexta-cleanup-rg.$$ 2>/dev/null; then
-  cat /tmp/arscontexta-cleanup-rg.$$ >&2
-  rm -f /tmp/arscontexta-cleanup-rg.$$
+  "$PROJECT_ROOT/plugins" "$PROJECT_ROOT/scripts" "$PROJECT_ROOT/platforms" >/tmp/hippocampusmd-cleanup-rg.$$ 2>/dev/null; then
+  cat /tmp/hippocampusmd-cleanup-rg.$$ >&2
+  rm -f /tmp/hippocampusmd-cleanup-rg.$$
   fail "active Codex surfaces still reference legacy Claude/template sources"
 fi
-rm -f /tmp/arscontexta-cleanup-rg.$$
+rm -f /tmp/hippocampusmd-cleanup-rg.$$
 
 printf 'PASS: codex-only cleanup checks\n'

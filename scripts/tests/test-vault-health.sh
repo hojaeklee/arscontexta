@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-HEALTH_SCRIPT="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-health.sh"
+HEALTH_SCRIPT="$PROJECT_ROOT/plugins/hippocampusmd/scripts/vault-health.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -24,7 +24,7 @@ assert_not_contains() {
   fi
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-health-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-health-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -32,7 +32,7 @@ trap cleanup EXIT
 
 vault="$tmp_dir/vault"
 mkdir -p "$vault/notes" "$vault/templates" "$vault/reference" "$vault/ops/health"
-touch "$vault/.arscontexta"
+touch "$vault/.hippocampusmd"
 
 printf '%s\n' \
   '---' \
@@ -89,7 +89,7 @@ printf '%s\n' 'Example [[Missing Example]].' > "$noise_vault/templates/template.
 
 noise_output="$("$HEALTH_SCRIPT" "$noise_vault" --mode quick --limit 1 --format text)"
 assert_contains "$noise_output" "Overall: PASS"
-assert_contains "$noise_output" ".arscontexta was not detected"
+assert_contains "$noise_output" ".hippocampusmd was not detected"
 assert_contains "$noise_output" "Noise/docs/templates: 1"
 
 json_output="$("$HEALTH_SCRIPT" "$vault" --mode quick --limit 2 --format json)"

@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-add-domain/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-add-domain/SKILL.md"
 
 assert_file() {
     local file="$1"
@@ -32,8 +32,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-add-domain"
-assert_contains "$SKILL" "Use when the user asks Codex to add a new Ars Contexta knowledge domain"
+assert_contains "$SKILL" "name: hippocampusmd-add-domain"
+assert_contains "$SKILL" "Use when the user asks Codex to add a new HippocampusMD knowledge domain"
 
 assert_contains "$SKILL" "ops/derivation.md"
 assert_contains "$SKILL" "ops/config.yaml"

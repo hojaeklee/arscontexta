@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-reweave/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-reweave/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,8 +29,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-reweave"
-assert_contains "$SKILL" "Use when the user asks Codex to revisit older Ars Contexta notes"
+assert_contains "$SKILL" "name: hippocampusmd-reweave"
+assert_contains "$SKILL" "Use when the user asks Codex to revisit older HippocampusMD notes"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/config.yaml"
 assert_contains "$SKILL" "vocabulary"
@@ -64,7 +64,7 @@ assert_contains "$SKILL" "small prose edits"
 assert_contains "$SKILL" "Require separate approval before substantial rewrites, splits, or claim changes"
 assert_contains "$SKILL" "Preserve existing note voice"
 assert_contains "$SKILL" "avoid broad churn"
-assert_contains "$SKILL" "arscontexta-validate"
+assert_contains "$SKILL" "hippocampusmd-validate"
 assert_contains "$SKILL" 'Do not automatically mutate `ops/queue/*`'
 assert_contains "$SKILL" "Ralph handoff"
 assert_contains "$SKILL" 'Do not create `ops/observations/` or `ops/tensions/` side-effect files'

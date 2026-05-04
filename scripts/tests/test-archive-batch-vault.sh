@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-ARCHIVE="$PROJECT_ROOT/plugins/arscontexta/scripts/archive-batch-vault.sh"
+ARCHIVE="$PROJECT_ROOT/plugins/hippocampusmd/scripts/archive-batch-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -36,7 +36,7 @@ assert_exit() {
   printf '%s' "$output"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-archive-batch-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-archive-batch-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }

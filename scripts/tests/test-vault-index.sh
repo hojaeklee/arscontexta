@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-INDEX="${ARS_CONTEXTA_INDEX:-$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh}"
+INDEX="${ARS_CONTEXTA_INDEX:-$PROJECT_ROOT/plugins/hippocampusmd/scripts/vault-index.sh}"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -28,7 +28,7 @@ assert_file() {
   [[ -f "$1" ]] || fail "expected file to exist: $1"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-vault-index-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-vault-index-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }

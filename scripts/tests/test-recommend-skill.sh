@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-recommend/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-recommend/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,19 +29,19 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-recommend"
-assert_contains "$SKILL" "Use when the user asks Codex for Ars Contexta architecture advice"
+assert_contains "$SKILL" "name: hippocampusmd-recommend"
+assert_contains "$SKILL" "Use when the user asks Codex for HippocampusMD architecture advice"
 assert_contains "$SKILL" "advisory and read-only"
 assert_contains "$SKILL" "rg"
 assert_contains "$SKILL" "read local files before using optional semantic tooling"
-assert_contains "$SKILL" "plugins/arscontexta/reference/"
-assert_contains "$SKILL" "plugins/arscontexta/methodology/"
-assert_contains "$SKILL" "plugins/arscontexta/reference/tradition-presets.md"
-assert_contains "$SKILL" "plugins/arscontexta/reference/methodology.md"
-assert_contains "$SKILL" "plugins/arscontexta/reference/components.md"
-assert_contains "$SKILL" "plugins/arscontexta/reference/dimension-claim-map.md"
-assert_contains "$SKILL" "plugins/arscontexta/reference/interaction-constraints.md"
-assert_contains "$SKILL" "plugins/arscontexta/reference/claim-map.md"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/"
+assert_contains "$SKILL" "plugins/hippocampusmd/methodology/"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/tradition-presets.md"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/methodology.md"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/components.md"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/dimension-claim-map.md"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/interaction-constraints.md"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/claim-map.md"
 assert_contains "$SKILL" "ask at most 1-2 clarifying questions"
 assert_contains "$SKILL" "domain, goals, pain points"
 assert_contains "$SKILL" "operator"

@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-VALIDATE="$PROJECT_ROOT/plugins/arscontexta/scripts/validate-vault.sh"
+VALIDATE="$PROJECT_ROOT/plugins/hippocampusmd/scripts/validate-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -24,7 +24,7 @@ assert_not_contains() {
   fi
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-validate-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-validate-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -32,7 +32,7 @@ trap cleanup EXIT
 
 vault="$tmp_dir/vault"
 mkdir -p "$vault/notes" "$vault/templates" "$vault/ops"
-touch "$vault/.arscontexta"
+touch "$vault/.hippocampusmd"
 
 cat > "$vault/ops/derivation-manifest.md" <<'EOF'
 ---
@@ -181,7 +181,7 @@ git_vault="$tmp_dir/git-vault"
 cp -R "$vault" "$git_vault"
 git -C "$git_vault" init --quiet
 git -C "$git_vault" config user.email "test@example.com"
-git -C "$git_vault" config user.name "Ars Contexta Test"
+git -C "$git_vault" config user.name "HippocampusMD Test"
 git -C "$git_vault" add .
 git -C "$git_vault" commit --quiet -m "test: seed validation vault"
 

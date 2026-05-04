@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-rethink/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-rethink/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,8 +29,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-rethink"
-assert_contains "$SKILL" "Use when the user asks Codex to review accumulated Ars Contexta observations"
+assert_contains "$SKILL" "name: hippocampusmd-rethink"
+assert_contains "$SKILL" "Use when the user asks Codex to review accumulated HippocampusMD observations"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/config.yaml"
 assert_contains "$SKILL" "vocabulary"
@@ -56,9 +56,9 @@ assert_contains "$SKILL" "explicit user approval before any file write"
 assert_contains "$SKILL" "note, methodology, config, context, changelog, or status edits"
 assert_contains "$SKILL" 'Do not automatically mutate `ops/queue/*`'
 assert_contains "$SKILL" "pipeline state"
-assert_contains "$SKILL" "arscontexta-architect"
-assert_contains "$SKILL" "arscontexta-refactor"
-assert_contains "$SKILL" "arscontexta-reseed"
+assert_contains "$SKILL" "hippocampusmd-architect"
+assert_contains "$SKILL" "hippocampusmd-refactor"
+assert_contains "$SKILL" "hippocampusmd-reseed"
 assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"

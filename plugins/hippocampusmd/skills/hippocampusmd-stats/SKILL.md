@@ -1,0 +1,44 @@
+---
+name: hippocampusmd-stats
+description: Use when the user asks Codex for HippocampusMD vault statistics, graph metrics, growth, link density, inbox state, queue state, or a shareable snapshot.
+---
+
+# HippocampusMD Stats
+
+Show a concise, read-only snapshot of vault growth and health. Metrics are evidence, not judgment; detailed remediation belongs to health, graph, or processing skills.
+
+## When Invoked
+
+1. Treat the current working directory as the vault unless the user gives another path.
+2. Prefer the deterministic helper when available. The public helper remains a shell command, but its implementation is Python and uses VaultIndex when a fresh index is available:
+
+```bash
+plugins/hippocampusmd/scripts/stats-vault.sh . --limit 25 --format text
+plugins/hippocampusmd/scripts/stats-vault.sh . --share --format text
+plugins/hippocampusmd/scripts/stats-vault.sh . --format json
+```
+
+From an installed plugin package or the repository, discover the helper relative to the plugin or repo root:
+
+```bash
+plugins/hippocampusmd/scripts/stats-vault.sh . --limit 25 --format text
+```
+
+## What It Reports
+
+- Knowledge graph size, MOCs, wiki-link count, average links, topics, and graph density.
+- Health snapshot: orphans, dangling links, and schema compliance.
+- Pipeline snapshot: inbox count, oldest inbox age, and queue state when present.
+- Growth this week from `created:` frontmatter.
+- System state: self space, methodology notes, observations, tensions, sessions, and health reports.
+
+## Safety
+
+- Read-only. Do not create history files or mutate queue/task state.
+- Keep output concise and shareable.
+- For large vaults, prefer approximate bounded metrics and recommend `hippocampusmd-graph` for precise graph analysis.
+- Skip missing optional directories without treating them as failures.
+
+## Output
+
+Default output is a compact stats block plus only notable interpretation notes. `--share` produces a positive markdown snapshot suitable for sharing.

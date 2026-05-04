@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-verify/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-verify/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,8 +29,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-verify"
-assert_contains "$SKILL" "Use when the user asks Codex to verify Ars Contexta note quality"
+assert_contains "$SKILL" "name: hippocampusmd-verify"
+assert_contains "$SKILL" "Use when the user asks Codex to verify HippocampusMD note quality"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/config.yaml"
 assert_contains "$SKILL" "vocabulary"
@@ -56,9 +56,9 @@ assert_contains "$SKILL" "required fields"
 assert_contains "$SKILL" "enum values"
 assert_contains "$SKILL" '`description`/`topics` defaults'
 assert_contains "$SKILL" 'body links, topics, and `relevant_notes`'
-assert_contains "$SKILL" "arscontexta-reflect"
-assert_contains "$SKILL" "arscontexta-reweave"
-assert_contains "$SKILL" "arscontexta-validate"
+assert_contains "$SKILL" "hippocampusmd-reflect"
+assert_contains "$SKILL" "hippocampusmd-reweave"
+assert_contains "$SKILL" "hippocampusmd-validate"
 assert_contains "$SKILL" "Do not edit notes by default"
 assert_contains "$SKILL" "Do not automatically edit notes"
 assert_contains "$SKILL" 'mutate `ops/queue/*`'

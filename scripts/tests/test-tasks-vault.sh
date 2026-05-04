@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-TASKS="$PROJECT_ROOT/plugins/arscontexta/scripts/tasks-vault.sh"
+TASKS="$PROJECT_ROOT/plugins/hippocampusmd/scripts/tasks-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -24,7 +24,7 @@ assert_not_contains() {
   fi
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-tasks-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-tasks-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }

@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-NEXT="$PROJECT_ROOT/plugins/arscontexta/scripts/next-vault.sh"
+NEXT="$PROJECT_ROOT/plugins/hippocampusmd/scripts/next-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -23,7 +23,7 @@ assert_not_exists() {
 make_vault() {
   local vault="$1"
   mkdir -p "$vault/notes" "$vault/inbox" "$vault/ops/queue" "$vault/ops/observations" "$vault/ops/tensions" "$vault/ops/health" "$vault/self"
-  touch "$vault/.arscontexta"
+  touch "$vault/.hippocampusmd"
   cat > "$vault/ops/derivation-manifest.md" <<'EOF'
 ---
 vocabulary:
@@ -52,7 +52,7 @@ add_notes() {
   done
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-next-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-next-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }

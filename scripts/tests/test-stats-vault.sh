@@ -3,8 +3,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-STATS="$PROJECT_ROOT/plugins/arscontexta/scripts/stats-vault.sh"
-INDEX="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh"
+STATS="$PROJECT_ROOT/plugins/hippocampusmd/scripts/stats-vault.sh"
+INDEX="$PROJECT_ROOT/plugins/hippocampusmd/scripts/vault-index.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -38,7 +38,7 @@ run_stats_capture() {
   "$STATS" "$vault_path" "$@" >"$stdout_path" 2>"$stderr_path"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-stats-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-stats-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -156,7 +156,7 @@ assert_contains "$output" "1 dangling links"
 share_output="$("$STATS" "$vault" --share)"
 assert_contains "$share_output" "## My Knowledge Graph"
 assert_contains "$share_output" "**2** claims"
-assert_contains "$share_output" "Built with Ars Contexta"
+assert_contains "$share_output" "Built with HippocampusMD"
 
 json_output="$("$STATS" "$vault" --format json)"
 assert_contains "$json_output" '"notes": 2'

@@ -92,38 +92,38 @@ require_json_tools() {
 }
 
 marketplace="$REPO_ROOT/.agents/plugins/marketplace.json"
-manifest="$REPO_ROOT/plugins/arscontexta/.codex-plugin/plugin.json"
-health_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault-health.sh"
-setup_helper="$REPO_ROOT/plugins/arscontexta/scripts/setup-vault.sh"
-session_orient_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-orient.sh"
-session_validate_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-validate.sh"
-session_capture_helper="$REPO_ROOT/plugins/arscontexta/scripts/session-capture.sh"
-mcp_tools_helper="$REPO_ROOT/plugins/arscontexta/scripts/mcp-vault-tools.sh"
-validate_helper="$REPO_ROOT/plugins/arscontexta/scripts/validate-vault.sh"
-tasks_helper="$REPO_ROOT/plugins/arscontexta/scripts/tasks-vault.sh"
-next_helper="$REPO_ROOT/plugins/arscontexta/scripts/next-vault.sh"
-stats_helper="$REPO_ROOT/plugins/arscontexta/scripts/stats-vault.sh"
-stats_python_helper="$REPO_ROOT/plugins/arscontexta/scripts/stats_vault.py"
-graph_helper="$REPO_ROOT/plugins/arscontexta/scripts/graph-vault.sh"
-seed_helper="$REPO_ROOT/plugins/arscontexta/scripts/seed-vault.sh"
-ralph_helper="$REPO_ROOT/plugins/arscontexta/scripts/ralph-vault.sh"
-pipeline_helper="$REPO_ROOT/plugins/arscontexta/scripts/pipeline-vault.sh"
-archive_batch_helper="$REPO_ROOT/plugins/arscontexta/scripts/archive-batch-vault.sh"
-vault_index_shell_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault-index.sh"
-vault_index_python_helper="$REPO_ROOT/plugins/arscontexta/scripts/vault_index.py"
-agent_knowledge_guide="$REPO_ROOT/plugins/arscontexta/agents/knowledge-guide.md"
-methodology_index="$REPO_ROOT/plugins/arscontexta/methodology/index.md"
-methodology_claim="$REPO_ROOT/plugins/arscontexta/methodology/claims must be specific enough to be wrong.md"
-reference_methodology="$REPO_ROOT/plugins/arscontexta/reference/methodology.md"
-reference_claim_map="$REPO_ROOT/plugins/arscontexta/reference/claim-map.md"
-reference_base_template="$REPO_ROOT/plugins/arscontexta/reference/templates/base-note.md"
-reference_kernel_validator="$REPO_ROOT/plugins/arscontexta/reference/validate-kernel.sh"
-generator_agents="$REPO_ROOT/plugins/arscontexta/generators/agents-md.md"
-generator_feature="$REPO_ROOT/plugins/arscontexta/generators/features/atomic-notes.md"
-preset_research="$REPO_ROOT/plugins/arscontexta/presets/research/preset.yaml"
-preset_research_starter="$REPO_ROOT/plugins/arscontexta/presets/research/starter/index.md"
-preset_personal_vocabulary="$REPO_ROOT/plugins/arscontexta/presets/personal/vocabulary.yaml"
-preset_experimental_categories="$REPO_ROOT/plugins/arscontexta/presets/experimental/categories.yaml"
+manifest="$REPO_ROOT/plugins/hippocampusmd/.codex-plugin/plugin.json"
+health_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/vault-health.sh"
+setup_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/setup-vault.sh"
+session_orient_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/session-orient.sh"
+session_validate_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/session-validate.sh"
+session_capture_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/session-capture.sh"
+mcp_tools_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/mcp-vault-tools.sh"
+validate_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/validate-vault.sh"
+tasks_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/tasks-vault.sh"
+next_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/next-vault.sh"
+stats_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/stats-vault.sh"
+stats_python_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/stats_vault.py"
+graph_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/graph-vault.sh"
+seed_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/seed-vault.sh"
+ralph_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/ralph-vault.sh"
+pipeline_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/pipeline-vault.sh"
+archive_batch_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/archive-batch-vault.sh"
+vault_index_shell_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/vault-index.sh"
+vault_index_python_helper="$REPO_ROOT/plugins/hippocampusmd/scripts/vault_index.py"
+agent_knowledge_guide="$REPO_ROOT/plugins/hippocampusmd/agents/knowledge-guide.md"
+methodology_index="$REPO_ROOT/plugins/hippocampusmd/methodology/index.md"
+methodology_claim="$REPO_ROOT/plugins/hippocampusmd/methodology/claims must be specific enough to be wrong.md"
+reference_methodology="$REPO_ROOT/plugins/hippocampusmd/reference/methodology.md"
+reference_claim_map="$REPO_ROOT/plugins/hippocampusmd/reference/claim-map.md"
+reference_base_template="$REPO_ROOT/plugins/hippocampusmd/reference/templates/base-note.md"
+reference_kernel_validator="$REPO_ROOT/plugins/hippocampusmd/reference/validate-kernel.sh"
+generator_agents="$REPO_ROOT/plugins/hippocampusmd/generators/agents-md.md"
+generator_feature="$REPO_ROOT/plugins/hippocampusmd/generators/features/atomic-notes.md"
+preset_research="$REPO_ROOT/plugins/hippocampusmd/presets/research/preset.yaml"
+preset_research_starter="$REPO_ROOT/plugins/hippocampusmd/presets/research/starter/index.md"
+preset_personal_vocabulary="$REPO_ROOT/plugins/hippocampusmd/presets/personal/vocabulary.yaml"
+preset_experimental_categories="$REPO_ROOT/plugins/hippocampusmd/presets/experimental/categories.yaml"
 
 if require_json_tools; then
   if [[ -f "$marketplace" ]]; then
@@ -133,17 +133,17 @@ if require_json_tools; then
       plugin_name="$(json_get "$marketplace" ".plugins[0].name")"
       plugin_path="$(json_get "$marketplace" ".plugins[0].source.path")"
 
-      [[ "$marketplace_name" == "agenticnotetaking" ]] \
-        && emit PASS "Marketplace name is agenticnotetaking." \
-        || emit FAIL "Marketplace name is '$marketplace_name', expected agenticnotetaking."
+      [[ "$marketplace_name" == "hippocampusmd" ]] \
+        && emit PASS "Marketplace name is hippocampusmd." \
+        || emit FAIL "Marketplace name is '$marketplace_name', expected hippocampusmd."
 
-      [[ "$plugin_name" == "arscontexta" ]] \
-        && emit PASS "Marketplace contains arscontexta plugin entry." \
-        || emit FAIL "Marketplace first plugin is '$plugin_name', expected arscontexta."
+      [[ "$plugin_name" == "hippocampusmd" ]] \
+        && emit PASS "Marketplace contains hippocampusmd plugin entry." \
+        || emit FAIL "Marketplace first plugin is '$plugin_name', expected hippocampusmd."
 
-      [[ "$plugin_path" == "./plugins/arscontexta" ]] \
-        && emit PASS "Marketplace plugin path is ./plugins/arscontexta." \
-        || emit FAIL "Marketplace plugin path is '$plugin_path', expected ./plugins/arscontexta."
+      [[ "$plugin_path" == "./plugins/hippocampusmd" ]] \
+        && emit PASS "Marketplace plugin path is ./plugins/hippocampusmd." \
+        || emit FAIL "Marketplace plugin path is '$plugin_path', expected ./plugins/hippocampusmd."
     else
       emit FAIL ".agents/plugins/marketplace.json does not parse."
     fi
@@ -153,14 +153,14 @@ if require_json_tools; then
 
   if [[ -f "$manifest" ]]; then
     if json_parse "$manifest"; then
-      emit PASS "plugins/arscontexta/.codex-plugin/plugin.json parses."
+      emit PASS "plugins/hippocampusmd/.codex-plugin/plugin.json parses."
       manifest_name="$(json_get "$manifest" ".name")"
       manifest_version="$(json_get "$manifest" ".version")"
       skills_path="$(json_get "$manifest" ".skills")"
 
-      [[ "$manifest_name" == "arscontexta" ]] \
-        && emit PASS "Plugin manifest name is arscontexta." \
-        || emit FAIL "Plugin manifest name is '$manifest_name', expected arscontexta."
+      [[ "$manifest_name" == "hippocampusmd" ]] \
+        && emit PASS "Plugin manifest name is hippocampusmd." \
+        || emit FAIL "Plugin manifest name is '$manifest_name', expected hippocampusmd."
 
       [[ -n "$manifest_version" ]] \
         && emit PASS "Plugin manifest version is $manifest_version." \
@@ -170,17 +170,17 @@ if require_json_tools; then
         && emit PASS "Plugin manifest uses skills path ./skills/." \
         || emit FAIL "Plugin manifest skills path is '$skills_path', expected ./skills/."
     else
-      emit FAIL "plugins/arscontexta/.codex-plugin/plugin.json does not parse."
+      emit FAIL "plugins/hippocampusmd/.codex-plugin/plugin.json does not parse."
       manifest_version=""
     fi
   else
-    emit FAIL "plugins/arscontexta/.codex-plugin/plugin.json is missing."
+    emit FAIL "plugins/hippocampusmd/.codex-plugin/plugin.json is missing."
     manifest_version=""
   fi
 fi
 
-for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-index arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify arscontexta-remember arscontexta-rethink arscontexta-architect arscontexta-refactor arscontexta-reseed arscontexta-upgrade arscontexta-add-domain arscontexta-seed arscontexta-ralph arscontexta-pipeline arscontexta-archive-batch arscontexta-tutorial arscontexta-learn; do
-  skill_file="$REPO_ROOT/plugins/arscontexta/skills/$skill_name/SKILL.md"
+for skill_name in hippocampusmd-help hippocampusmd-health hippocampusmd-setup hippocampusmd-session hippocampusmd-validate hippocampusmd-tasks hippocampusmd-next hippocampusmd-index hippocampusmd-stats hippocampusmd-graph hippocampusmd-ask hippocampusmd-recommend hippocampusmd-reduce hippocampusmd-reflect hippocampusmd-reweave hippocampusmd-verify hippocampusmd-remember hippocampusmd-rethink hippocampusmd-architect hippocampusmd-refactor hippocampusmd-reseed hippocampusmd-upgrade hippocampusmd-add-domain hippocampusmd-seed hippocampusmd-ralph hippocampusmd-pipeline hippocampusmd-archive-batch hippocampusmd-tutorial hippocampusmd-learn; do
+  skill_file="$REPO_ROOT/plugins/hippocampusmd/skills/$skill_name/SKILL.md"
   if [[ -f "$skill_file" ]]; then
     emit PASS "$skill_name skill exists in installable plugin."
     if awk -v expected="name: $skill_name" 'NR == 1 && $0 == "---" { in_fm = 1; next } in_fm && $0 == expected { found = 1 } in_fm && NR > 1 && $0 == "---" { exit } END { exit found ? 0 : 1 }' "$skill_file"; then
@@ -265,25 +265,25 @@ done
 if [[ -f "$CODEX_CONFIG_PATH" ]]; then
   emit PASS "Codex config found at $CODEX_CONFIG_PATH."
 
-  if grep -Fqx '[marketplaces.agenticnotetaking]' "$CODEX_CONFIG_PATH"; then
-    emit PASS "Codex config has marketplaces.agenticnotetaking block."
-    if toml_section_contains "$CODEX_CONFIG_PATH" '[marketplaces.agenticnotetaking]' "source = \"$REPO_ROOT\""; then
+  if grep -Fqx '[marketplaces.hippocampusmd]' "$CODEX_CONFIG_PATH"; then
+    emit PASS "Codex config has marketplaces.hippocampusmd block."
+    if toml_section_contains "$CODEX_CONFIG_PATH" '[marketplaces.hippocampusmd]' "source = \"$REPO_ROOT\""; then
       emit PASS "Codex marketplace source points at this repo."
     else
       emit WARN "Codex marketplace source does not point at this repo: $REPO_ROOT."
     fi
   else
-    emit WARN "Codex config is missing marketplaces.agenticnotetaking block."
+    emit WARN "Codex config is missing marketplaces.hippocampusmd block."
   fi
 
-  if grep -Fqx '[plugins."arscontexta@agenticnotetaking"]' "$CODEX_CONFIG_PATH"; then
-    if toml_section_contains "$CODEX_CONFIG_PATH" '[plugins."arscontexta@agenticnotetaking"]' 'enabled = true'; then
-      emit PASS "Codex config enables arscontexta@agenticnotetaking."
+  if grep -Fqx '[plugins."hippocampusmd@hippocampusmd"]' "$CODEX_CONFIG_PATH"; then
+    if toml_section_contains "$CODEX_CONFIG_PATH" '[plugins."hippocampusmd@hippocampusmd"]' 'enabled = true'; then
+      emit PASS "Codex config enables hippocampusmd@hippocampusmd."
     else
-      emit WARN "Codex config has arscontexta plugin block but enabled = true was not found."
+      emit WARN "Codex config has hippocampusmd plugin block but enabled = true was not found."
     fi
   else
-    emit WARN "Codex config is missing arscontexta@agenticnotetaking plugin block."
+    emit WARN "Codex config is missing hippocampusmd@hippocampusmd plugin block."
   fi
 
   if grep -Eq '^[[:space:]]*model[[:space:]]*=[[:space:]]*"gpt-5-codex"' "$CODEX_CONFIG_PATH"; then
@@ -296,13 +296,13 @@ else
 fi
 
 if [[ -n "${manifest_version:-}" ]]; then
-  cache_dir="$CODEX_CACHE_ROOT/agenticnotetaking/arscontexta/$manifest_version"
+  cache_dir="$CODEX_CACHE_ROOT/hippocampusmd/hippocampusmd/$manifest_version"
   if [[ -d "$cache_dir" ]]; then
-    emit PASS "Codex cache exists for arscontexta $manifest_version."
+    emit PASS "Codex cache exists for hippocampusmd $manifest_version."
     [[ -f "$cache_dir/.codex-plugin/plugin.json" ]] \
       && emit PASS "Cached plugin manifest exists." \
       || emit WARN "Cached plugin manifest is missing."
-    for skill_name in arscontexta-help arscontexta-health arscontexta-setup arscontexta-session arscontexta-validate arscontexta-tasks arscontexta-next arscontexta-index arscontexta-stats arscontexta-graph arscontexta-ask arscontexta-recommend arscontexta-reduce arscontexta-reflect arscontexta-reweave arscontexta-verify arscontexta-remember arscontexta-rethink arscontexta-architect arscontexta-refactor arscontexta-reseed arscontexta-upgrade arscontexta-add-domain arscontexta-seed arscontexta-ralph arscontexta-pipeline arscontexta-archive-batch arscontexta-tutorial arscontexta-learn; do
+    for skill_name in hippocampusmd-help hippocampusmd-health hippocampusmd-setup hippocampusmd-session hippocampusmd-validate hippocampusmd-tasks hippocampusmd-next hippocampusmd-index hippocampusmd-stats hippocampusmd-graph hippocampusmd-ask hippocampusmd-recommend hippocampusmd-reduce hippocampusmd-reflect hippocampusmd-reweave hippocampusmd-verify hippocampusmd-remember hippocampusmd-rethink hippocampusmd-architect hippocampusmd-refactor hippocampusmd-reseed hippocampusmd-upgrade hippocampusmd-add-domain hippocampusmd-seed hippocampusmd-ralph hippocampusmd-pipeline hippocampusmd-archive-batch hippocampusmd-tutorial hippocampusmd-learn; do
       [[ -f "$cache_dir/skills/$skill_name/SKILL.md" ]] \
         && emit PASS "Cached $skill_name skill exists." \
         || emit WARN "Cached $skill_name skill is missing; reinstall plugin after adding new Codex skills."
@@ -340,7 +340,7 @@ if [[ -n "${manifest_version:-}" ]]; then
         || emit WARN "Cached $knowledge_label is missing; reinstall plugin after bundling plugin knowledge and preset sources."
     done
   else
-    emit WARN "No Codex cache found for arscontexta $manifest_version at $cache_dir."
+    emit WARN "No Codex cache found for hippocampusmd $manifest_version at $cache_dir."
   fi
 else
   emit WARN "Skipping cache check because manifest version was not available."

@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-seed/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-seed/SKILL.md"
 
 fail() {
     printf 'FAIL: %s\n' "$1" >&2
@@ -29,9 +29,9 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-seed"
+assert_contains "$SKILL" "name: hippocampusmd-seed"
 assert_contains "$SKILL" "Use when the user asks Codex to add a source file"
-assert_contains "$SKILL" "plugins/arscontexta/scripts/seed-vault.sh"
+assert_contains "$SKILL" "plugins/hippocampusmd/scripts/seed-vault.sh"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/derivation.md"
 assert_contains "$SKILL" "ops/config.yaml"
@@ -47,8 +47,8 @@ assert_contains "$SKILL" "File moves and archive writes must be clearly reported
 assert_contains "$SKILL" "avoid overwriting user content"
 assert_contains "$SKILL" "next_claim_start"
 assert_contains "$SKILL" "extract task"
-assert_contains "$SKILL" "arscontexta-ralph"
-assert_contains "$SKILL" "arscontexta-pipeline"
+assert_contains "$SKILL" "hippocampusmd-ralph"
+assert_contains "$SKILL" "hippocampusmd-pipeline"
 assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"

@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-ask/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-ask/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,13 +29,13 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-ask"
-assert_contains "$SKILL" "Use when the user asks Codex questions about Ars Contexta methodology"
+assert_contains "$SKILL" "name: hippocampusmd-ask"
+assert_contains "$SKILL" "Use when the user asks Codex questions about HippocampusMD methodology"
 assert_contains "$SKILL" "read-only"
 assert_contains "$SKILL" "rg"
 assert_contains "$SKILL" "read local files before using optional semantic tooling"
-assert_contains "$SKILL" "plugins/arscontexta/reference/"
-assert_contains "$SKILL" "plugins/arscontexta/methodology/"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/"
+assert_contains "$SKILL" "plugins/hippocampusmd/methodology/"
 assert_contains "$SKILL" "README.md"
 assert_contains "$SKILL" "ops/derivation.md"
 assert_contains "$SKILL" "ops/methodology/"

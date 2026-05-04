@@ -3,9 +3,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-ORIENT="$PROJECT_ROOT/plugins/arscontexta/scripts/session-orient.sh"
-VALIDATE="$PROJECT_ROOT/plugins/arscontexta/scripts/session-validate.sh"
-CAPTURE="$PROJECT_ROOT/plugins/arscontexta/scripts/session-capture.sh"
+ORIENT="$PROJECT_ROOT/plugins/hippocampusmd/scripts/session-orient.sh"
+VALIDATE="$PROJECT_ROOT/plugins/hippocampusmd/scripts/session-validate.sh"
+CAPTURE="$PROJECT_ROOT/plugins/hippocampusmd/scripts/session-capture.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -22,7 +22,7 @@ assert_file() {
   [[ -f "$1" ]] || fail "expected file to exist: $1"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-session-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-session-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -39,7 +39,7 @@ mkdir -p \
   "$vault/ops/health" \
   "$vault/self"
 
-touch "$vault/.arscontexta"
+touch "$vault/.hippocampusmd"
 cat > "$vault/self/goals.md" <<'EOF'
 # Goals
 
@@ -91,13 +91,13 @@ Links to [[missing target]].
 EOF
 
 orient_output="$("$ORIENT" "$vault" --limit 5)"
-assert_contains "$orient_output" "Ars Contexta session orientation"
+assert_contains "$orient_output" "HippocampusMD session orientation"
 assert_contains "$orient_output" "Marker: present"
 assert_contains "$orient_output" "ops/queue/: 1"
 assert_contains "$orient_output" "Recommended next action: Review inbox pressure"
 
 orient_json="$("$ORIENT" "$vault" --format json)"
-assert_contains "$orient_json" '"arscontexta_marker": "present"'
+assert_contains "$orient_json" '"hippocampusmd_marker": "present"'
 assert_contains "$orient_json" '"inbox": 1'
 
 valid_output="$("$VALIDATE" "$vault" --file notes/valid.md)"
@@ -115,7 +115,7 @@ git_vault="$tmp_dir/git-vault"
 cp -R "$vault" "$git_vault"
 git -C "$git_vault" init --quiet
 git -C "$git_vault" config user.email "test@example.com"
-git -C "$git_vault" config user.name "Ars Contexta Test"
+git -C "$git_vault" config user.name "HippocampusMD Test"
 git -C "$git_vault" add .
 git -C "$git_vault" commit --quiet -m "test: seed vault"
 cat > "$git_vault/notes/changed.md" <<'EOF'

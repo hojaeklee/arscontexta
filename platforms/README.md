@@ -1,8 +1,8 @@
 # Platform Notes
 
-Codex is the only supported Ars Contexta platform in this repository.
+Codex is the only supported HippocampusMD platform in this repository.
 
-The runtime plugin lives at `plugins/arscontexta/`. Platform notes here are
+The runtime plugin lives at `plugins/hippocampusmd/`. Platform notes here are
 non-runtime guidance for how Codex workflows are expected to behave.
 
 ## Structure

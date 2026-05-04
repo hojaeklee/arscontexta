@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-archive-batch/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-archive-batch/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,8 +29,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-archive-batch"
-assert_contains "$SKILL" "Use when the user asks Codex to archive a completed Ars Contexta processing batch"
+assert_contains "$SKILL" "name: hippocampusmd-archive-batch"
+assert_contains "$SKILL" "Use when the user asks Codex to archive a completed HippocampusMD processing batch"
 assert_contains "$SKILL" "complete-batch precondition"
 assert_contains "$SKILL" "done"
 assert_contains "$SKILL" "completed"
@@ -44,7 +44,7 @@ assert_contains "$SKILL" "BATCH-summary.md"
 assert_contains "$SKILL" "no overwrites"
 assert_contains "$SKILL" "preserving queue format"
 assert_contains "$SKILL" "removes archived batch entries"
-assert_contains "$SKILL" "plugins/arscontexta/scripts/archive-batch-vault.sh"
+assert_contains "$SKILL" "plugins/hippocampusmd/scripts/archive-batch-vault.sh"
 assert_contains "$SKILL" "Do not process research directly"
 assert_contains "$SKILL" "Do not extract notes"
 assert_contains "$SKILL" "Do not verify claims"

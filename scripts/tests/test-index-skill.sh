@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-index/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-index/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -24,10 +24,10 @@ assert_not_contains() {
   fi
 }
 
-[[ -f "$SKILL" ]] || fail "missing arscontexta-index skill"
+[[ -f "$SKILL" ]] || fail "missing hippocampusmd-index skill"
 
 skill_text="$(cat "$SKILL")"
-assert_contains "$skill_text" "name: arscontexta-index"
+assert_contains "$skill_text" "name: hippocampusmd-index"
 assert_contains "$skill_text" "vault-index.sh"
 assert_contains "$skill_text" "build"
 assert_contains "$skill_text" "status"

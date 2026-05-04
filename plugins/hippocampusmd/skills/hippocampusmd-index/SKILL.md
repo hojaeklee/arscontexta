@@ -1,0 +1,47 @@
+---
+name: hippocampusmd-index
+description: Use when the user asks Codex to index my vault, build or rebuild the vault index, check VaultIndex status, export the vault index, run an incremental scan, or inspect the persisted VaultIndex cache.
+---
+
+# HippocampusMD Index
+
+Build, inspect, or export the persisted VaultIndex for a HippocampusMD vault without making the user remember helper paths.
+
+## When Invoked
+
+1. Treat the current working directory as the vault unless the user gives another path.
+2. Resolve the deterministic helper from the plugin repository or installed plugin package:
+
+```bash
+plugins/hippocampusmd/scripts/vault-index.sh build . --format text
+plugins/hippocampusmd/scripts/vault-index.sh status . --format text
+plugins/hippocampusmd/scripts/vault-index.sh export . --format all
+```
+
+3. Choose the operation from the user's request:
+   - "index my vault", "build the index", "rebuild the index", or "run an incremental scan" -> run `build`.
+   - "show index status", "is the index fresh", or "VaultIndex status" -> run `status --format text`, unless JSON is requested.
+   - "export the index" -> run `export --format all` to write Markdown and CSV snapshots under `ops/cache/exports/`.
+   - "export Markdown" or "Obsidian-readable export" -> run `export --format markdown`.
+   - "export CSV" or "spreadsheet export" -> run `export --format csv`.
+   - "show index JSON" -> run `export --format json`.
+4. After `build`, mention that the index is stored at `ops/cache/index.sqlite`.
+5. Mention ignored-file counts when present; scan rules come from the user-editable `ops/config.yaml` `scan:` section.
+6. If the vault is tracked in git, recommend ignoring `ops/cache/`.
+
+## Safety
+
+- `build` writes only `ops/cache/index.sqlite`.
+- `status` is read-only.
+- `export --format json` is read-only.
+- `export --format markdown`, `csv`, `all`, or default `text` writes only `ops/cache/exports/*`.
+- Scan rules only decide which markdown files are analyzed; ignored files are never deleted.
+- Do not migrate or rewrite graph, health, validate, notes, queues, or task state.
+- Do not edit a vault `.gitignore` unless the user explicitly asks.
+
+## Output
+
+- Keep text output concise and include the helper output when it is short.
+- For JSON requests, return the helper's JSON without additional prose unless a failure needs explanation.
+- For Markdown or CSV export requests, mention the generated paths from the helper output.
+- If the helper is missing, say that the installed HippocampusMD plugin needs to be refreshed.

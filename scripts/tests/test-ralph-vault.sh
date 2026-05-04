@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-RALPH="$PROJECT_ROOT/plugins/arscontexta/scripts/ralph-vault.sh"
+RALPH="$PROJECT_ROOT/plugins/hippocampusmd/scripts/ralph-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -36,7 +36,7 @@ assert_exit() {
   printf '%s' "$output"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-ralph-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-ralph-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -46,7 +46,7 @@ missing_vault="$tmp_dir/missing"
 mkdir -p "$missing_vault"
 missing_output="$("$RALPH" "$missing_vault" --dry-run)"
 assert_contains "$missing_output" "Queue is empty"
-assert_contains "$missing_output" "Use arscontexta-seed"
+assert_contains "$missing_output" "Use hippocampusmd-seed"
 
 yaml_vault="$tmp_dir/yaml"
 mkdir -p "$yaml_vault/ops/queue"

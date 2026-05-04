@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-reduce/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-reduce/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,8 +29,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-reduce"
-assert_contains "$SKILL" "Use when the user asks Codex to extract durable Ars Contexta notes"
+assert_contains "$SKILL" "name: hippocampusmd-reduce"
+assert_contains "$SKILL" "Use when the user asks Codex to extract durable HippocampusMD notes"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/config.yaml"
 assert_contains "$SKILL" "vocabulary"
@@ -50,7 +50,7 @@ assert_contains "$SKILL" "local templates"
 assert_contains "$SKILL" "_schema"
 assert_contains "$SKILL" "description"
 assert_contains "$SKILL" "topics"
-assert_contains "$SKILL" "arscontexta-validate"
+assert_contains "$SKILL" "hippocampusmd-validate"
 assert_contains "$SKILL" 'Do not automatically mutate `ops/queue/*`'
 assert_contains "$SKILL" 'Do not create `ops/observations/` or `ops/tensions/` side-effect files'
 assert_contains "$SKILL" "Use Codex file workflows"

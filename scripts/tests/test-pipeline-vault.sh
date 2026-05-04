@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-PIPELINE="$PROJECT_ROOT/plugins/arscontexta/scripts/pipeline-vault.sh"
+PIPELINE="$PROJECT_ROOT/plugins/hippocampusmd/scripts/pipeline-vault.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -36,7 +36,7 @@ assert_exit() {
   printf '%s' "$output"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-pipeline-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-pipeline-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -57,8 +57,8 @@ assert_contains "$plan_output" "Pipeline plan"
 assert_contains "$plan_output" "Source: inbox/New Source.md"
 assert_contains "$plan_output" "Batch: new-source"
 assert_contains "$plan_output" "Queue status: unseeded"
-assert_contains "$plan_output" "Next action: run arscontexta-seed"
-assert_contains "$plan_output" "Then: run arscontexta-ralph"
+assert_contains "$plan_output" "Next action: run hippocampusmd-seed"
+assert_contains "$plan_output" "Then: run hippocampusmd-ralph"
 [[ ! -f "$plan_vault/ops/queue/queue.yaml" ]] || fail "plan should not create queue state"
 
 cat > "$plan_vault/ops/queue/queue.yaml" <<'EOF'
@@ -73,7 +73,7 @@ EOF
 queued_plan="$("$PIPELINE" "$plan_vault" --plan --file "New Source.md" --format json)"
 assert_contains "$queued_plan" '"batch": "new-source"'
 assert_contains "$queued_plan" '"queue_status": "already queued"'
-assert_contains "$queued_plan" '"next_action": "run arscontexta-ralph --batch new-source"'
+assert_contains "$queued_plan" '"next_action": "run hippocampusmd-ralph --batch new-source"'
 
 status_vault="$tmp_dir/status"
 mkdir -p "$status_vault/ops/queue"
@@ -96,7 +96,7 @@ assert_contains "$status_output" "create: 1"
 assert_contains "$status_output" "verify: 1"
 assert_contains "$status_output" "Blocked tasks:"
 assert_contains "$status_output" "alpha-002 -- reflect -- Missing source"
-assert_contains "$status_output" "Next action: resolve blocked tasks, then run arscontexta-ralph --batch alpha"
+assert_contains "$status_output" "Next action: resolve blocked tasks, then run hippocampusmd-ralph --batch alpha"
 assert_not_contains "$status_output" "beta-001"
 
 status_json="$("$PIPELINE" "$status_vault" --status --batch alpha --format json)"
@@ -104,7 +104,7 @@ assert_contains "$status_json" '"batch": "alpha"'
 assert_contains "$status_json" '"pending": 1'
 assert_contains "$status_json" '"blocked": 1'
 assert_contains "$status_json" '"ready_to_archive": false'
-assert_contains "$status_json" '"next_action": "resolve blocked tasks, then run arscontexta-ralph --batch alpha"'
+assert_contains "$status_json" '"next_action": "resolve blocked tasks, then run hippocampusmd-ralph --batch alpha"'
 
 ready_false="$("$PIPELINE" "$status_vault" --ready-to-archive --batch alpha)"
 assert_contains "$ready_false" "Ready to archive: no"
@@ -127,7 +127,7 @@ EOF
 ready_output="$("$PIPELINE" "$ready_vault" --ready-to-archive --batch gamma --format json)"
 assert_contains "$ready_output" '"batch": "gamma"'
 assert_contains "$ready_output" '"ready_to_archive": true'
-assert_contains "$ready_output" '"next_action": "run arscontexta-archive-batch --batch gamma"'
+assert_contains "$ready_output" '"next_action": "run hippocampusmd-archive-batch --batch gamma"'
 
 malformed_vault="$tmp_dir/malformed"
 mkdir -p "$malformed_vault/ops/queue"

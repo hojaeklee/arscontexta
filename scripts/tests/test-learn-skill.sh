@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-learn/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-learn/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,7 +29,7 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-learn"
+assert_contains "$SKILL" "name: hippocampusmd-learn"
 assert_contains "$SKILL" "Use when the user asks Codex to research a topic"
 assert_contains "$SKILL" "current directory as the vault"
 assert_contains "$SKILL" "ops/config.yaml"
@@ -61,8 +61,8 @@ assert_contains "$SKILL" "No fabricated sources or URLs"
 assert_contains "$SKILL" "## Key Findings"
 assert_contains "$SKILL" "## Sources"
 assert_contains "$SKILL" "## Research Directions"
-assert_contains "$SKILL" "arscontexta-seed"
-assert_contains "$SKILL" "arscontexta-pipeline"
+assert_contains "$SKILL" "hippocampusmd-seed"
+assert_contains "$SKILL" "hippocampusmd-pipeline"
 assert_contains "$SKILL" "Do not process research directly"
 assert_contains "$SKILL" "Do not start downstream processing automatically"
 assert_contains "$SKILL" "Codex conversation"

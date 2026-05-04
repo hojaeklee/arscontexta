@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-reflect/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-reflect/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,7 +29,7 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-reflect"
+assert_contains "$SKILL" "name: hippocampusmd-reflect"
 assert_contains "$SKILL" "Use when the user asks Codex to find meaningful connections"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/config.yaml"
@@ -54,7 +54,7 @@ assert_contains "$SKILL" "focused inline wiki links"
 assert_contains "$SKILL" 'contextual `relevant_notes` entries'
 assert_contains "$SKILL" "MOC/topic-map additions"
 assert_contains "$SKILL" "Preserve existing note voice"
-assert_contains "$SKILL" "arscontexta-validate"
+assert_contains "$SKILL" "hippocampusmd-validate"
 assert_contains "$SKILL" 'Do not automatically mutate `ops/queue/*`'
 assert_contains "$SKILL" "Ralph handoff"
 assert_contains "$SKILL" 'Do not create `ops/observations/` or `ops/tensions/` side-effect files'

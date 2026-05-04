@@ -3,9 +3,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SETUP_SCRIPT="$PROJECT_ROOT/plugins/arscontexta/scripts/setup-vault.sh"
+SETUP_SCRIPT="$PROJECT_ROOT/plugins/hippocampusmd/scripts/setup-vault.sh"
 CHECK_VAULT="$PROJECT_ROOT/scripts/check-vault.sh"
-HEALTH_SCRIPT="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-health.sh"
+HEALTH_SCRIPT="$PROJECT_ROOT/plugins/hippocampusmd/scripts/vault-health.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -38,7 +38,7 @@ assert_not_contains() {
   fi
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-setup-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-setup-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -48,7 +48,7 @@ for preset in research personal experimental; do
   vault="$tmp_dir/$preset-vault"
   "$SETUP_SCRIPT" "$vault" --preset "$preset" --domain "$preset domain" >/dev/null
 
-  assert_file "$vault/.arscontexta"
+  assert_file "$vault/.hippocampusmd"
   assert_file "$vault/AGENTS.md"
   assert_file "$vault/ops/derivation.md"
   assert_file "$vault/ops/derivation-manifest.md"
@@ -70,7 +70,7 @@ for preset in research personal experimental; do
   assert_no_dir "$vault/generators"
   assert_no_dir "$vault/presets"
 
-  assert_contains "$vault/AGENTS.md" "Codex-oriented Ars Contexta vault"
+  assert_contains "$vault/AGENTS.md" "Codex-oriented HippocampusMD vault"
   assert_contains "$vault/AGENTS.md" "explicit session workflows"
   assert_contains "$vault/AGENTS.md" "no hidden background automation"
   assert_contains "$vault/ops/config.yaml" "vocabulary:"
@@ -114,7 +114,7 @@ old_hash="$(shasum "$existing/old.md")"
 "$SETUP_SCRIPT" "$existing" --preset experimental --domain "existing notes" >/dev/null
 new_hash="$(shasum "$existing/old.md")"
 [[ "$old_hash" == "$new_hash" ]] || fail "existing markdown file changed"
-assert_file "$existing/.arscontexta"
+assert_file "$existing/.hippocampusmd"
 assert_file "$existing/AGENTS.md"
 
 printf 'PASS: setup vault fixtures\n'

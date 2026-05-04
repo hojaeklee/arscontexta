@@ -21,16 +21,16 @@ assert_exit() {
   local expected="$1"
   shift
   set +e
-  "$@" >/tmp/arscontexta-test-out.$$ 2>&1
+  "$@" >/tmp/hippocampusmd-test-out.$$ 2>&1
   local actual=$?
-  output="$(cat /tmp/arscontexta-test-out.$$)"
-  rm -f /tmp/arscontexta-test-out.$$
+  output="$(cat /tmp/hippocampusmd-test-out.$$)"
+  rm -f /tmp/hippocampusmd-test-out.$$
   set -e
   [[ "$actual" -eq "$expected" ]] || fail "expected exit $expected but got $actual from $*; output: $output"
   printf '%s' "$output"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-codex-smoke-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-codex-smoke-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }
@@ -39,35 +39,35 @@ trap cleanup EXIT
 plugin_output="$(CODEX_CACHE_ROOT="$tmp_dir/cache" "$PLUGIN_CHECK")"
 assert_contains "$plugin_output" "PASS .agents/plugins/marketplace.json parses."
 assert_contains "$plugin_output" "PASS Plugin manifest uses skills path ./skills/."
-assert_contains "$plugin_output" "PASS arscontexta-help skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-health skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-setup skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-session skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-validate skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-tasks skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-next skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-index skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-stats skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-graph skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-ask skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-recommend skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-reduce skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-reflect skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-reweave skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-verify skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-remember skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-rethink skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-architect skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-refactor skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-reseed skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-upgrade skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-add-domain skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-seed skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-ralph skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-pipeline skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-archive-batch skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-tutorial skill exists in installable plugin."
-assert_contains "$plugin_output" "PASS arscontexta-learn skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-help skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-health skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-setup skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-session skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-validate skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-tasks skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-next skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-index skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-stats skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-graph skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-ask skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-recommend skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-reduce skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-reflect skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-reweave skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-verify skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-remember skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-rethink skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-architect skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-refactor skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-reseed skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-upgrade skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-add-domain skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-seed skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-ralph skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-pipeline skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-archive-batch skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-tutorial skill exists in installable plugin."
+assert_contains "$plugin_output" "PASS hippocampusmd-learn skill exists in installable plugin."
 assert_contains "$plugin_output" "PASS Bundled session orientation helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled session validation helper exists and is executable."
 assert_contains "$plugin_output" "PASS Bundled session capture helper exists and is executable."
@@ -86,11 +86,11 @@ bad_config="$tmp_dir/bad-config.toml"
 cat > "$bad_config" <<EOF
 model = "gpt-5-codex"
 
-[marketplaces.agenticnotetaking]
+[marketplaces.hippocampusmd]
 source_type = "local"
 source = "$PROJECT_ROOT"
 
-[plugins."arscontexta@agenticnotetaking"]
+[plugins."hippocampusmd@hippocampusmd"]
 enabled = true
 EOF
 
@@ -99,7 +99,7 @@ assert_contains "$deny_output" "FAIL Codex config uses unsupported ChatGPT-accou
 
 vault="$tmp_dir/valid-vault"
 mkdir -p "$vault/notes" "$vault/inbox" "$vault/ops" "$vault/self" "$vault/manual"
-touch "$vault/.arscontexta"
+touch "$vault/.hippocampusmd"
 cat > "$vault/notes/Index.md" <<'EOF'
 ---
 description: Index
@@ -110,13 +110,13 @@ EOF
 touch "$vault/ops/derivation-manifest.md" "$vault/ops/derivation.md" "$vault/ops/config.yaml"
 
 valid_output="$("$VAULT_CHECK" "$vault")"
-assert_contains "$valid_output" "PASS .arscontexta marker exists."
+assert_contains "$valid_output" "PASS .hippocampusmd marker exists."
 assert_contains "$valid_output" "PASS Bounded vault health helper completed with parseable JSON."
 
 missing_marker="$tmp_dir/missing-marker"
 mkdir -p "$missing_marker/notes"
 missing_output="$(assert_exit 1 "$VAULT_CHECK" "$missing_marker")"
-assert_contains "$missing_output" "FAIL .arscontexta marker is missing."
+assert_contains "$missing_output" "FAIL .hippocampusmd marker is missing."
 
 generic="$tmp_dir/generic-markdown"
 mkdir -p "$generic"
@@ -124,6 +124,6 @@ cat > "$generic/note.md" <<'EOF'
 # Generic note
 EOF
 generic_output="$(assert_exit 1 "$VAULT_CHECK" "$generic")"
-assert_contains "$generic_output" "FAIL .arscontexta marker is missing."
+assert_contains "$generic_output" "FAIL .hippocampusmd marker is missing."
 
 printf 'PASS: codex compatibility smoke tests\n'

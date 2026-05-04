@@ -1,14 +1,14 @@
 {
-  "name": "agenticnotetaking",
+  "name": "hippocampusmd",
   "interface": {
-    "displayName": "Agentic Note Taking"
+    "displayName": "HippocampusMD"
   },
   "plugins": [
     {
-      "name": "arscontexta",
+      "name": "hippocampusmd",
       "source": {
         "source": "local",
-        "path": "./plugins/arscontexta"
+        "path": "./plugins/hippocampusmd"
       },
       "policy": {
         "installation": "AVAILABLE",

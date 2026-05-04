@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-architect/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-architect/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,8 +29,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-architect"
-assert_contains "$SKILL" "Use when the user asks Codex to review or evolve an existing Ars Contexta vault architecture"
+assert_contains "$SKILL" "name: hippocampusmd-architect"
+assert_contains "$SKILL" "Use when the user asks Codex to review or evolve an existing HippocampusMD vault architecture"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
 assert_contains "$SKILL" "ops/config.yaml"
 assert_contains "$SKILL" "ops/derivation.md"
@@ -68,10 +68,10 @@ assert_contains "$SKILL" "next step"
 assert_contains "$SKILL" "cite local vault evidence"
 assert_contains "$SKILL" "cite local reference paths"
 assert_contains "$SKILL" "Do not auto-implement architecture changes"
-assert_contains "$SKILL" "arscontexta-refactor"
-assert_contains "$SKILL" "arscontexta-reseed"
+assert_contains "$SKILL" "hippocampusmd-refactor"
+assert_contains "$SKILL" "hippocampusmd-reseed"
 assert_contains "$SKILL" "separate explicit follow-up"
-assert_contains "$SKILL" "arscontexta-recommend"
+assert_contains "$SKILL" "hippocampusmd-recommend"
 assert_contains "$SKILL" "Use Codex file workflows"
 assert_contains "$SKILL" "Codex file workflows"
 assert_not_contains "$SKILL" "mcp__"

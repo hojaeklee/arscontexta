@@ -3,8 +3,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-GRAPH="$PROJECT_ROOT/plugins/arscontexta/scripts/graph-vault.sh"
-INDEX="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh"
+GRAPH="$PROJECT_ROOT/plugins/hippocampusmd/scripts/graph-vault.sh"
+INDEX="$PROJECT_ROOT/plugins/hippocampusmd/scripts/vault-index.sh"
 
 has_ruby_sqlite3() {
   ruby -e 'require "sqlite3"' >/dev/null 2>&1
@@ -33,7 +33,7 @@ assert_not_exists() {
   [[ ! -e "$1" ]] || fail "expected file not to exist: $1"
 }
 
-tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/arscontexta-graph-test.XXXXXX")"
+tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/hippocampusmd-graph-test.XXXXXX")"
 cleanup() {
   rm -rf "$tmp_dir"
 }

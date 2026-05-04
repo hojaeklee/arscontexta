@@ -4,7 +4,7 @@
 
 **Goal:** Migrate `graph-vault.sh --mode health` to use persisted VaultIndex graph data when available, while preserving the existing full-scan fallback.
 
-**Architecture:** Keep `plugins/arscontexta/scripts/graph-vault.sh` as the public graph CLI and add a health-only indexed graph loader inside its Ruby implementation. The indexed path reads `ops/cache/index.sqlite`, resolves wiki-link targets to vault-relative canonical IDs, computes health metrics from indexed rows, and falls back to the existing markdown scan when the index is absent, unreadable, stale, or unusable.
+**Architecture:** Keep `plugins/hippocampusmd/scripts/graph-vault.sh` as the public graph CLI and add a health-only indexed graph loader inside its Ruby implementation. The indexed path reads `ops/cache/index.sqlite`, resolves wiki-link targets to vault-relative canonical IDs, computes health metrics from indexed rows, and falls back to the existing markdown scan when the index is absent, unreadable, stale, or unusable.
 
 **Tech Stack:** Ruby stdlib plus `sqlite3` Ruby gem when available, Bash test harness, existing Python-backed `VaultIndex`, SQLite database at `ops/cache/index.sqlite`, existing plugin shell verification.
 
@@ -17,7 +17,7 @@ Issue #39: "Migrate graph-vault core health mode to indexed graph data"
 Parent: #34
 
 In scope:
-- Teach `plugins/arscontexta/scripts/graph-vault.sh --mode health` to use indexed outgoing links, incoming counts, MOC/topic-map coverage, dangling links, and orphan candidates when available.
+- Teach `plugins/hippocampusmd/scripts/graph-vault.sh --mode health` to use indexed outgoing links, incoming counts, MOC/topic-map coverage, dangling links, and orphan candidates when available.
 - Preserve current fallback behavior when no index exists.
 - Use vault-relative canonical IDs internally.
 - Keep basename/title lookup user-friendly in output.
@@ -30,7 +30,7 @@ Out of scope:
 
 ## File Structure
 
-- Modify `plugins/arscontexta/scripts/graph-vault.sh`
+- Modify `plugins/hippocampusmd/scripts/graph-vault.sh`
   - Add optional `sqlite3` loading for indexed health.
   - Add index freshness/status detection.
   - Add path-aware indexed graph construction.
@@ -41,9 +41,9 @@ Out of scope:
   - Add an indexed duplicate-basename fixture.
   - Add missing-index fallback assertions.
   - Add stale-index fallback assertions.
-- Modify `plugins/arscontexta/.codex-plugin/plugin.json`
+- Modify `plugins/hippocampusmd/.codex-plugin/plugin.json`
   - Bump version from `0.11.0` to `0.11.1` because this is a plugin-facing fix/internal performance improvement.
-- No schema change is planned for `plugins/arscontexta/scripts/vault_index.py`.
+- No schema change is planned for `plugins/hippocampusmd/scripts/vault_index.py`.
   - Existing `notes.path`, `notes.basename`, `notes.title`, `notes.aliases_json`, `notes.description`, `notes.is_moc`, and `links.source_path/target/raw` are sufficient.
   - If implementation proves the Ruby environment cannot load `sqlite3`, keep fallback behavior and make the test skip indexed-path assertions with an explicit message rather than requiring a new dependency.
 
@@ -107,7 +107,7 @@ Index: full scan fallback (missing index; run vault-index.sh build)
 - [ ] **Step 1: Add an index helper path and optional sqlite detection after the `GRAPH` variable**
 
 ```bash
-INDEX="$PROJECT_ROOT/plugins/arscontexta/scripts/vault-index.sh"
+INDEX="$PROJECT_ROOT/plugins/hippocampusmd/scripts/vault-index.sh"
 
 has_ruby_sqlite3() {
   ruby -e 'require "sqlite3"' >/dev/null 2>&1
@@ -264,7 +264,7 @@ git commit -m "test: cover indexed graph health duplicate basenames"
 ## Task 3: Refactor Graph Loading Behind a Builder Interface
 
 **Files:**
-- Modify: `plugins/arscontexta/scripts/graph-vault.sh`
+- Modify: `plugins/hippocampusmd/scripts/graph-vault.sh`
 
 - [ ] **Step 1: Add optional sqlite support near the existing `require` lines**
 
@@ -474,14 +474,14 @@ Expected: existing mode assertions still pass except the new index status assert
 - [ ] **Step 6: Commit the loader refactor**
 
 ```bash
-git add plugins/arscontexta/scripts/graph-vault.sh
+git add plugins/hippocampusmd/scripts/graph-vault.sh
 git commit -m "refactor: isolate graph health payload construction"
 ```
 
 ## Task 4: Implement Path-Aware Indexed Health Loading
 
 **Files:**
-- Modify: `plugins/arscontexta/scripts/graph-vault.sh`
+- Modify: `plugins/hippocampusmd/scripts/graph-vault.sh`
 
 - [ ] **Step 1: Add index freshness detection after helper methods**
 
@@ -655,14 +655,14 @@ Expected: PASS when `sqlite3` is available or PASS with `SKIP: indexed graph hea
 - [ ] **Step 8: Commit indexed health loading**
 
 ```bash
-git add plugins/arscontexta/scripts/graph-vault.sh
+git add plugins/hippocampusmd/scripts/graph-vault.sh
 git commit -m "feat: use VaultIndex for graph health"
 ```
 
 ## Task 5: Update Text and JSON Output
 
 **Files:**
-- Modify: `plugins/arscontexta/scripts/graph-vault.sh`
+- Modify: `plugins/hippocampusmd/scripts/graph-vault.sh`
 
 - [ ] **Step 1: Include `index` metadata in JSON output**
 
@@ -728,7 +728,7 @@ Expected: PASS.
 - [ ] **Step 6: Commit output metadata**
 
 ```bash
-git add plugins/arscontexta/scripts/graph-vault.sh
+git add plugins/hippocampusmd/scripts/graph-vault.sh
 git commit -m "fix: report graph health index status"
 ```
 
@@ -778,7 +778,7 @@ git commit -m "test: cover stale graph health index recovery"
 ## Task 7: Bump Plugin Version and Verify
 
 **Files:**
-- Modify: `plugins/arscontexta/.codex-plugin/plugin.json`
+- Modify: `plugins/hippocampusmd/.codex-plugin/plugin.json`
 
 - [ ] **Step 1: Bump plugin version**
 
@@ -814,7 +814,7 @@ Expected:
 Run:
 
 ```bash
-/bin/cp -R plugins/arscontexta /Users/hlee/.codex/plugins/cache/agenticnotetaking/arscontexta/0.11.1
+/bin/cp -R plugins/hippocampusmd /Users/hlee/.codex/plugins/cache/hippocampusmd/hippocampusmd/0.11.1
 ```
 
 Expected: the cache path exists and contains the updated `graph-vault.sh`, `vault-index.sh`, and `plugin.json`.
@@ -822,7 +822,7 @@ Expected: the cache path exists and contains the updated `graph-vault.sh`, `vaul
 - [ ] **Step 4: Commit final plugin-facing changes**
 
 ```bash
-git add plugins/arscontexta/scripts/graph-vault.sh scripts/tests/test-graph-vault.sh plugins/arscontexta/.codex-plugin/plugin.json
+git add plugins/hippocampusmd/scripts/graph-vault.sh scripts/tests/test-graph-vault.sh plugins/hippocampusmd/.codex-plugin/plugin.json
 git commit -m "fix: migrate graph health to VaultIndex"
 ```
 
@@ -839,7 +839,7 @@ git commit -m "fix: migrate graph health to VaultIndex"
 - [ ] `scripts/tests/test-vault-index.sh` passes.
 - [ ] `scripts/tests/test-graph-vault.sh` passes.
 - [ ] `scripts/check-codex-plugin.sh` passes.
-- [ ] `plugins/arscontexta/.codex-plugin/plugin.json` has a patch version bump.
+- [ ] `plugins/hippocampusmd/.codex-plugin/plugin.json` has a patch version bump.
 - [ ] Local plugin cache is refreshed to the new version.
 
 ## Self-Review Notes

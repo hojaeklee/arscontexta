@@ -1,0 +1,40 @@
+{
+  "name": "hippocampusmd",
+  "version": "1.0.0",
+  "description": "Agent memory OS for local markdown knowledge systems.",
+  "author": {
+    "name": "Hojae Lee",
+    "email": "43919952+hojaeklee@users.noreply.github.com",
+    "url": "https://github.com/hojaeklee"
+  },
+  "homepage": "https://github.com/hojaeklee/hippocampusmd",
+  "repository": "https://github.com/hojaeklee/hippocampusmd",
+  "license": "MIT",
+  "keywords": [
+    "knowledge-management",
+    "obsidian",
+    "codex",
+    "agent-memory",
+    "zettelkasten",
+    "knowledge-graph"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "HippocampusMD",
+    "shortDescription": "Operate and maintain local markdown memory for Codex.",
+    "longDescription": "HippocampusMD provides Codex skills for deriving, maintaining, querying, and evolving local markdown knowledge graphs, with Obsidian-friendly conventions and agent-native workflows.",
+    "developerName": "Hojae Lee",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Interactive"
+    ],
+    "websiteURL": "https://github.com/hojaeklee/hippocampusmd",
+    "defaultPrompt": [
+      "Run a HippocampusMD health check.",
+      "Set up HippocampusMD for my vault.",
+      "Process this source into my knowledge graph."
+    ]
+  }
+}

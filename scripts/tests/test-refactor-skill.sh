@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
-SKILL="$PROJECT_ROOT/plugins/arscontexta/skills/arscontexta-refactor/SKILL.md"
+SKILL="$PROJECT_ROOT/plugins/hippocampusmd/skills/hippocampusmd-refactor/SKILL.md"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -29,8 +29,8 @@ assert_not_contains() {
 }
 
 assert_file "$SKILL"
-assert_contains "$SKILL" "name: arscontexta-refactor"
-assert_contains "$SKILL" "Use when the user asks Codex to plan Ars Contexta vault restructuring"
+assert_contains "$SKILL" "name: hippocampusmd-refactor"
+assert_contains "$SKILL" "Use when the user asks Codex to pla HippocampusMD vault restructuring"
 assert_contains "$SKILL" "ops/config.yaml"
 assert_contains "$SKILL" "ops/derivation.md"
 assert_contains "$SKILL" "ops/derivation-manifest.md"
@@ -48,7 +48,7 @@ assert_contains "$SKILL" "risk"
 assert_contains "$SKILL" "reversibility"
 assert_contains "$SKILL" "validation"
 assert_contains "$SKILL" "interaction constraints"
-assert_contains "$SKILL" "plugins/arscontexta/reference/interaction-constraints.md"
+assert_contains "$SKILL" "plugins/hippocampusmd/reference/interaction-constraints.md"
 assert_contains "$SKILL" "explicit approval before"
 assert_contains "$SKILL" "file moves"
 assert_contains "$SKILL" "rewrites"
@@ -60,7 +60,7 @@ assert_contains "$SKILL" "broad note changes"
 assert_contains "$SKILL" 'Do not automatically mutate `ops/queue/*`'
 assert_contains "$SKILL" "Do not auto-regenerate skills"
 assert_contains "$SKILL" "destructive migrations"
-assert_contains "$SKILL" "arscontexta-architect"
+assert_contains "$SKILL" "hippocampusmd-architect"
 assert_contains "$SKILL" "report-only restructuring plan"
 assert_contains "$SKILL" "Codex file workflows"
 assert_contains "$SKILL" "Use Codex file workflows"
