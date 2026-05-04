@@ -11,7 +11,6 @@ exit 1
 require "date"
 require "json"
 require "yaml"
-require "set"
 
 require_relative "lib/queue_hygiene"
 
@@ -146,60 +145,6 @@ def parse_tasks(path)
     end
   end
   result
-end
-
-def queue_file(root)
-  ["ops/queue/queue.json", "ops/queue/queue.yaml", "ops/queue.yaml"].find do |rel|
-    File.file?(File.join(root, rel))
-  end
-end
-
-def normalize_status(status)
-  case status.to_s.downcase
-  when "pending", "todo", "queued" then "pending"
-  when "active", "in_progress", "in-progress", "running", "current" then "active"
-  when "done", "completed", "complete" then "completed"
-  when "blocked", "waiting" then "blocked"
-  else
-    status.to_s.empty? ? "unknown" : status.to_s.downcase
-  end
-end
-
-def queue_tasks_from_data(data)
-  raw =
-    if data.is_a?(Hash) && data["tasks"].is_a?(Array)
-      data["tasks"]
-    elsif data.is_a?(Array)
-      data
-    elsif data.is_a?(Hash)
-      data.values.find { |value| value.is_a?(Array) } || []
-    else
-      []
-    end
-
-  raw.select { |entry| entry.is_a?(Hash) }.map do |entry|
-    {
-      "id" => entry["id"] || entry["task_id"] || entry["queue_id"] || "(no id)",
-      "status" => normalize_status(entry["status"]),
-      "phase" => entry["current_phase"] || entry["phase"] || entry["next_phase"],
-      "target" => entry["target"] || entry["file"] || entry["note"] || entry["source"],
-      "batch" => entry["batch"] || entry["batch_id"] || entry["source_batch"]
-    }
-  end
-end
-
-def parse_queue(root)
-  rel = queue_file(root)
-  return { exists: false, file: nil, tasks: [], counts: Hash.new(0) } unless rel
-
-  path = File.join(root, rel)
-  data = rel.end_with?(".json") ? JSON.parse(File.read(path)) : YAML.safe_load(File.read(path), aliases: true)
-  tasks = queue_tasks_from_data(data || {})
-  counts = Hash.new(0)
-  tasks.each { |task| counts[task["status"]] += 1 }
-  { exists: true, file: rel, tasks: tasks, counts: counts }
-rescue JSON::ParserError, Psych::Exception => e
-  { exists: true, file: rel, tasks: [], counts: Hash.new(0), error: e.message }
 end
 
 def count_pending_frontmatter(root, rel_dir, statuses)

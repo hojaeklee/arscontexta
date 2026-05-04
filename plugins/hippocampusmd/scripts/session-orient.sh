@@ -9,7 +9,7 @@ exit 1
 # frozen_string_literal: true
 
 require "json"
-require "pathname"
+require "find"
 
 require_relative "lib/queue_hygiene"
 
@@ -76,12 +76,15 @@ def count_files(path, pattern = "*")
 end
 
 def markdown_count(root)
-  Dir.glob(File.join(root, "**", "*.md"), File::FNM_DOTMATCH).count do |path|
-    next false unless File.file?(path)
-
-    parts = Pathname.new(path).relative_path_from(Pathname.new(root)).each_filename.to_a
-    !parts.include?(".git") && !parts.include?("node_modules")
+  count = 0
+  Find.find(root) do |path|
+    if File.directory?(path) && %w[.git node_modules].include?(File.basename(path))
+      Find.prune
+    elsif File.file?(path) && File.extname(path) == ".md"
+      count += 1
+    end
   end
+  count
 end
 
 def excerpt_file(root, rel, limit)
