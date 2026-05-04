@@ -26,7 +26,7 @@ _schema:
   required: [description, type]
   optional: [status, created]
   enums:
-    type: [insight, pattern, preference, fact, decision, question]
+    type: [insight, pattern, preference, fact, decision, question, concept]
     status: [preliminary, open, active, archived]
   constraints:
     description: "max 200 chars, no trailing period"
