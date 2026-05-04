@@ -13,9 +13,10 @@ require "json"
 require "pathname"
 require "time"
 require "yaml"
+require_relative "lib/queue_hygiene"
 
 def usage
-  warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] --dry-run|--advance TASK_ID|--fail TASK_ID --reason TEXT [--limit N] [--batch ID] [--type PHASE] [--format text|json]"
+  warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] --dry-run|--claim TASK_ID|--release TASK_ID|--advance TASK_ID|--fail TASK_ID --reason TEXT [--limit N] [--batch ID] [--type PHASE] [--format text|json]"
 end
 
 def rel_path(path, root)
@@ -85,6 +86,10 @@ def status_for(task)
   (task["status"] || task[:status] || "pending").to_s
 end
 
+def normalized_status_for(task)
+  QueueHygiene.normalize_status(status_for(task))
+end
+
 def id_for(task)
   (task["id"] || task[:id]).to_s
 end
@@ -141,6 +146,15 @@ def find_task!(tasks, id)
   task
 end
 
+def claim_token_for(task_id)
+  "#{task_id}-#{Time.now.utc.strftime("%Y%m%dT%H%M%SZ")}"
+end
+
+def stale_task_phase(task)
+  raw = task[:raw] || {}
+  raw["current_phase"] || raw[:current_phase] || (raw["type"] == "extract" ? "extract" : nil)
+end
+
 vault = "."
 mode = nil
 task_id = nil
@@ -156,6 +170,12 @@ until args.empty?
   case arg
   when "--dry-run"
     mode = :dry_run
+  when "--claim"
+    mode = :claim
+    task_id = args.shift
+  when "--release"
+    mode = :release
+    task_id = args.shift
   when "--advance"
     mode = :advance
     task_id = args.shift
@@ -244,6 +264,8 @@ summary_counts = {
 case mode
 when :dry_run
   selected = selected_tasks(tasks, limit, batch, type)
+  hygiene = QueueHygiene.status(vault)
+  stale_active_tasks = hygiene[:stale_active_tasks]
   result = {
     "queue_file" => rel_path(queue_path, vault),
     "counts" => summary_counts,
@@ -257,7 +279,16 @@ when :dry_run
         "file" => task["file"] || task[:file]
       }
     end,
-    "estimated_subagent_spawns" => selected.length
+    "estimated_subagent_spawns" => selected.length,
+    "stale_active_tasks" => stale_active_tasks.map do |task|
+      {
+        "id" => task[:id],
+        "batch" => task[:batch],
+        "phase" => stale_task_phase(task),
+        "stale_since" => task[:stale_since],
+        "stale_minutes" => task[:stale_minutes]
+      }
+    end
   }
   if format == "json"
     puts JSON.pretty_generate(result)
@@ -283,7 +314,71 @@ when :dry_run
       end
     end
     puts
+    if stale_active_tasks.any?
+      puts "Stale active tasks:"
+      stale_active_tasks.each do |task|
+        puts "  #{task[:id]} -- use --release, --fail, or --advance after review"
+      end
+      puts
+    end
     puts "Estimated subagent spawns: #{selected.length}"
+  end
+when :claim
+  begin
+    task = find_task!(tasks, task_id)
+  rescue StandardError => e
+    warn e.message
+    exit 1
+  end
+  unless normalized_status_for(task) == "pending"
+    warn "Task #{task_id} is #{status_for(task)}; only pending tasks can be claimed."
+    exit 1
+  end
+  now = Time.now.utc.iso8601
+  token = claim_token_for(task_id)
+  task["status"] = "active"
+  task["claimed_at"] = now
+  task["last_seen_at"] = now
+  task["claimed_by"] = ENV.fetch("USER", "codex")
+  task["claim_token"] = token
+  write_queue(queue_path, queue_data, queue_shape)
+  result = {
+    "id" => task_id,
+    "status" => "active",
+    "claim_token" => token,
+    "claimed_at" => now,
+    "last_seen_at" => now
+  }
+  if format == "json"
+    puts JSON.pretty_generate(result)
+  else
+    puts "Claimed: #{task_id}"
+    puts "Claim token: #{token}"
+  end
+when :release
+  begin
+    task = find_task!(tasks, task_id)
+  rescue StandardError => e
+    warn e.message
+    exit 1
+  end
+  release_reason = reason || "Released for recovery"
+  task["status"] = "pending"
+  task["released_at"] = Time.now.utc.iso8601
+  task["release_reason"] = release_reason
+  task.delete("last_seen_at")
+  task.delete(:last_seen_at)
+  write_queue(queue_path, queue_data, queue_shape)
+  result = {
+    "id" => task_id,
+    "status" => "pending",
+    "reason" => release_reason
+  }
+  if format == "json"
+    puts JSON.pretty_generate(result)
+  else
+    puts "Released: #{task_id}"
+    puts release_reason
   end
 when :advance
   begin

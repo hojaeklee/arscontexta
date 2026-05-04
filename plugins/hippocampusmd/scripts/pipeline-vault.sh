@@ -11,6 +11,7 @@ exit 1
 require "json"
 require "pathname"
 require "yaml"
+require_relative "lib/queue_hygiene"
 
 def usage
   warn "Usage: #{File.basename($PROGRAM_NAME)} [vault-path] --plan --file PATH|--status --batch ID|--ready-to-archive --batch ID [--format text|json]"
@@ -148,13 +149,19 @@ def ready_to_archive?(tasks)
   !tasks.empty? && tasks.all? { |task| %w[done completed].include?(status_for(task)) }
 end
 
-def next_action(batch, counts, ready)
+def next_action(batch, counts, ready, stale_for_batch)
+  return "review stale active work before continuing batch #{batch}" if stale_for_batch.any?
   return "run hippocampusmd-archive-batch --batch #{batch}" if ready
   return "resolve blocked tasks, then run hippocampusmd-ralph --batch #{batch}" if counts["blocked"].positive?
   return "wait for active tasks or inspect with hippocampusmd-ralph --batch #{batch}" if counts["active"].positive?
   return "run hippocampusmd-ralph --batch #{batch}" if counts["pending"].positive?
 
   "no tasks found for batch #{batch}"
+end
+
+def hygiene_phase_for(task)
+  raw = task[:raw] || {}
+  raw["current_phase"] || raw[:current_phase] || (raw["type"] == "extract" ? "extract" : nil)
 end
 
 vault = "."
@@ -266,7 +273,11 @@ when :status, :ready
   distribution = phase_distribution(batch_tasks)
   blocked = batch_tasks.select { |task| status_for(task) == "blocked" }
   ready = ready_to_archive?(batch_tasks)
-  action = next_action(batch, counts, ready)
+  hygiene = QueueHygiene.status(vault)
+  stale_for_batch = hygiene[:stale_active_tasks].select do |task|
+    task[:batch].to_s == batch || task[:id] == batch
+  end
+  action = next_action(batch, counts, ready, stale_for_batch)
   result = {
     "batch" => batch,
     "queue_file" => queue_path ? rel_path(queue_path, vault) : nil,
@@ -274,6 +285,15 @@ when :status, :ready
     "phase_distribution" => distribution,
     "ready_to_archive" => ready,
     "next_action" => action,
+    "stale_active_tasks" => stale_for_batch.map do |task|
+      {
+        "id" => task[:id],
+        "batch" => task[:batch],
+        "phase" => hygiene_phase_for(task),
+        "stale_since" => task[:stale_since],
+        "stale_minutes" => task[:stale_minutes]
+      }
+    end,
     "tasks" => batch_tasks.map do |task|
       {
         "id" => id_for(task),
@@ -307,6 +327,13 @@ when :status, :ready
       puts "Blocked tasks:"
       blocked.each do |task|
         puts "  #{id_for(task)} -- #{phase_for(task)} -- #{task["blocked_reason"] || task[:blocked_reason] || "no reason"}"
+      end
+    end
+    if stale_for_batch.any?
+      puts
+      puts "Stale active tasks:"
+      stale_for_batch.each do |task|
+        puts "  #{task[:id]} -- #{hygiene_phase_for(task) || "unknown phase"}"
       end
     end
     puts

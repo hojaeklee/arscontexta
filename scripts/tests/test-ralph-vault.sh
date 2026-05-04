@@ -115,6 +115,17 @@ filtered_output="$("$RALPH" "$yaml_vault" --dry-run --batch beta --type verify)"
 assert_contains "$filtered_output" "1. claim-006 -- phase: verify -- Beta Claim"
 assert_not_contains "$filtered_output" "claim-001"
 
+claim_output="$("$RALPH" "$yaml_vault" --claim claim-002 --format json)"
+assert_contains "$claim_output" '"status": "active"'
+assert_contains "$claim_output" '"claim_token"'
+assert_contains "$(cat "$yaml_vault/ops/queue/queue.yaml")" "claimed_at:"
+assert_contains "$(cat "$yaml_vault/ops/queue/queue.yaml")" "claim_token:"
+
+release_output="$("$RALPH" "$yaml_vault" --release claim-002 --reason "Session interrupted before review")"
+assert_contains "$release_output" "Released: claim-002"
+assert_contains "$(cat "$yaml_vault/ops/queue/queue.yaml")" "status: pending"
+assert_contains "$(cat "$yaml_vault/ops/queue/queue.yaml")" "release_reason: Session interrupted before review"
+
 advance_output="$("$RALPH" "$yaml_vault" --advance claim-001)"
 assert_contains "$advance_output" "Advanced: claim-001"
 assert_contains "$advance_output" "create -> reflect"
@@ -151,6 +162,16 @@ assert_contains "$json_output" '"queue_file": "ops/queue/queue.json"'
 assert_contains "$json_output" '"pending": 2'
 assert_contains "$json_output" '"id": "claim-json"'
 assert_not_contains "$json_output" '"id": "source-a"'
+
+stale_vault="$tmp_dir/stale"
+mkdir -p "$stale_vault/ops/queue"
+cat > "$stale_vault/ops/queue/queue.json" <<'EOF'
+{"tasks":[{"id":"stale-001","status":"active","current_phase":"reflect","target":"Stale Claim","claimed_at":"2020-01-01T00:00:00Z"}]}
+EOF
+stale_output="$("$RALPH" "$stale_vault" --dry-run)"
+assert_contains "$stale_output" "Stale active tasks:"
+assert_contains "$stale_output" "stale-001"
+assert_contains "$stale_output" "use --release, --fail, or --advance after review"
 
 malformed_vault="$tmp_dir/malformed"
 mkdir -p "$malformed_vault/ops/queue"

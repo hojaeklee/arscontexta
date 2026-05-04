@@ -43,6 +43,8 @@ Do not perform hidden background work. Use Codex subagents only when the user ex
 
 Use explicit failure reporting and resumability guidance throughout the workflow.
 
+Pipeline status must surface stale active work before selecting more tasks. Recovery choices are continue, release to pending, block with reason, or advance only after evidence review.
+
 Do not hide failures. After each phase, report:
 
 - phase result

@@ -15,6 +15,8 @@ Ralph is the standalone queue worker for HippocampusMD. Keep it separate from `h
    - `plugins/hippocampusmd/scripts/ralph-vault.sh [vault-path] --dry-run --limit N --format text|json`
 4. Keep all queue processing state under `ops/queue/`.
 
+Before handing a task to a worker, claim it with `ralph-vault.sh --claim TASK_ID`. If the session is interrupted or worker output cannot be reviewed, release it with `--release TASK_ID --reason TEXT` rather than leaving it indistinguishable from never-started pending work.
+
 ## Helper Responsibilities
 
 Use the helper for deterministic queue inspection and queue-state mutation only. It may:
@@ -22,6 +24,8 @@ Use the helper for deterministic queue inspection and queue-state mutation only.
 - read `ops/queue/queue.json`, `ops/queue/queue.yaml`, or `ops/queue.yaml`
 - summarize pending, active, blocked, and done tasks
 - select pending tasks by limit, batch, and current phase
+- claim a pending task before handing it to a worker
+- release interrupted active work back to pending with a reason
 - advance a task after a successful worker phase
 - block a task with a reason after a failed worker phase
 

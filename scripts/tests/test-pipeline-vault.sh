@@ -106,6 +106,16 @@ assert_contains "$status_json" '"blocked": 1'
 assert_contains "$status_json" '"ready_to_archive": false'
 assert_contains "$status_json" '"next_action": "resolve blocked tasks, then run hippocampusmd-ralph --batch alpha"'
 
+recovery_vault="$tmp_dir/recovery"
+mkdir -p "$recovery_vault/ops/queue"
+cat > "$recovery_vault/ops/queue/queue.json" <<'EOF'
+{"tasks":[{"id":"recover-001","status":"active","batch":"recover","file":"recover-001.md","current_phase":"verify","claimed_at":"2020-01-01T00:00:00Z"}]}
+EOF
+recovery_output="$("$PIPELINE" "$recovery_vault" --status --batch recover)"
+assert_contains "$recovery_output" "Stale active tasks:"
+assert_contains "$recovery_output" "recover-001"
+assert_contains "$recovery_output" "Next action: review stale active work before continuing batch recover"
+
 ready_false="$("$PIPELINE" "$status_vault" --ready-to-archive --batch alpha)"
 assert_contains "$ready_false" "Ready to archive: no"
 
