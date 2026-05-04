@@ -51,6 +51,7 @@ module QueueHygiene
       stale_active_tasks: stale_active_tasks,
       missing_task_files: missing_task_files,
       orphan_task_files: orphan_task_files,
+      completed_left_active: completed_left_active,
       stale_task_stack_items: stale_task_stack_items,
       queue_errors: queue.fetch(:errors)
     )
@@ -100,7 +101,7 @@ module QueueHygiene
       tasks: queue_tasks_from_data(data),
       errors: []
     }
-  rescue JSON::ParserError, Psych::Exception, Errno::ENOENT, Errno::EACCES, StandardError => e
+  rescue JSON::ParserError, Psych::Exception, SystemCallError, Encoding::InvalidByteSequenceError => e
     {
       path: queue && queue[:path],
       rel_path: queue && queue[:rel_path],
@@ -204,12 +205,12 @@ module QueueHygiene
 
   def stale_active_tasks(tasks, stale_active_minutes, now)
     threshold_seconds = stale_active_minutes.to_i * 60
-    tasks.select { |task| task[:status] == "active" }.filter_map do |task|
+    tasks.select { |task| task[:status] == "active" }.map do |task|
       timestamp = parse_task_timestamp(task)
       next unless timestamp && (now - timestamp) > threshold_seconds
 
       task.merge(stale_since: timestamp.utc.iso8601, stale_minutes: ((now - timestamp) / 60).floor)
-    end
+    end.compact
   end
 
   def parse_task_timestamp(task)
@@ -232,13 +233,13 @@ module QueueHygiene
     queue_dir = File.join(root, "ops", "queue")
     return [] unless Dir.exist?(queue_dir)
 
-    referenced = tasks.filter_map { |task| task[:file_path] && File.expand_path(task[:file_path]) }.to_set
-    Dir.glob(File.join(queue_dir, "**", "*.md")).filter_map do |path|
+    referenced = tasks.map { |task| task[:file_path] && File.expand_path(task[:file_path]) }.compact.to_set
+    Dir.glob(File.join(queue_dir, "**", "*.md")).map do |path|
       next if rel_path(path, root).start_with?("ops/queue/archive/")
       next if referenced.include?(File.expand_path(path))
 
       rel_path(path, root)
-    end.sort
+    end.compact.sort
   end
 
   def missing_task_files(tasks)
@@ -261,15 +262,27 @@ module QueueHygiene
     return [] unless File.file?(path)
 
     section = nil
-    File.readlines(path, chomp: true).filter_map do |line|
-      if line.match?(/\A##\s+/)
-        section = line.strip.downcase
+    File.readlines(path, chomp: true).map do |line|
+      heading = canonical_task_heading(line)
+      if heading
+        section = heading
         next
+      elsif line.match?(/\A##\s+/)
+        section = nil
       end
-      next unless section == "## current"
+      next unless section == :current
       next unless line.match?(/\A-\s+\[\s\]\s+/)
 
       line.sub(/\A-\s+\[\s\]\s*/, "")
+    end.compact
+  end
+
+  def canonical_task_heading(line)
+    case line.strip.downcase
+    when "## current", "## active" then :current
+    when "## completed", "## done" then :completed
+    when "## discoveries" then :discoveries
+    else nil
     end
   end
 
@@ -288,7 +301,14 @@ module QueueHygiene
     text.match?(/(?:\A|[^[:alnum:]_-])#{escaped}(?:\z|[^[:alnum:]_-])/)
   end
 
-  def proposals_for(stale_active_tasks:, missing_task_files:, orphan_task_files:, stale_task_stack_items:, queue_errors:)
+  def proposals_for(
+    stale_active_tasks:,
+    missing_task_files:,
+    orphan_task_files:,
+    completed_left_active:,
+    stale_task_stack_items:,
+    queue_errors:
+  )
     proposals = []
     queue_errors.each { |error| proposals << { type: "queue_error", message: error } }
     stale_active_tasks.each do |task|
@@ -311,6 +331,14 @@ module QueueHygiene
         type: "orphan_task_file",
         file: file,
         message: "Review orphan queue task file #{file} before reconciling."
+      }
+    end
+    completed_left_active.each do |task|
+      proposals << {
+        type: "completed_left_active",
+        task_id: task[:id],
+        file: task[:file_rel_path],
+        message: "Archive completed task file #{task[:file_rel_path]} for queue entry #{task[:id]}."
       }
     end
     stale_task_stack_items.each do |item|

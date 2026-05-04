@@ -18,7 +18,7 @@ cleanup() { rm -rf "$tmp_dir"; }
 trap cleanup EXIT
 
 vault="$tmp_dir/vault"
-mkdir -p "$vault/ops/queue/archive" "$vault/ops/tasks.md.d"
+mkdir -p "$vault/ops/queue/archive"
 cat > "$vault/ops/queue/queue.json" <<'JSON'
 {
   "tasks": [
@@ -40,7 +40,7 @@ printf '# Orphan\n' > "$vault/ops/queue/orphan.md"
 cat > "$vault/ops/tasks.md" <<'EOF'
 # Task Stack
 
-## Current
+## Active
 - [ ] Process queue batch alpha
 - [ ] Review unrelated human task
 
@@ -48,6 +48,14 @@ cat > "$vault/ops/tasks.md" <<'EOF'
 
 ## Discoveries
 EOF
+
+ruby -I "$PROJECT_ROOT/plugins/hippocampusmd/scripts/lib" -r queue_hygiene -e '
+report = QueueHygiene.status(ARGV.fetch(0))
+unless report.fetch(:stale_task_stack_items).include?("Process queue batch alpha")
+  warn "FAIL: expected ## Active to be parsed as current task stack"
+  exit 1
+end
+' "$vault"
 
 output="$("$STATUS" "$vault")"
 assert_contains "$output" "Queue hygiene status"
