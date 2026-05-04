@@ -222,7 +222,7 @@ def task_item_from_current_line(line)
 end
 
 def current_item_covers_suggestion?(current_item, suggestion)
-  current_item == suggestion || current_item.start_with?("#{suggestion} ")
+  current_item.match?(/\A#{Regexp.escape(suggestion)}(?:\z|[[:space:][:punct:]])/)
 end
 
 def current_section_range(lines)
@@ -234,6 +234,8 @@ def current_section_range(lines)
 end
 
 def insert_current_section(lines, added_items)
+  return lines if added_items.empty?
+
   section = ["## Current"] + added_items.map { |item| "- [ ] #{item}" }
   insert_at = lines.index { |line| %i[completed discoveries].include?(canonical_heading(line)) } || lines.length
   prefix_blank = insert_at.positive? && !lines[insert_at - 1].to_s.empty? ? [""] : []
@@ -262,7 +264,7 @@ def refresh_tasks_file(path, stale_items, suggested_items)
 
   unless range
     updated = insert_current_section(lines, suggested_items)
-    File.write(path, "#{updated.join("\n")}#{trailing_newline ? "\n" : ""}")
+    File.write(path, "#{updated.join("\n")}#{trailing_newline ? "\n" : ""}") unless updated == lines
     return { removed: [], added: suggested_items }
   end
 

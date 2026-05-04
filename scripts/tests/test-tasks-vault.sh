@@ -177,7 +177,7 @@ cat > "$drift_vault/ops/tasks.md" <<'EOF'
 
 ## Current
 - [ ] Process queue batch alpha
-- [ ] Continue queue task beta-001 with manual context
+- [ ] Continue queue task beta-001: keep context
 Remember why beta matters.
 <!-- keep current comment -->
 - unchecked prose without checkbox
@@ -204,7 +204,7 @@ assert_contains "$drift_output" "Continue queue task beta-001"
 
 refresh_output="$("$TASKS" "$drift_vault" --refresh-queue)"
 assert_contains "$refresh_output" "Removed stale generated task: Process queue batch alpha"
-assert_not_contains "$refresh_output" "Removed stale generated task: Continue queue task beta-001 with manual context"
+assert_not_contains "$refresh_output" "Removed stale generated task: Continue queue task beta-001: keep context"
 assert_not_contains "$refresh_output" "Added queue task: Continue queue task beta-001"
 assert_contains "$(cat "$drift_vault/ops/tasks.md")" "Preserve human priority"
 assert_contains "$(cat "$drift_vault/ops/tasks.md")" "Remember why beta matters."
@@ -212,7 +212,7 @@ assert_contains "$(cat "$drift_vault/ops/tasks.md")" "<!-- keep current comment 
 assert_contains "$(cat "$drift_vault/ops/tasks.md")" "- unchecked prose without checkbox"
 assert_contains "$(cat "$drift_vault/ops/tasks.md")" "Completed section note should stay."
 assert_contains "$(cat "$drift_vault/ops/tasks.md")" "- discovery note should stay"
-assert_file_contains_line "$drift_vault/ops/tasks.md" "- [ ] Continue queue task beta-001 with manual context"
+assert_file_contains_line "$drift_vault/ops/tasks.md" "- [ ] Continue queue task beta-001: keep context"
 assert_file_not_contains_line "$drift_vault/ops/tasks.md" "- [ ] Continue queue task beta-001"
 assert_not_contains "$(cat "$drift_vault/ops/tasks.md")" "Process queue batch alpha"
 
@@ -245,5 +245,29 @@ assert_file_contains_line "$no_current_vault/ops/tasks.md" "## Current"
 assert_file_contains_line "$no_current_vault/ops/tasks.md" "- [ ] Continue queue task gamma-001"
 assert_contains "$(cat "$no_current_vault/ops/tasks.md")" "- [x] Previous work"
 assert_contains "$(cat "$no_current_vault/ops/tasks.md")" "- Keep this discovery"
+
+no_suggestions_vault="$tmp_dir/no-suggestions-vault"
+mkdir -p "$no_suggestions_vault/ops/queue"
+cat > "$no_suggestions_vault/ops/tasks.md" <<'EOF'
+# Task Stack
+
+Opening note only.
+
+## Completed
+- [x] Finished
+
+## Discoveries
+- Keep discovery
+EOF
+cat > "$no_suggestions_vault/ops/queue/queue.json" <<'EOF'
+{"tasks":[
+  {"id":"done-001","status":"completed","batch":"done"}
+]}
+EOF
+no_suggestions_before="$(cat "$no_suggestions_vault/ops/tasks.md")"
+no_suggestions_refresh="$("$TASKS" "$no_suggestions_vault" --refresh-queue)"
+assert_contains "$no_suggestions_refresh" "Task stack already matches queue state."
+assert_not_contains "$(cat "$no_suggestions_vault/ops/tasks.md")" "## Current"
+[[ "$(cat "$no_suggestions_vault/ops/tasks.md")" == "$no_suggestions_before" ]] || fail "refresh without suggestions should not change tasks.md"
 
 printf 'PASS: tasks-vault checks\n'
