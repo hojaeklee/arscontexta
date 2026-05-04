@@ -291,6 +291,21 @@ EOF
   assert_contains "$indexed_json" '"id": "notes/team-b/shared.md"'
   assert_contains "$indexed_json" '"target": "shared"'
   assert_contains "$indexed_json" '"reason": "ambiguous"'
+
+  sleep 1
+  cat >> "$indexed_vault/notes/alpha.md" <<'EOF'
+
+Fresh edit after the index was built.
+EOF
+
+  stale_output="$("$GRAPH" "$indexed_vault" --mode health)"
+  assert_contains "$stale_output" "Index: full scan fallback"
+  assert_contains "$stale_output" "stale index"
+  assert_contains "$stale_output" "claims: 3 (plus 1 topic maps)"
+
+  "$INDEX" build "$indexed_vault" >/dev/null
+  rebuilt_output="$("$GRAPH" "$indexed_vault" --mode health)"
+  assert_contains "$rebuilt_output" "Index: using fresh VaultIndex"
 else
   printf 'SKIP: indexed graph health duplicate-basename checks require ruby sqlite3\n'
 fi
