@@ -123,8 +123,27 @@ module QueueHygiene
   end
 
   def archive_dir_for_completed_task(root, task)
-    batch = task[:batch].to_s.empty? ? task[:id] : task[:batch].to_s
-    File.join(root, "ops", "queue", "archive", batch)
+    File.join(root, "ops", "queue", "archive", archive_segment_for_completed_task(task))
+  end
+
+  def archive_segment_for_completed_task(task)
+    batch = task[:batch].to_s
+    segment = batch.strip.empty? ? task[:id].to_s : batch
+    unless safe_archive_segment?(segment)
+      raise ArgumentError, "Unsafe archive segment for completed task #{task[:id]}: #{segment}"
+    end
+
+    segment
+  end
+
+  def safe_archive_segment?(segment)
+    value = segment.to_s
+    return false if value.strip.empty?
+    return false if value != value.strip
+    return false if [".", ".."].include?(value)
+    return false if value.include?("/") || value.include?("\\")
+
+    !Pathname.new(value).absolute?
   end
 
   def write_queue(path, data, shape)

@@ -70,4 +70,60 @@ assert_not_contains "$(cat "$vault/ops/queue/queue.yaml")" "status: dropped"
 second_apply="$("$RECONCILE" "$vault" --apply)"
 assert_contains "$second_apply" "No deterministic repairs needed"
 
+unsafe_vault="$tmp_dir/unsafe-vault"
+mkdir -p "$unsafe_vault/ops/queue"
+cat > "$unsafe_vault/ops/queue/queue.yaml" <<'EOF'
+tasks:
+  - id: unsafe-001
+    status: completed
+    batch: ../../escape
+    file: unsafe.md
+EOF
+printf '# Unsafe\n' > "$unsafe_vault/ops/queue/unsafe.md"
+unsafe_output="$("$RECONCILE" "$unsafe_vault" --apply)"
+assert_contains "$unsafe_output" "Skipped completed task file ops/queue/unsafe.md because archive segment is unsafe: ../../escape"
+[[ -f "$unsafe_vault/ops/queue/unsafe.md" ]] || fail "unsafe source must remain active"
+[[ ! -e "$unsafe_vault/escape" ]] || fail "unsafe batch must not create directory outside archive"
+[[ ! -e "$unsafe_vault/ops/escape" ]] || fail "unsafe batch must not escape queue archive"
+
+collision_vault="$tmp_dir/collision-vault"
+mkdir -p "$collision_vault/ops/queue/archive/foo"
+cat > "$collision_vault/ops/queue/queue.yaml" <<'EOF'
+tasks:
+  - id: foo-001
+    status: completed
+    batch: foo
+    file: foo.md
+  - id: stale-001
+    status: active
+    batch: stale
+    file: stale.md
+    claimed_at: "2020-01-01T00:00:00Z"
+EOF
+printf '# Active Foo\n' > "$collision_vault/ops/queue/foo.md"
+printf '# Archived Foo\n' > "$collision_vault/ops/queue/archive/foo/foo.md"
+printf '# Stale\n' > "$collision_vault/ops/queue/stale.md"
+collision_output="$("$RECONCILE" "$collision_vault" --apply)"
+assert_contains "$collision_output" "Skipped completed task file ops/queue/foo.md because archive destination already exists ops/queue/archive/foo/foo.md"
+[[ -f "$collision_vault/ops/queue/foo.md" ]] || fail "collision source must remain active"
+assert_contains "$(cat "$collision_vault/ops/queue/archive/foo/foo.md")" "Archived Foo"
+
+json_output="$("$RECONCILE" "$collision_vault" --format json)"
+ruby -rjson -e '
+data = JSON.parse(ARGF.read)
+actions = data.fetch("actions")
+unless data.fetch("mode") == "dry run"
+  warn "FAIL: expected JSON mode to be dry run"
+  exit 1
+end
+unless actions.any? { |action| action.fetch("type") == "skipped_completed_task_file" && action.fetch("reason") == "destination_exists" }
+  warn "FAIL: expected JSON skipped collision action"
+  exit 1
+end
+unless data.fetch("proposals").any? { |proposal| proposal.fetch("type") == "stale_active_task" && proposal.fetch("task_id") == "stale-001" }
+  warn "FAIL: expected JSON stale active proposal"
+  exit 1
+end
+' <<< "$json_output"
+
 printf 'PASS: queue-reconcile-vault checks\n'

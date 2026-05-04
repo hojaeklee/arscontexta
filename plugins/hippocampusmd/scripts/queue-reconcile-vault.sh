@@ -24,6 +24,18 @@ def destination_for_task(root, task)
   File.join(QueueHygiene.archive_dir_for_completed_task(root, task), File.basename(task.fetch(:file_path)))
 end
 
+def unsafe_archive_segment_action(task)
+  segment = task[:batch].to_s.strip.empty? ? task[:id].to_s : task[:batch].to_s
+  {
+    type: "skipped_completed_task_file",
+    reason: "unsafe_archive_segment",
+    task_id: task.fetch(:id),
+    source: task.fetch(:file_path),
+    source_rel: task.fetch(:file_rel_path),
+    archive_segment: segment
+  }
+end
+
 def deterministic_actions(report)
   root = report.fetch(:root)
   actions = []
@@ -31,8 +43,28 @@ def deterministic_actions(report)
 
   report.fetch(:completed_left_active).each do |task|
     source = task.fetch(:file_path)
-    archive_dir = QueueHygiene.archive_dir_for_completed_task(root, task)
-    destination = destination_for_task(root, task)
+    begin
+      archive_dir = QueueHygiene.archive_dir_for_completed_task(root, task)
+      destination = destination_for_task(root, task)
+    rescue ArgumentError
+      actions << unsafe_archive_segment_action(task)
+      next
+    end
+
+    if File.file?(source) && File.exist?(destination)
+      actions << {
+        type: "skipped_completed_task_file",
+        reason: "destination_exists",
+        task_id: task.fetch(:id),
+        source: source,
+        source_rel: rel_path(source, root),
+        destination: destination,
+        destination_rel: rel_path(destination, root),
+        archive_dir: archive_dir,
+        archive_dir_rel: rel_path(archive_dir, root)
+      }
+      next
+    end
 
     unless Dir.exist?(archive_dir) || seen_dirs[archive_dir]
       actions << {
@@ -100,6 +132,8 @@ def apply_actions(actions)
       else
         action[:applied] = false
       end
+    when "skipped_completed_task_file"
+      action[:applied] = false
     end
   end
 end
@@ -177,6 +211,13 @@ else
       when "move_completed_task_file"
         verb = apply && action[:applied] ? "Moved" : "Would move"
         puts "#{verb} completed task file #{action.fetch(:source_rel)} to #{action.fetch(:destination_rel)}"
+      when "skipped_completed_task_file"
+        case action.fetch(:reason)
+        when "destination_exists"
+          puts "Skipped completed task file #{action.fetch(:source_rel)} because archive destination already exists #{action.fetch(:destination_rel)}"
+        when "unsafe_archive_segment"
+          puts "Skipped completed task file #{action.fetch(:source_rel)} because archive segment is unsafe: #{action.fetch(:archive_segment)}"
+        end
       end
     end
   end
