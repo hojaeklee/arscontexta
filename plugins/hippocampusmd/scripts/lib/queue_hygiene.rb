@@ -362,9 +362,14 @@ module QueueHygiene
     suggested = suggested_task_stack_items(tasks)
 
     current_items.select do |item|
-      generated_task_stack_item?(item) &&
+      exact_generated_task_stack_item?(item) &&
         (stale_items.include?(item) || !suggested.include?(item))
     end
+  end
+
+  def exact_generated_task_stack_item?(item)
+    item.match?(/\AProcess queue batch\s+\S+\z/) ||
+      item.match?(/\AContinue queue task\s+\S+\z/)
   end
 
   def proposals_for(

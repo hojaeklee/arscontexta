@@ -215,6 +215,82 @@ def stack_current_items(root)
   QueueHygiene.current_task_stack_items(root)
 end
 
+def task_item_from_current_line(line)
+  return nil unless line.match?(/\A-\s+\[\s\]\s+/)
+
+  line.sub(/\A-\s+\[\s\]\s*/, "")
+end
+
+def current_item_covers_suggestion?(current_item, suggestion)
+  current_item == suggestion || current_item.start_with?("#{suggestion} ")
+end
+
+def current_section_range(lines)
+  start_index = lines.index { |line| canonical_heading(line) == :current }
+  return nil unless start_index
+
+  end_index = ((start_index + 1)...lines.length).find { |index| lines[index].match?(/\A##\s+/) } || lines.length
+  [start_index, end_index]
+end
+
+def insert_current_section(lines, added_items)
+  section = ["## Current"] + added_items.map { |item| "- [ ] #{item}" }
+  insert_at = lines.index { |line| %i[completed discoveries].include?(canonical_heading(line)) } || lines.length
+  prefix_blank = insert_at.positive? && !lines[insert_at - 1].to_s.empty? ? [""] : []
+  suffix_blank = insert_at < lines.length && !lines[insert_at].to_s.empty? ? [""] : []
+  lines[0...insert_at] + prefix_blank + section + suffix_blank + lines[insert_at..]
+end
+
+def refresh_tasks_file(path, stale_items, suggested_items)
+  if !File.file?(path)
+    stack = {
+      title: "# Task Stack",
+      preface: [],
+      current: suggested_items,
+      completed: [],
+      discoveries: [],
+      trailing: []
+    }
+    write_tasks(path, stack)
+    return { removed: [], added: suggested_items }
+  end
+
+  original = File.read(path)
+  trailing_newline = original.end_with?("\n")
+  lines = original.lines(chomp: true)
+  range = current_section_range(lines)
+
+  unless range
+    updated = insert_current_section(lines, suggested_items)
+    File.write(path, "#{updated.join("\n")}#{trailing_newline ? "\n" : ""}")
+    return { removed: [], added: suggested_items }
+  end
+
+  start_index, end_index = range
+  before = lines[0...start_index]
+  current = lines[start_index...end_index]
+  after = lines[end_index..] || []
+  removed = []
+  kept_current = current.reject do |line|
+    item = task_item_from_current_line(line)
+    should_remove = item && stale_items.include?(item)
+    removed << item if should_remove
+    should_remove
+  end
+  current_items = kept_current.map { |line| task_item_from_current_line(line) }.compact
+  added = suggested_items.reject do |item|
+    current_items.any? { |current_item| current_item_covers_suggestion?(current_item, item) }
+  end
+
+  insert_at = kept_current.length
+  insert_at -= 1 while insert_at > 1 && kept_current[insert_at - 1].to_s.empty?
+  updated_current = kept_current.dup
+  updated_current.insert(insert_at, *added.map { |item| "- [ ] #{item}" })
+  updated = before + updated_current + after
+  File.write(path, "#{updated.join("\n")}#{trailing_newline ? "\n" : ""}")
+  { removed: removed, added: added }
+end
+
 stack = parse_tasks(tasks_path)
 queue = parse_queue(vault_abs)
 
@@ -275,11 +351,10 @@ when :reorder
   stack[:exists] = true
   message = "Moved: #{item}"
 when :refresh_queue
-  removed = queue[:stale_task_stack_items]
-  stack[:current] = stack[:current].reject { |item| removed.include?(item) }
-  added = queue[:suggested_task_stack_items].reject { |item| stack[:current].include?(item) }
-  stack[:current].concat(added)
-  write_tasks(tasks_path, stack)
+  result = refresh_tasks_file(tasks_path, queue[:stale_task_stack_items], queue[:suggested_task_stack_items])
+  removed = result.fetch(:removed)
+  added = result.fetch(:added)
+  stack = parse_tasks(tasks_path)
   stack[:exists] = true
   message = (removed.map { |item| "Removed stale generated task: #{item}" } +
              added.map { |item| "Added queue task: #{item}" }).join("\n")
@@ -372,9 +447,9 @@ else
   puts "Pending: #{counts["pending"]} | Active: #{counts["active"]} | Blocked: #{counts["blocked"]} | Completed: #{counts["completed"]}"
   queue[:tasks].select { |task| %w[pending active blocked].include?(task["status"]) }.first(limit).each do |task|
     detail = "#{task["id"]}: #{task["status"]}"
-    detail += " / #{task["phase"]}" if task["phase"]
-    detail += " -- #{task["target"]}" if task["target"]
-    detail += " (batch: #{task["batch"]})" if task["batch"]
+    detail += " / #{task["phase"]}" unless task["phase"].to_s.empty?
+    detail += " -- #{task["target"]}" unless task["target"].to_s.empty?
+    detail += " (batch: #{task["batch"]})" unless task["batch"].to_s.empty?
     puts "  - #{detail}"
   end
   if queue[:archivable_batches].empty?
