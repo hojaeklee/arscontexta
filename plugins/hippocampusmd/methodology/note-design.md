@@ -12,6 +12,7 @@ How to design individual notes for maximum composability and retrieval quality. 
 ### Research
 - [[claims must be specific enough to be wrong]] -- Vague claims can't be disagreed with or built on — for agents, vague titles are undocumented functions where you can inv
 - [[coherent architecture emerges from wiki links spreading activation and small-world topology]] -- The foundational triangle — wiki links create structure, spreading activation models traversal, small-world topology pro
+- [[topic-titled concept notes are valid when the note models a learnable entity]] -- Guarded exception to prose-as-title: concept notes use topic handles when they model learnable entities, while claim notes remain sentence-form arguments
 - [[decontextualization risk means atomicity may strip meaning that cannot be recovered]] -- Extracting claims from source discourse strips argumentative context, and Source footers plus wiki links may not reconst
 - [[each module must be describable in one sentence under 200 characters or it does too many things]] -- The single-sentence test operationalizes Unix "do one thing" as a measurable constraint — if the description exceeds 200
 - [[elaborative encoding is the quality gate for new notes]] -- Zettelkasten works because connecting new information to existing knowledge — not just filing it — creates encoding dept

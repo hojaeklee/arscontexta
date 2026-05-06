@@ -46,6 +46,8 @@ When generating a knowledge system for a specific domain, every universal term i
 | archive/ | archive/ | past/ | mastered/ | history/ | completed/ | closed/ | past/ |
 | templates/ | templates/ | templates/ | templates/ | templates/ | templates/ | templates/ | templates/ |
 
+Mixed research-learning vaults should usually keep `notes/` as the shared graph and distinguish concept notes with `type: concept`. A pure learning vault may still map the collection folder to `concepts/`.
+
 ---
 
 ## Skill Name Mapping

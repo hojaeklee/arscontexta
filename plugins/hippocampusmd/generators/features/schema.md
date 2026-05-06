@@ -16,7 +16,7 @@ Schema enforcement is an INVARIANT. Every vault validates structured metadata be
 ```yaml
 ---
 description: One sentence adding context beyond the title (~150 chars, no period)
-type: insight | pattern | preference | fact | decision | question
+type: insight | pattern | preference | fact | decision | question | tension | methodology | concept
 created: YYYY-MM-DD
 ---
 ```
@@ -33,7 +33,7 @@ created: YYYY-MM-DD
 
 **`type` is optional for standard {DOMAIN:notes}.** Most {DOMAIN:notes} are insights or claims — that is the default. Add `type` explicitly when:
 - You want to query {DOMAIN:notes} by category (all patterns, all decisions)
-- The {DOMAIN:note} is a special type (tension, methodology, problem)
+- The {DOMAIN:note} is a special type (tension, methodology)
 - Domain-specific types exist that matter for retrieval
 
 ### Enum Values
@@ -48,8 +48,11 @@ Type values define categories of {DOMAIN:notes}. The default set:
 | `fact` | An objective observation or datum |
 | `decision` | A choice made with reasoning |
 | `question` | An unresolved question worth tracking |
+| `concept` | A learnable entity or domain primitive; may use a topic title only when the note follows concept-note structure |
 | `tension` | A conflict between two ideas |
 | `methodology` | A way of working or processing |
+
+Use `type: concept` for learnable entities or domain primitives that follow concept-note structure.
 
 **Domain-specific enums** are added during derivation. A therapy vault might add `reflection`, `trigger`, `coping-strategy`. A PM vault might add `requirement`, `risk`, `dependency`. The template `_schema` block is the single source of truth for what values are valid.
 
@@ -70,8 +73,8 @@ rg -L '^description:' {DOMAIN:notes}/*.md
 # Find {DOMAIN:notes} by {DOMAIN:topic map}
 rg '^topics:.*\[\[methodology\]\]' {DOMAIN:notes}/
 
-# Cross-field queries — find pending tensions
-rg -l '^type: tension' {DOMAIN:notes}/ | xargs rg '^status: pending'
+# Cross-field queries — find open tensions
+rg -l '^type: tension' {DOMAIN:notes}/ | xargs rg '^status: open'
 
 # Count {DOMAIN:notes} by type
 rg '^type:' {DOMAIN:notes}/ --no-filename | sort | uniq -c | sort -rn
@@ -133,7 +136,7 @@ _schema:
   required: [description]
   optional: [type, status, created, modified]
   enums:
-    type: [insight, pattern, preference, fact, decision, question]
+    type: [insight, pattern, preference, fact, decision, question, tension, methodology, concept]
     status: [preliminary, open, active, archived]
   constraints:
     description: "max 200 chars, no trailing period, must add info beyond title"

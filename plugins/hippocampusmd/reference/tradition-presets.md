@@ -176,6 +176,8 @@ These are derived from tradition presets, adapted for specific use cases. Each c
 - Creative → Evergreen-influenced — living ideas that evolve through revisiting
 - Companion → lightest configuration — memory building without processing overhead
 
+Mixed research-learning vaults should combine Research claim extraction with Learning concept-note scaffolding rather than choosing one preset exclusively. Concept notes provide the learning scaffold while claims preserve argument-level synthesis.
+
 **Why flat organization for all:** The research strongly favors flat-associative for agent-operated systems. Hierarchy can be added via MOCs without folder nesting. This is the one dimension where the recommendation holds across all use cases.
 
 **Why convention automation for all:** Following Gall's Law (complex systems evolve from simple working systems), all systems start at convention level. Users add automation at friction points rather than deploying full automation from day one.

@@ -26,7 +26,7 @@ _schema:
   required: [description, type]
   optional: [status, created]
   enums:
-    type: [insight, pattern, preference, fact, decision, question]
+    type: [insight, pattern, preference, fact, decision, question, tension, methodology, concept]
     status: [preliminary, open, active, archived]
   constraints:
     description: "max 200 chars, no trailing period"
@@ -55,6 +55,10 @@ Create a new template when:
 - A domain grows complex enough to warrant its own schema
 
 Don't create templates speculatively. Wait until you have 3+ {DOMAIN:notes} that share a pattern, then extract the template from what works.
+
+### Concept Note Template
+
+Mixed research-learning vaults should keep a concept-note template available from setup rather than waiting for three manual examples. Concept notes are a known cross-domain shape: they need `type: concept`, a topic title, prerequisites, downstream concepts, and retrieval questions. This is not speculative ceremony; it is the schema that protects the prose-as-title exception from becoming generic topic buckets.
 
 ### Schema Evolution Rules
 

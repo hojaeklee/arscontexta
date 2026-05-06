@@ -158,6 +158,7 @@ render_template_file() {
 note_type="$(yaml_scalar "$preset_file" "note_type" "note")"
 topic_map="$(yaml_scalar "$preset_file" "topic_map" "topic map")"
 focus_term="$(yaml_scalar "$preset_file" "focus_term" "knowledge")"
+concept_notes="$(yaml_scalar "$preset_file" "concept_notes" "false")"
 starter_files="$(yaml_list_values "$preset_file" "starter_notes" | tr '\n' ' ')"
 if [[ -z "${starter_files// }" ]]; then
   starter_files="index"
@@ -315,6 +316,13 @@ write_file() {
         else
           printf 'extraction_categories: []\n'
         fi
+        if [[ "$concept_notes" == "true" ]]; then
+          printf '%s\n' \
+            "concept_notes: true" \
+            "concept_template: templates/concept-note.md"
+        else
+          printf 'concept_notes: false\n'
+        fi
         printf '%s\n' \
           "scan:" \
           "  include:" \
@@ -341,6 +349,53 @@ write_file() {
           "maintenance:" \
           "  health_skill: hippocampusmd-health"
       } > "$path"
+      ;;
+    templates/concept-note.md)
+      if [[ "$concept_notes" != "true" ]]; then
+        return 0
+      fi
+      printf '%s\n' \
+        "---" \
+        "description: One sentence explaining the concept's scope, mechanism, or learning value" \
+        "type: concept" \
+        "domain: $domain" \
+        "mastery: new | developing | solid | expert" \
+        "prerequisites: []" \
+        "enables: []" \
+        "retrieval_questions:" \
+        "  - \"Question that tests understanding of this concept\"" \
+        "aliases: []" \
+        "created: YYYY-MM-DD" \
+        "---" \
+        "" \
+        "# topic-title naming the concept" \
+        "" \
+        "Define the concept in your own words. Explain why it matters, what must be understood first, and what it helps explain." \
+        "" \
+        "## Key Facts" \
+        "" \
+        "- Fact worth remembering, with links to supporting claim notes when available." \
+        "" \
+        "## Prerequisites" \
+        "" \
+        "- [[prerequisite concept]] -- why this must be understood first" \
+        "" \
+        "## Enables" \
+        "" \
+        "- [[downstream concept]] -- what this concept makes understandable" \
+        "" \
+        "## Retrieval Questions" \
+        "" \
+        "- Question that tests understanding of the concept." \
+        "" \
+        "---" \
+        "" \
+        "Relevant Notes:" \
+        "- [[related claim note]] -- relationship context" \
+        "" \
+        "Topics:" \
+        "- [[index]]" \
+        > "$path"
       ;;
     templates/base-note.md)
       printf '%s\n' \
@@ -435,19 +490,25 @@ write_file() {
         > "$path"
       ;;
     manual/getting-started.md)
-      printf '%s\n' \
-        "---" \
-        "description: First steps for using this HippocampusMD vault with Codex" \
-        "type: manual" \
-        "created: $today" \
-        "---" \
-        "" \
-        "# Getting Started" \
-        "" \
-        "Start by adding raw thoughts or source material to \`inbox/\`. At session start, ask Codex to run \`hippocampusmd-session orient\`. When you want a checkup, ask Codex to run \`hippocampusmd-health\`." \
-        "" \
-        "Use \`notes/\` for durable $note_type files and \`manual/\` for human-facing guidance." \
-        > "$path"
+      {
+        printf '%s\n' \
+          "---" \
+          "description: First steps for using this HippocampusMD vault with Codex" \
+          "type: manual" \
+          "created: $today" \
+          "---" \
+          "" \
+          "# Getting Started" \
+          "" \
+          "Start by adding raw thoughts or source material to \`inbox/\`. At session start, ask Codex to run \`hippocampusmd-session orient\`. When you want a checkup, ask Codex to run \`hippocampusmd-health\`." \
+          "" \
+          "Use \`notes/\` for durable $note_type files and \`manual/\` for human-facing guidance."
+        if [[ "$concept_notes" == "true" ]]; then
+          printf '%s\n' \
+            "" \
+            "Use concept notes for durable vocabulary, mechanisms, methods, structures, and prerequisite ideas. Concept notes declare \`type: concept\` and may use topic titles; claim notes still use prose-as-title."
+        fi
+      } > "$path"
       ;;
     manual/skills.md)
       printf '%s\n' \
@@ -650,6 +711,7 @@ for file in \
   ops/derivation.md \
   ops/derivation-manifest.md \
   ops/config.yaml \
+  templates/concept-note.md \
   templates/base-note.md \
   templates/moc.md \
   self/identity.md \
