@@ -1,6 +1,7 @@
 .DS_Store
 .idea/
 .obsidian/
+__pycache__/
 *.local.md
 /hippocampusmd/
 .worktrees/
